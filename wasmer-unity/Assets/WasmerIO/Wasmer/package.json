@@ -1,0 +1,11 @@
+{
+  "name": "com.wasmerio.wasmer",
+  "version": "3.1.1",
+  "displayName": "Wasmer",
+  "description": "Wasmer as native plugins",
+  "unity": "2021.3",
+  "author": {
+    "name": "Mochineko",
+    "email": "t.o.e.4315@gmail.com"
+  }
+}
