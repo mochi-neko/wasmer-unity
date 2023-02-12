@@ -1,6 +1,6 @@
 # wasmer-unity
 
-Aims to provide a C# interface of Wasmer, one of WebAssembly runtimes, integrating as a native plugin for Unity.
+Aims to provide a C# interface of [Wasmer](https://github.com/wasmerio/wasmer), one of WebAssembly runtimes, integrating as a native plugin for Unity.
 
 ## Motivation
 
