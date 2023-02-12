@@ -1,6 +1,5 @@
 using System;
 using System.Runtime.InteropServices;
-using Microsoft.Win32.SafeHandles;
 
 namespace Mochineko.WasmerBridge.Tests
 {
@@ -35,13 +34,17 @@ namespace Mochineko.WasmerBridge.Tests
         {
             handle.Dispose();
         }
-        
-        internal sealed class NativeHandle : SafeHandleZeroOrMinusOneIsInvalid
+
+        internal sealed class NativeHandle : SafeHandle
         {
-            public NativeHandle(IntPtr handle) : base(true)
+            public NativeHandle(IntPtr handle)
+                : base(IntPtr.Zero,true)
             {
                 SetHandle(handle);
             }
+
+            public override bool IsInvalid
+                => handle == IntPtr.Zero;
 
             protected override bool ReleaseHandle()
             {
