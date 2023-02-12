@@ -8,9 +8,27 @@ namespace Mochineko.WasmerBridge.Tests
     {
         private readonly NativeHandle handle;
         
+        internal NativeHandle Handle
+        {
+            get
+            {
+                if (handle.IsInvalid)
+                {
+                    throw new ObjectDisposedException(typeof(Store).FullName);
+                }
+
+                return handle;
+            }
+        }
+        
         public Store(Engine engine)
         {
-            handle = new NativeHandle(NativeAPIs.wasm_store_new(engine.Handle));
+            if (engine is null)
+            {
+                throw new ArgumentNullException(nameof(engine));
+            }
+            
+            handle = new NativeHandle(WasmAPIs.wasm_store_new(engine.Handle));
         }
 
         public void Dispose()
@@ -18,7 +36,7 @@ namespace Mochineko.WasmerBridge.Tests
             handle.Dispose();
         }
         
-        private sealed class NativeHandle : SafeHandleZeroOrMinusOneIsInvalid
+        internal sealed class NativeHandle : SafeHandleZeroOrMinusOneIsInvalid
         {
             public NativeHandle(IntPtr handle) : base(true)
             {
@@ -27,12 +45,12 @@ namespace Mochineko.WasmerBridge.Tests
 
             protected override bool ReleaseHandle()
             {
-                NativeAPIs.wasm_store_delete(handle);
+                WasmAPIs.wasm_store_delete(handle);
                 return true;
             }
         }
         
-        private static class NativeAPIs
+        private static class WasmAPIs
         {
             [DllImport(NativePlugin.LibraryName)]
             public static extern IntPtr wasm_store_new(Engine.NativeHandle engine);

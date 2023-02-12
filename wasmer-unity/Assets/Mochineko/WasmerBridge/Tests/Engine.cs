@@ -23,7 +23,7 @@ namespace Mochineko.WasmerBridge.Tests
         
         public Engine()
         {
-            handle = new NativeHandle(NativeAPIs.wasm_engine_new());
+            handle = new NativeHandle(WasmAPIs.wasm_engine_new());
         }
         
         public void Dispose()
@@ -40,12 +40,12 @@ namespace Mochineko.WasmerBridge.Tests
 
             protected override bool ReleaseHandle()
             {
-                NativeAPIs.wasm_engine_delete(handle);
+                WasmAPIs.wasm_engine_delete(handle);
                 return true;
             }
         }
         
-        private static class NativeAPIs
+        private static class WasmAPIs
         {
             [DllImport(NativePlugin.LibraryName)]
             public static extern IntPtr wasm_engine_new();

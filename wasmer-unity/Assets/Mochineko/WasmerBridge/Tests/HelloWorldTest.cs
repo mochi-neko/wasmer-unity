@@ -7,6 +7,13 @@ namespace Mochineko.WasmerBridge.Tests
 {
     internal sealed class HelloWorldTest
     {
+        private const string EmptyModuleWat = "(module)"; 
+        private static readonly byte[] EmptyWasmBinary = new byte[8]
+        {
+            0x00, 0x61, 0x73, 0x6d, // WASM_BINARY_MAGIC
+            0x01, 0x00, 0x00, 0x00, // WASM_BINARY_VERSION
+        };
+        
         [Test, RequiresPlayMode(false)]
         public void InitializeEngineTest()
         {
@@ -21,6 +28,54 @@ namespace Mochineko.WasmerBridge.Tests
 
             using var store = new Store(engine);
             store.Should().NotBeNull();
+        }
+        
+        [Test, RequiresPlayMode(false)]
+        public unsafe void InitializeNativeArrayTest()
+        {
+            using var emptyArray = WasmByteArray.New();
+            emptyArray.Should().NotBeNull();
+            emptyArray.size.Should().Be((nuint)0);
+            
+            fixed (byte* ptr = EmptyWasmBinary)
+            {
+                using var array = WasmByteArray.New((nuint)EmptyWasmBinary.Length, ptr);
+                array.Should().NotBeNull();
+                array.size.Should().Be((nuint)EmptyWasmBinary.Length);
+            }
+
+            using var converted = WasmByteArray.ToNativeArray(EmptyWasmBinary);
+            converted.Should().NotBeNull();
+            converted.size.Should().Be((nuint)EmptyWasmBinary.Length);
+        }
+        
+        [Test, RequiresPlayMode(false)]
+        public void ConvertWat2WasmTest()
+        {
+            using var wasm = EmptyModuleWat.ToWasm();
+            wasm.size.Should().Be((nuint)8);
+        }
+        
+        [Test, RequiresPlayMode(false)]
+        public void InitializeModuleFromWatTest()
+        {
+            using var engine = new Engine();
+            using var store = new Store(engine);
+            using var wasm = EmptyModuleWat.ToWasm();
+            
+            using var module = new Module(store, "empty", wasm);
+            module.Should().NotBeNull();
+        }
+        
+        [Test, RequiresPlayMode(false)]
+        public void InitializeModuleTest()
+        {
+            using var engine = new Engine();
+            using var store = new Store(engine);
+            using var wasm = WasmByteArray.ToNativeArray(EmptyWasmBinary);
+            
+            using var module = new Module(store, "empty", wasm);
+            module.Should().NotBeNull();
         }
 
         [Test, RequiresPlayMode(false)]
@@ -45,7 +100,7 @@ namespace Mochineko.WasmerBridge.Tests
             using var store = new Store(engine);
 
             // Compile wasm.
-            using var module = new Module(store, wat);
+            using var module = new Module(store, "hello", wat.ToWasm());
 
             // Define "hello" function as import object.
             var importObject = new ImportObject();
@@ -63,23 +118,6 @@ namespace Mochineko.WasmerBridge.Tests
 
             // Assert flag.
             helloCalled.Should().Be(true);
-        }
-    }
-
-    public sealed class Module : IDisposable
-    {
-        public Module(Store store, string wat)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Dispose()
-        {
-        }
-
-        public Instance Instantiate(Store store, Module module, ImportObject importObject)
-        {
-            throw new NotImplementedException();
         }
     }
 
