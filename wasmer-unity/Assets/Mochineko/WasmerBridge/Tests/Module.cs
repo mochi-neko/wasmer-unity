@@ -20,6 +20,21 @@ namespace Mochineko.WasmerBridge.Tests
                 return handle;
             }
         }
+        
+        public static bool Validate(Store store, WasmByteArray binary)
+        {
+            if (store is null)
+            {
+                throw new ArgumentNullException(nameof(store));
+            }
+            
+            if (binary.size == 0)
+            {
+                throw new ArgumentNullException(nameof(binary));
+            }
+
+            return WasmAPIs.wasm_module_validate(store.Handle, binary);
+        }
 
         public Module(Store store, string name, WasmByteArray binary)
         {
@@ -81,6 +96,9 @@ namespace Mochineko.WasmerBridge.Tests
 
         private static class WasmAPIs
         {
+            [DllImport(NativePlugin.LibraryName)]
+            public static extern bool wasm_module_validate(Store.NativeHandle store, in WasmByteArray binary);
+            
             [DllImport(NativePlugin.LibraryName)]
             public static extern IntPtr wasm_module_new(Store.NativeHandle store, in WasmByteArray binary);
 
