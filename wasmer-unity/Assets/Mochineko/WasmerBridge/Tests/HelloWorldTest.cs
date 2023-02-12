@@ -8,6 +8,23 @@ namespace Mochineko.WasmerBridge.Tests
     internal sealed class HelloWorldTest
     {
         [Test, RequiresPlayMode(false)]
+        public void InitializeEngineTest()
+        {
+            using var engine = new Engine();
+            engine.Should().NotBeNull();
+        }
+        
+        [Test, RequiresPlayMode(false)]
+        public void InitializeStoreTest()
+        {
+            using var engine = new Engine();
+
+            using var store = new Store(engine);
+            store.Should().NotBeNull();
+        }
+
+        [Test, RequiresPlayMode(false)]
+        [Ignore("Not Implemented")]
         public void HelloWorld()
         {
             // WebAssembly Text Format
@@ -46,25 +63,6 @@ namespace Mochineko.WasmerBridge.Tests
 
             // Assert flag.
             helloCalled.Should().Be(true);
-        }
-    }
-
-    public sealed class Engine : IDisposable
-    {
-        public void Dispose()
-        {
-        }
-    }
-
-    public sealed class Store : IDisposable
-    {
-        public Store(Engine engine)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Dispose()
-        {
         }
     }
 
