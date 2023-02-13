@@ -4,7 +4,7 @@ Aims to provide a C# interface of [Wasmer](https://github.com/wasmerio/wasmer), 
 
 ## Motivation
 
-There are no suitable libraries to use Wasm on Unity/C#.
+There is no best library to use Wasm on Unity/C#.
 
 - [Wasmtime](https://github.com/bytecodealliance/wasmtime) / [wasmtime-dotnet](https://github.com/bytecodealliance/wasmtime-dotnet)
   - Wasmtime does not support iOS/Android platforms.
