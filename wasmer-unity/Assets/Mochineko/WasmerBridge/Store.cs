@@ -1,35 +1,40 @@
 using System;
 using System.Runtime.InteropServices;
 
-namespace Mochineko.WasmerBridge.Tests
+namespace Mochineko.WasmerBridge
 {
-    public sealed class Engine : IDisposable
+    public sealed class Store : IDisposable
     {
         private readonly NativeHandle handle;
-
+        
         internal NativeHandle Handle
         {
             get
             {
                 if (handle.IsInvalid)
                 {
-                    throw new ObjectDisposedException(typeof(Engine).FullName);
+                    throw new ObjectDisposedException(typeof(Store).FullName);
                 }
 
                 return handle;
             }
         }
         
-        public Engine()
+        public Store(Engine engine)
         {
-            handle = new NativeHandle(WasmAPIs.wasm_engine_new());
+            if (engine is null)
+            {
+                throw new ArgumentNullException(nameof(engine));
+            }
+            
+            handle = new NativeHandle(WasmAPIs.wasm_store_new(engine.Handle));
         }
-        
+
         public void Dispose()
         {
             handle.Dispose();
         }
-        
+
         internal sealed class NativeHandle : SafeHandle
         {
             public NativeHandle(IntPtr handle)
@@ -43,7 +48,7 @@ namespace Mochineko.WasmerBridge.Tests
 
             protected override bool ReleaseHandle()
             {
-                WasmAPIs.wasm_engine_delete(handle);
+                WasmAPIs.wasm_store_delete(handle);
                 return true;
             }
         }
@@ -51,10 +56,10 @@ namespace Mochineko.WasmerBridge.Tests
         private static class WasmAPIs
         {
             [DllImport(NativePlugin.LibraryName)]
-            public static extern IntPtr wasm_engine_new();
+            public static extern IntPtr wasm_store_new(Engine.NativeHandle engine);
 
             [DllImport(NativePlugin.LibraryName)]
-            public static extern void wasm_engine_delete(IntPtr engine);
+            public static extern void wasm_store_delete(IntPtr store);
         }
     }
 }

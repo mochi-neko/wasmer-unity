@@ -1,4 +1,4 @@
-namespace Mochineko.WasmerBridge.Tests
+namespace Mochineko.WasmerBridge
 {
     internal static class NativePlugin
     {

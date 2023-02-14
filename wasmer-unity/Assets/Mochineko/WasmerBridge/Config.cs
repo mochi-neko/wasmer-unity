@@ -1,40 +1,35 @@
 using System;
 using System.Runtime.InteropServices;
 
-namespace Mochineko.WasmerBridge.Tests
+namespace Mochineko.WasmerBridge
 {
-    public sealed class Store : IDisposable
+    public sealed class Config : IDisposable
     {
         private readonly NativeHandle handle;
-        
+
         internal NativeHandle Handle
         {
             get
             {
                 if (handle.IsInvalid)
                 {
-                    throw new ObjectDisposedException(typeof(Store).FullName);
+                    throw new ObjectDisposedException(typeof(Config).FullName);
                 }
 
                 return handle;
             }
         }
         
-        public Store(Engine engine)
+        public Config()
         {
-            if (engine is null)
-            {
-                throw new ArgumentNullException(nameof(engine));
-            }
-            
-            handle = new NativeHandle(WasmAPIs.wasm_store_new(engine.Handle));
+            handle = new NativeHandle(WasmAPIs.wasm_config_new());
         }
-
+        
         public void Dispose()
         {
             handle.Dispose();
         }
-
+        
         internal sealed class NativeHandle : SafeHandle
         {
             public NativeHandle(IntPtr handle)
@@ -48,7 +43,7 @@ namespace Mochineko.WasmerBridge.Tests
 
             protected override bool ReleaseHandle()
             {
-                WasmAPIs.wasm_store_delete(handle);
+                WasmAPIs.wasm_config_delete(handle);
                 return true;
             }
         }
@@ -56,10 +51,10 @@ namespace Mochineko.WasmerBridge.Tests
         private static class WasmAPIs
         {
             [DllImport(NativePlugin.LibraryName)]
-            public static extern IntPtr wasm_store_new(Engine.NativeHandle engine);
+            public static extern IntPtr wasm_config_new();
 
             [DllImport(NativePlugin.LibraryName)]
-            public static extern void wasm_store_delete(IntPtr store);
+            public static extern void wasm_config_delete(IntPtr config);
         }
     }
 }

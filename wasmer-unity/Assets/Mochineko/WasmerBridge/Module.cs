@@ -1,11 +1,12 @@
 using System;
 using System.Runtime.InteropServices;
 
-namespace Mochineko.WasmerBridge.Tests
+namespace Mochineko.WasmerBridge
 {
     public sealed class Module : IDisposable
     {
         public string Name { get; }
+        
         private readonly NativeHandle handle;
 
         internal NativeHandle Handle
@@ -20,8 +21,11 @@ namespace Mochineko.WasmerBridge.Tests
                 return handle;
             }
         }
+
+        // private readonly ImportType[] importTypes;
+        // private readonly ExportType[] exportTypes;
         
-        public static bool Validate(Store store, WasmByteArray binary)
+        public static bool Validate(Store store, NativeByteArray binary)
         {
             if (store is null)
             {
@@ -36,7 +40,7 @@ namespace Mochineko.WasmerBridge.Tests
             return WasmAPIs.wasm_module_validate(store.Handle, binary);
         }
 
-        public Module(Store store, string name, WasmByteArray binary)
+        public Module(Store store, string name, NativeByteArray binary)
         {
             if (store is null)
             {
@@ -63,7 +67,18 @@ namespace Mochineko.WasmerBridge.Tests
             this.Name = name;
             this.handle = new NativeHandle(moduleHandle);
 
-            // TODO: Import and Export
+            // WasmAPIs.wasm_module_imports(handle, out var imports);
+            // using (var _ = imports)
+            // {
+            //     this.importTypes = imports.ToImportArray();
+            // }
+            //
+            // WasmAPIs.wasm_module_exports(handle, out var exports);
+            //
+            // using (var _ = exports)
+            // {
+            //     this.exportTypes = exports.ToExportArray();
+            // }
         }
 
         public void Dispose()
@@ -71,11 +86,6 @@ namespace Mochineko.WasmerBridge.Tests
             handle.Dispose();
         }
 
-        public Instance Instantiate(Store store, Module module, ImportObject importObject)
-        {
-            throw new NotImplementedException();
-        }
-        
         internal sealed class NativeHandle : SafeHandle
         {
             public NativeHandle(IntPtr handle)
@@ -97,11 +107,19 @@ namespace Mochineko.WasmerBridge.Tests
         private static class WasmAPIs
         {
             [DllImport(NativePlugin.LibraryName)]
-            public static extern bool wasm_module_validate(Store.NativeHandle store, in WasmByteArray binary);
+            public static extern bool wasm_module_validate(Store.NativeHandle store, in NativeByteArray binary);
             
             [DllImport(NativePlugin.LibraryName)]
-            public static extern IntPtr wasm_module_new(Store.NativeHandle store, in WasmByteArray binary);
+            public static extern IntPtr wasm_module_new(Store.NativeHandle store, in NativeByteArray binary);
 
+            // TODO:
+            //[DllImport(NativePlugin.LibraryName)]
+            //public static extern void wasm_module_imports(NativeHandle module, out ImportTypeArray importTypes);
+            
+            // TODO:
+            //[DllImport(NativePlugin.LibraryName)]
+            //public static extern void wasm_module_exports(NativeHandle module, out ExportTypeArray exportTypes);
+            
             [DllImport(NativePlugin.LibraryName)]
             public static extern void wasm_module_delete(IntPtr module);
         }

@@ -1,18 +1,18 @@
 using System;
 using System.Runtime.InteropServices;
 
-namespace Mochineko.WasmerBridge.Tests
+namespace Mochineko.WasmerBridge
 {
     public static class Wat2Wasm
     {
-        public static WasmByteArray ToWasm(this string wat)
+        public static NativeByteArray ToWasm(this string wat)
         {
             if (string.IsNullOrEmpty(wat))
             {
                 throw new ArgumentNullException(nameof(wat));
             }
 
-            using var watBinary = WasmByteArray.ToNativeArray(System.Text.Encoding.UTF8.GetBytes(wat));
+            using var watBinary = NativeByteArray.CreateFromManaged(System.Text.Encoding.UTF8.GetBytes(wat));
             if (watBinary.size == 0)
             {
                 throw new InvalidOperationException("Failed to get wat binary as native vector.");
@@ -22,7 +22,9 @@ namespace Mochineko.WasmerBridge.Tests
             if (wasm.size == 0)
             {
                 wasm.Dispose();
-                throw WasmerException.GetInnerLastError();
+                // TODO:
+                //throw WasmerException.GetInnerLastError();
+                throw new Exception("Failed to convert wat to wasm.");
             }
 
             return wasm;
@@ -31,7 +33,7 @@ namespace Mochineko.WasmerBridge.Tests
         private static class WasmerAPIs
         {
             [DllImport(NativePlugin.LibraryName)]
-            public static extern void wat2wasm(in WasmByteArray wat, out WasmByteArray wasm);
+            public static extern void wat2wasm(in NativeByteArray wat, out NativeByteArray native);
         }
     }
 }
