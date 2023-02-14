@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 
 namespace Mochineko.WasmerBridge
 {
-    public static class Wat2Wasm
+    internal static class Wat2Wasm
     {
         public static NativeByteArray ToWasm(this string wat)
         {

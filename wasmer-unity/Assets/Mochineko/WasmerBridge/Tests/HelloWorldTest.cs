@@ -5,27 +5,6 @@ using UnityEngine.TestTools;
 namespace Mochineko.WasmerBridge.Tests
 {
     [TestFixture]
-    internal sealed class ValueTypeArrayTest
-    {
-        [Test, RequiresPlayMode(false)]
-        [Ignore("Remains crashes")]
-        public void CreateValueTypeArrayTest()
-        {
-            var valueKindArray = new[]
-            {
-                ValueKind.Int32,
-                ValueKind.Int64,
-                ValueKind.Float32,
-                ValueKind.Float64
-            };
-
-            using var array = new ValueTypeArray(valueKindArray);
-            array.Should().NotBeNull();
-            array.size.Should().Be((nuint)valueKindArray.Length);
-        }
-    }
-
-    [TestFixture]
     internal sealed class HelloWorldTest
     {
         [Test, RequiresPlayMode(false)]

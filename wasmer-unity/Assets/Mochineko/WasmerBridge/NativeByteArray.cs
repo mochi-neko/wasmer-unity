@@ -4,10 +4,10 @@ using System.Runtime.InteropServices;
 namespace Mochineko.WasmerBridge
 {
     [StructLayout(LayoutKind.Sequential)]
-    public unsafe struct NativeByteArray : IDisposable
+    internal readonly unsafe struct NativeByteArray : IDisposable
     {
-        internal nuint size;
-        internal byte* data;
+        internal readonly nuint size;
+        internal readonly byte* data;
 
         public static NativeByteArray New()
         {
@@ -23,6 +23,7 @@ namespace Mochineko.WasmerBridge
             return array;
         }
 
+        // TODO: Replace readonly interface
         public static NativeByteArray CreateFromManaged(byte[] byteArray)
         {
             var copied = Marshal.AllocHGlobal(Marshal.SizeOf<byte>() * byteArray.Length);
