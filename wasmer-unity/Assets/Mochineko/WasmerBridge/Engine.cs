@@ -34,6 +34,11 @@ namespace Mochineko.WasmerBridge
             
             handle = new NativeHandle(WasmAPIs.wasm_engine_new_with_config(config.Handle));
         }
+
+        ~Engine()
+        {
+            Dispose();
+        }
         
         public void Dispose()
         {

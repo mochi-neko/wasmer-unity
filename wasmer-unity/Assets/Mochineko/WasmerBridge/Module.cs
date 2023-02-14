@@ -25,7 +25,7 @@ namespace Mochineko.WasmerBridge
         // private readonly ImportType[] importTypes;
         // private readonly ExportType[] exportTypes;
         
-        public static bool Validate(Store store, NativeByteArray binary)
+        internal static bool Validate(Store store, NativeByteArray binary)
         {
             if (store is null)
             {
@@ -40,7 +40,7 @@ namespace Mochineko.WasmerBridge
             return WasmAPIs.wasm_module_validate(store.Handle, binary);
         }
 
-        public Module(Store store, string name, NativeByteArray binary)
+        internal Module(Store store, string name, NativeByteArray binary)
         {
             if (store is null)
             {
@@ -79,6 +79,11 @@ namespace Mochineko.WasmerBridge
             // {
             //     this.exportTypes = exports.ToExportArray();
             // }
+        }
+
+        ~Module()
+        {
+            Dispose();
         }
 
         public void Dispose()
