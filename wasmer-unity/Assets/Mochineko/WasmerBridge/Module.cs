@@ -60,7 +60,6 @@ namespace Mochineko.WasmerBridge
             var moduleHandle = WasmAPIs.wasm_module_new(store.Handle, binary);
             if (moduleHandle == IntPtr.Zero)
             {
-                Marshal.FreeHGlobal(moduleHandle);
                 throw new InvalidOperationException("Failed to create module.");
             }
 

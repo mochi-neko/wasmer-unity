@@ -24,6 +24,7 @@ namespace Mochineko.WasmerBridge
                 return New();
             }
 
+            // NOTE: Allocate block memory of ValueType array to pass native.
             var valueTypes = stackalloc IntPtr[valueKinds.Count];
             var valueTypeHandles = new ValueType.NativeHandle[valueKinds.Count];
             for (var i = 0; i < valueKinds.Count; i++)
@@ -80,6 +81,7 @@ namespace Mochineko.WasmerBridge
             protected override bool ReleaseHandle()
             {
                 // NOTE: Use not "wasm_valtype_vec_delete" but explicit disposing of elements.
+                // WasmAPIs.wasm_valtype_vec_delete(handle);
                 foreach (var elementHandle in elementHandles)
                 {
                     elementHandle.Dispose();
@@ -92,19 +94,19 @@ namespace Mochineko.WasmerBridge
         private static class WasmAPIs
         {
             [DllImport(NativePlugin.LibraryName)]
-            public static extern void wasm_valtype_vec_new_empty(out IntPtr vec);
+            public static extern void wasm_valtype_vec_new_empty(out IntPtr vector);
 
             [DllImport(NativePlugin.LibraryName)]
-            public static extern void wasm_valtype_vec_new_uninitialized(out IntPtr vec, nuint size);
+            public static extern void wasm_valtype_vec_new_uninitialized(out IntPtr vector, nuint size);
 
             [DllImport(NativePlugin.LibraryName)]
-            public static extern void wasm_valtype_vec_new(out IntPtr vec, nuint size, IntPtr data);
+            public static extern void wasm_valtype_vec_new(out IntPtr vector, nuint size, IntPtr data);
 
             [DllImport(NativePlugin.LibraryName)]
             public static extern void wasm_valtype_vec_copy(out IntPtr destination, in IntPtr source);
 
-            // [DllImport(NativePlugin.LibraryName)]
-            // public static extern void wasm_valtype_vec_delete(IntPtr vec);
+            [DllImport(NativePlugin.LibraryName)]
+            public static extern void wasm_valtype_vec_delete(IntPtr vector);
         }
     }
 }

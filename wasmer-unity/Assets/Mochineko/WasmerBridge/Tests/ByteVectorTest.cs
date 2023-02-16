@@ -14,26 +14,21 @@ namespace Mochineko.WasmerBridge.Tests
             emptyArray.Should().NotBeNull();
             emptyArray.size.Should().Be((nuint)0);
         }
-        
-        [Test, RequiresPlayMode(false)]
-        public unsafe void CrateFromByteArrayUnsafeTest()
-        {
-            var binary = MockModule.EmptyWasmBinary;
-            fixed (byte* ptr = MockModule.EmptyWasmBinary)
-            {
-                using var array = ByteVector.New((nuint)binary.Length, ptr);
-                array.Should().NotBeNull();
-                array.size.Should().Be((nuint)binary.Length);
-            }
-        }
-        
+
         [Test, RequiresPlayMode(false)]
         public void CreateFromManagedByteArrayTest()
         {
             var binary = MockModule.EmptyWasmBinary;
-            using var converted = ByteVector.New(binary);
-            converted.Should().NotBeNull();
-            converted.size.Should().Be((nuint)binary.Length);
+            
+            using var nativeBinary = ByteVector.New(binary);
+            nativeBinary.Should().NotBeNull();
+            nativeBinary.size.Should().Be((nuint)binary.Length);
+
+            var takenBinary = ByteVector.ToManagedArray(nativeBinary);
+            for (int i = 0; i < binary.Length; i++)
+            {
+                takenBinary[i].Should().Be(binary[i]);
+            }
         }
     }
 }

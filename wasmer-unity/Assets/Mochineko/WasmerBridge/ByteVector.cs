@@ -11,16 +11,16 @@ namespace Mochineko.WasmerBridge
 
         internal static ByteVector New()
         {
-            WasmAPIs.wasm_byte_vec_new_empty(out var array);
+            WasmAPIs.wasm_byte_vec_new_empty(out var vector);
 
-            return array;
+            return vector;
         }
         
-        internal static ByteVector New(nuint size, byte* data)
+        private static ByteVector New(nuint size, byte* data)
         {
-            WasmAPIs.wasm_byte_vec_new(out var array, size, data);
+            WasmAPIs.wasm_byte_vec_new(out var vector, size, data);
 
-            return array;
+            return vector;
         }
 
         public static ByteVector New(byte[] byteArray)
@@ -33,6 +33,19 @@ namespace Mochineko.WasmerBridge
 
             Marshal.FreeCoTaskMem(copied);
             
+            return array;
+        }
+
+        public static byte[] ToManagedArray(in ByteVector vector)
+        {
+            var size = (int)vector.size;
+            var array = new byte[size];
+
+            for (int i = 0; i < size; ++i)
+            {
+                array[i] = vector.data[i];
+            }
+
             return array;
         }
 
