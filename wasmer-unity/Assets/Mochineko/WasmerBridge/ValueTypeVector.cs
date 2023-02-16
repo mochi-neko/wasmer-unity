@@ -44,8 +44,7 @@ namespace Mochineko.WasmerBridge
 
             for (int i = 0; i < size; ++i)
             {
-                var elementPtr = IntPtr.Add(valueTypes.data, Marshal.SizeOf<ValueType>() * i);
-                array[i] = ValueType.ToKind(elementPtr);
+                array[i] = ValueType.ToKind(valueTypes.elementHandles[i].DangerousGetHandle());
             }
 
             return array;
@@ -55,7 +54,7 @@ namespace Mochineko.WasmerBridge
         {
             internal readonly nuint size;
             internal readonly IntPtr data;
-            private readonly IEnumerable<ValueType.NativeHandle> elementHandles;
+            internal readonly ValueType.NativeHandle[] elementHandles;
 
             public NativeHandle(IntPtr handle)
                 : base(IntPtr.Zero, true)
@@ -66,7 +65,7 @@ namespace Mochineko.WasmerBridge
                 this.elementHandles = Array.Empty<ValueType.NativeHandle>();
             }
             
-            public NativeHandle(IntPtr handle, nuint size, IntPtr data, IEnumerable<ValueType.NativeHandle> elementHandles)
+            public NativeHandle(IntPtr handle, nuint size, IntPtr data, ValueType.NativeHandle[] elementHandles)
                 : base(IntPtr.Zero, true)
             {
                 SetHandle(handle);
