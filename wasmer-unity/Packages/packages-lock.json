@@ -7,6 +7,13 @@
       "dependencies": {},
       "hash": "ac405b32a618bf9d9880e4fc1b63c5e45036c72c"
     },
+    "com.system-community.systemruntimecompilerservicesunsafe": {
+      "version": "https://github.com/system-community/SystemRuntimeCompilerServicesUnsafe.git?path=Assets/_Root#6.0.0",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "85fa84e534a422b09e7f1f334735e73215cb17f5"
+    },
     "com.unity.collab-proxy": {
       "version": "1.15.15",
       "depth": 0,

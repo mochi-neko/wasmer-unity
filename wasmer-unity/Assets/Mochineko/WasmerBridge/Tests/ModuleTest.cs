@@ -12,11 +12,11 @@ namespace Mochineko.WasmerBridge.Tests
         {
             using var engine = new Engine();
             using var store = new Store(engine);
-            using var wasm = NativeByteArray.CreateFromManaged(MockModule.EmptyWasmBinary);
+            using var wasm = ByteVector.New(MockModule.EmptyWasmBinary);
 
             Module.Validate(store, wasm).Should().BeTrue();
 
-            using var notWasm = NativeByteArray.CreateFromManaged(new byte[8]
+            using var notWasm = ByteVector.New(new byte[8]
                 {
                     0x00, 0x00, 0x00, 0x00,
                     0x00, 0x00, 0x00, 0x00,
@@ -42,7 +42,7 @@ namespace Mochineko.WasmerBridge.Tests
         {
             using var engine = new Engine();
             using var store = new Store(engine);
-            using var wasm = NativeByteArray.CreateFromManaged(MockModule.EmptyWasmBinary);
+            using var wasm = ByteVector.New(MockModule.EmptyWasmBinary);
 
             using var module = new Module(store, "empty", wasm);
             module.Should().NotBeNull();

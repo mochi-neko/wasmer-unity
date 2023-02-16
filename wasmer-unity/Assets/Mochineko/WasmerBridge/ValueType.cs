@@ -6,16 +6,21 @@ namespace Mochineko.WasmerBridge
     [StructLayout(LayoutKind.Sequential)]
     internal readonly struct ValueType
     {
-        internal readonly ValueKind valueKind;
+        private readonly ValueKind valueKind;
 
-        // NOTE: ValueType cannot have NativeHandle as field, but must be call "delete" function.
-        public static (ValueType valueType, NativeHandle handle) New(ValueKind kind)
+        internal static NativeHandle New(ValueKind kind)
         {
-            var ptr = WasmAPIs.wasm_valtype_new((byte)kind);
-            
-            var valueType = Marshal.PtrToStructure<ValueType>(ptr);
+            return new NativeHandle(WasmAPIs.wasm_valtype_new((byte)kind));
+        }
+        
+        internal static IntPtr NewAsPointer(ValueKind kind)
+        {
+            return WasmAPIs.wasm_valtype_new((byte)kind);
+        }
 
-            return (valueType, new NativeHandle(ptr));
+        internal static ValueKind ToKind(IntPtr valueType)
+        {
+            return WasmAPIs.wasm_valtype_kind(valueType);
         }
 
         internal sealed class NativeHandle : SafeHandle
@@ -34,6 +39,19 @@ namespace Mochineko.WasmerBridge
                 WasmAPIs.wasm_valtype_delete(handle);
                 return true;
             }
+
+            public ValueKind ValueKind
+            {
+                get
+                {
+                    if (IsInvalid)
+                    {
+                        throw new ObjectDisposedException(typeof(ValueType).FullName);
+                    }
+
+                    return WasmAPIs.wasm_valtype_kind(this);
+                }
+            }
         }
 
         private static class WasmAPIs
@@ -43,6 +61,9 @@ namespace Mochineko.WasmerBridge
             
             [DllImport(NativePlugin.LibraryName)]
             public static extern ValueKind wasm_valtype_kind(NativeHandle valueType);
+            
+            [DllImport(NativePlugin.LibraryName)]
+            public static extern ValueKind wasm_valtype_kind(IntPtr valueType);
 
             [DllImport(NativePlugin.LibraryName)]
             public static extern void wasm_valtype_delete(IntPtr valueType);

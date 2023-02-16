@@ -16,10 +16,8 @@ namespace Mochineko.WasmerBridge.Tests
         [RequiresPlayMode(false)]
         public void CreateValueTypeTest(ValueKind valueKind)
         {
-            var (valueType, nativeHandle) = ValueType.New(valueKind);
-            valueType.valueKind.Should().Be(valueKind);
-            
-            nativeHandle.Dispose();
+            using var valueType = ValueType.New(valueKind);
+            valueType.ValueKind.Should().Be(valueKind);
         }
     }
 }

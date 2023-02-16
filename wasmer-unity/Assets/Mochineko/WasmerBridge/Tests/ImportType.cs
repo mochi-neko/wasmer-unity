@@ -50,7 +50,7 @@ namespace Mochineko.WasmerBridge.Tests
         private static class WasmAPIs
         {
             [DllImport(NativePlugin.LibraryName)]
-            public static extern IntPtr wasm_importtype_new(Module.NativeHandle module, NativeByteArray name, ExternType.NativeHandle type);
+            public static extern IntPtr wasm_importtype_new(Module.NativeHandle module, ByteVector name, ExternType.NativeHandle type);
             
             [DllImport(NativePlugin.LibraryName)]
             public static extern void wasm_importtype_delete(IntPtr importType);

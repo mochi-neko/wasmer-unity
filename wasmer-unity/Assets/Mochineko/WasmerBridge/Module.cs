@@ -25,7 +25,7 @@ namespace Mochineko.WasmerBridge
         // private readonly ImportType[] importTypes;
         // private readonly ExportType[] exportTypes;
         
-        internal static bool Validate(Store store, NativeByteArray binary)
+        internal static bool Validate(Store store, ByteVector binary)
         {
             if (store is null)
             {
@@ -40,7 +40,7 @@ namespace Mochineko.WasmerBridge
             return WasmAPIs.wasm_module_validate(store.Handle, binary);
         }
 
-        internal Module(Store store, string name, NativeByteArray binary)
+        internal Module(Store store, string name, ByteVector binary)
         {
             if (store is null)
             {
@@ -81,11 +81,6 @@ namespace Mochineko.WasmerBridge
             // }
         }
 
-        ~Module()
-        {
-            Dispose();
-        }
-
         public void Dispose()
         {
             handle.Dispose();
@@ -112,10 +107,10 @@ namespace Mochineko.WasmerBridge
         private static class WasmAPIs
         {
             [DllImport(NativePlugin.LibraryName)]
-            public static extern bool wasm_module_validate(Store.NativeHandle store, in NativeByteArray binary);
+            public static extern bool wasm_module_validate(Store.NativeHandle store, in ByteVector binary);
             
             [DllImport(NativePlugin.LibraryName)]
-            public static extern IntPtr wasm_module_new(Store.NativeHandle store, in NativeByteArray binary);
+            public static extern IntPtr wasm_module_new(Store.NativeHandle store, in ByteVector binary);
 
             // TODO:
             //[DllImport(NativePlugin.LibraryName)]
@@ -126,7 +121,7 @@ namespace Mochineko.WasmerBridge
             //public static extern void wasm_module_exports(NativeHandle module, out ExportTypeArray exportTypes);
             
             [DllImport(NativePlugin.LibraryName)]
-            public static extern void wasm_module_delete(IntPtr module);
+            public static extern void wasm_module_delete(in IntPtr module);
         }
     }
 }

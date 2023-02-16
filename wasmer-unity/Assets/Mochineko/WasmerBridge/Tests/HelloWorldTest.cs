@@ -13,7 +13,7 @@ namespace Mochineko.WasmerBridge.Tests
         {
             using var engine = new Engine();
             using var store = new Store(engine);
-            using var wasm = NativeByteArray.CreateFromManaged(MockModule.EmptyWasmBinary);
+            using var wasm = ByteVector.New(MockModule.EmptyWasmBinary);
             using var module = new Module(store, "empty", wasm);
             //using var importObject = new ImportObject();
 

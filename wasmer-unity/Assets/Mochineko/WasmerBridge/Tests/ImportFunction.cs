@@ -52,10 +52,10 @@ namespace Mochineko.WasmerBridge.Tests
         private static class WasmAPIs
         {
             [DllImport(NativePlugin.LibraryName)]
-            public static extern unsafe NativeByteArray* wasm_importtype_module(ImportType.NativeHandle type);
+            public static extern unsafe ByteVector* wasm_importtype_module(ImportType.NativeHandle type);
 
             [DllImport(NativePlugin.LibraryName)]
-            public static extern unsafe NativeByteArray* wasm_importtype_name(ImportType.NativeHandle type);
+            public static extern unsafe ByteVector* wasm_importtype_name(ImportType.NativeHandle type);
         }
     }
 

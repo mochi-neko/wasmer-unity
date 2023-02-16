@@ -5,12 +5,12 @@ using UnityEngine.TestTools;
 namespace Mochineko.WasmerBridge.Tests
 {
     [TestFixture]
-    internal sealed class ByteArrayTest
+    internal sealed class ByteVectorTest
     {
         [Test, RequiresPlayMode(false)]
         public void CreateEmptyTest()
         {
-            using var emptyArray = NativeByteArray.New();
+            using var emptyArray = ByteVector.New();
             emptyArray.Should().NotBeNull();
             emptyArray.size.Should().Be((nuint)0);
         }
@@ -21,7 +21,7 @@ namespace Mochineko.WasmerBridge.Tests
             var binary = MockModule.EmptyWasmBinary;
             fixed (byte* ptr = MockModule.EmptyWasmBinary)
             {
-                using var array = NativeByteArray.New((nuint)binary.Length, ptr);
+                using var array = ByteVector.New((nuint)binary.Length, ptr);
                 array.Should().NotBeNull();
                 array.size.Should().Be((nuint)binary.Length);
             }
@@ -31,7 +31,7 @@ namespace Mochineko.WasmerBridge.Tests
         public void CreateFromManagedByteArrayTest()
         {
             var binary = MockModule.EmptyWasmBinary;
-            using var converted = NativeByteArray.CreateFromManaged(binary);
+            using var converted = ByteVector.New(binary);
             converted.Should().NotBeNull();
             converted.size.Should().Be((nuint)binary.Length);
         }
