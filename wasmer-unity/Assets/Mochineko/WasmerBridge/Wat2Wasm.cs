@@ -5,7 +5,7 @@ namespace Mochineko.WasmerBridge
 {
     internal static class Wat2Wasm
     {
-        public static ByteVector ToWasm(this string wat)
+        internal static ByteVector ToWasm(this string wat)
         {
             if (string.IsNullOrEmpty(wat))
             {
@@ -18,7 +18,7 @@ namespace Mochineko.WasmerBridge
                 throw new InvalidOperationException("Failed to get wat binary as native vector.");
             }
 
-            WasmerAPIs.wat2wasm(watBinary, out var wasm);
+            WasmerAPIs.wat2wasm(in watBinary, out var wasm);
             if (wasm.size == 0)
             {
                 wasm.Dispose();

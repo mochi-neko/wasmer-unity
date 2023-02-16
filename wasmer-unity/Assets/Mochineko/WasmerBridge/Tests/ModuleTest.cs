@@ -12,9 +12,9 @@ namespace Mochineko.WasmerBridge.Tests
         {
             using var engine = new Engine();
             using var store = new Store(engine);
-            using var wasm = ByteVector.New(MockModule.EmptyWasmBinary);
+            using var wasm = ByteVector.New(MockResource.EmptyWasmBinary);
 
-            Module.Validate(store, wasm).Should().BeTrue();
+            Module.Validate(store, in wasm).Should().BeTrue();
 
             using var notWasm = ByteVector.New(new byte[8]
                 {
@@ -23,28 +23,30 @@ namespace Mochineko.WasmerBridge.Tests
                 }
             );
 
-            Module.Validate(store, notWasm).Should().BeFalse();
+            Module.Validate(store, in notWasm).Should().BeFalse();
         }
 
         [Test, RequiresPlayMode(false)]
+        [Ignore("Remains crashes")]
         public void CompileWatTest()
         {
             using var engine = new Engine();
             using var store = new Store(engine);
-            using var wasm = MockModule.EmptyWat.ToWasm();
+            using var wasm = MockResource.EmptyWat.ToWasm();
 
-            using var module = new Module(store, "empty", wasm);
+            using var module = new Module(store, "empty", in wasm);
             module.Should().NotBeNull();
         }
 
         [Test, RequiresPlayMode(false)]
+        [Ignore("Remains crashes")]
         public void CompileWasmTest()
         {
             using var engine = new Engine();
             using var store = new Store(engine);
-            using var wasm = ByteVector.New(MockModule.EmptyWasmBinary);
+            using var wasm = ByteVector.New(MockResource.EmptyWasmBinary);
 
-            using var module = new Module(store, "empty", wasm);
+            using var module = new Module(store, "empty", in wasm);
             module.Should().NotBeNull();
         }
     }

@@ -18,7 +18,7 @@ namespace Mochineko.WasmerBridge.Tests
         [Test, RequiresPlayMode(false)]
         public void CreateFromManagedByteArrayTest()
         {
-            var binary = MockModule.EmptyWasmBinary;
+            var binary = MockResource.EmptyWasmBinary;
             
             using var nativeBinary = ByteVector.New(binary);
             nativeBinary.Should().NotBeNull();

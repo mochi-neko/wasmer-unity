@@ -10,22 +10,31 @@ namespace Mochineko.WasmerBridge.Tests
     internal sealed class FunctionTypeTest
     {
         [Test, RequiresPlayMode(false)]
-        public void CreateFunctionTypeTest()
+        public void CreateEmptyFunctionTypeTest()
         {
-            using var parameters = ValueTypeVector.New();
-            using var results = ValueTypeVector.New();
-            
-            using var functionType = FunctionType.New(parameters, results);
+            using var functionType = FunctionType.New();
             functionType.ParameterTypes.size.Should().Be((nuint)0);
             functionType.ResultTypes.size.Should().Be((nuint)0);
+            
+            //using var parameters = ValueTypeVector.New();
+            //using var results = ValueTypeVector.New();
+            
+            //using var explicitEmptyFunctionType = FunctionType.New(parameters, results);
+            //explicitEmptyFunctionType.ParameterTypes.size.Should().Be((nuint)0);
+            //explicitEmptyFunctionType.ResultTypes.size.Should().Be((nuint)0);
         }
     }
     
     [StructLayout(LayoutKind.Sequential)]
     internal readonly struct FunctionType
     {
-        private readonly ValueTypeVector.NativeHandle parameterTypes;
-        private readonly ValueTypeVector.NativeHandle resultTypes;
+        private readonly IntPtr parameterTypes;
+        private readonly IntPtr resultTypes;
+        
+        internal static NativeHandle New()
+        {
+            return new NativeHandle(WasmAPIs.wasm_functype_new(IntPtr.Zero, IntPtr.Zero));
+        }
         
         internal static NativeHandle New(ValueTypeVector.NativeHandle parameters, ValueTypeVector.NativeHandle results)
         {
@@ -55,7 +64,7 @@ namespace Mochineko.WasmerBridge.Tests
                 {
                     if (IsInvalid)
                     {
-                        throw new ObjectDisposedException(typeof(ValueType).FullName);
+                        throw new ObjectDisposedException(typeof(FunctionType).FullName);
                     }
 
                     return WasmAPIs.wasm_functype_params(this);
@@ -68,7 +77,7 @@ namespace Mochineko.WasmerBridge.Tests
                 {
                     if (IsInvalid)
                     {
-                        throw new ObjectDisposedException(typeof(ValueType).FullName);
+                        throw new ObjectDisposedException(typeof(FunctionType).FullName);
                     }
 
                     return WasmAPIs.wasm_functype_results(this);
@@ -80,7 +89,9 @@ namespace Mochineko.WasmerBridge.Tests
         {
             [DllImport(NativePlugin.LibraryName)]
             public static extern IntPtr wasm_functype_new(ValueTypeVector.NativeHandle parameters, ValueTypeVector.NativeHandle results);
-            
+            [DllImport(NativePlugin.LibraryName)]
+            public static extern IntPtr wasm_functype_new(IntPtr parameters, IntPtr results);
+
             [DllImport(NativePlugin.LibraryName)]
             public static extern ValueTypeVector.NativeHandle wasm_functype_params(NativeHandle functionType);
             

@@ -25,7 +25,7 @@ namespace Mochineko.WasmerBridge
         // private readonly ImportType[] importTypes;
         // private readonly ExportType[] exportTypes;
         
-        internal static bool Validate(Store store, ByteVector binary)
+        internal static bool Validate(Store store, in ByteVector binary)
         {
             if (store is null)
             {
@@ -37,10 +37,10 @@ namespace Mochineko.WasmerBridge
                 throw new ArgumentNullException(nameof(binary));
             }
 
-            return WasmAPIs.wasm_module_validate(store.Handle, binary);
+            return WasmAPIs.wasm_module_validate(store.Handle, in binary);
         }
 
-        internal Module(Store store, string name, ByteVector binary)
+        internal Module(Store store, string name, in ByteVector binary)
         {
             if (store is null)
             {
@@ -57,14 +57,14 @@ namespace Mochineko.WasmerBridge
                 throw new ArgumentNullException(nameof(binary));
             }
 
-            var moduleHandle = WasmAPIs.wasm_module_new(store.Handle, binary);
-            if (moduleHandle == IntPtr.Zero)
+            var handle = WasmAPIs.wasm_module_new(store.Handle, in binary);
+            if (handle == IntPtr.Zero)
             {
                 throw new InvalidOperationException("Failed to create module.");
             }
 
             this.Name = name;
-            this.handle = new NativeHandle(moduleHandle);
+            this.handle = new NativeHandle(handle);
 
             // WasmAPIs.wasm_module_imports(handle, out var imports);
             // using (var _ = imports)
@@ -98,7 +98,7 @@ namespace Mochineko.WasmerBridge
 
             protected override bool ReleaseHandle()
             {
-                WasmAPIs.wasm_module_delete(handle);
+                WasmAPIs.wasm_module_delete(in handle);
                 return true;
             }
         }

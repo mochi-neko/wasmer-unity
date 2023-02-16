@@ -1,6 +1,6 @@
 namespace Mochineko.WasmerBridge.Tests
 {
-    internal static class MockModule
+    internal static class MockResource
     {
         public const string EmptyWat = "(module)";
 

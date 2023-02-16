@@ -15,7 +15,7 @@ namespace Mochineko.WasmerBridge.Tests
             vector.size.Should().Be((nuint)0);
             
             using var emptyVector = ValueTypeVector.New(ArraySegment<ValueKind>.Empty);
-            vector.size.Should().Be((nuint)0);
+            emptyVector.size.Should().Be((nuint)0);
         }
 
         [Test, RequiresPlayMode(false)]
