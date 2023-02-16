@@ -10,7 +10,7 @@ namespace Mochineko.WasmerBridge.Tests
         [Test, RequiresPlayMode(false)]
         public void CreateStoreTest()
         {
-            using var engine = new Engine();
+            using var engine = Engine.New();
 
             using var store = new Store(engine);
             store.Should().NotBeNull();

@@ -10,7 +10,7 @@ namespace Mochineko.WasmerBridge.Tests
         [Test, RequiresPlayMode(false)]
         public void CreateConfigTest()
         {
-            using var config = new Config();
+            using var config = Config.New();
             config.Should().NotBeNull();
         }
     }

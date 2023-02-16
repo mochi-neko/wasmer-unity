@@ -10,16 +10,15 @@ namespace Mochineko.WasmerBridge.Tests
         [Test, RequiresPlayMode(false)]
         public void CreateEngineTest()
         {
-            using var engine = new Engine();
+            using var engine = Engine.New();
             engine.Should().NotBeNull();
         }
 
         [Test, RequiresPlayMode(false)]
-        [Ignore("Remains crashes")]
         public void CreateEngineWithConfigTest()
         {
-            using var config = new Config();
-            using var engine = new Engine(config);
+            var config = Config.New();
+            using var engine = Engine.New(config);
             engine.Should().NotBeNull();
         }
     }

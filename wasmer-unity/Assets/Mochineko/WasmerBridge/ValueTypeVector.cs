@@ -17,6 +17,11 @@ namespace Mochineko.WasmerBridge
             return new NativeHandle(vector);
         }
 
+        internal static NativeHandle FromPointer(IntPtr ptr)
+        {
+            return new NativeHandle(ptr);
+        }
+
         internal static NativeHandle New(IReadOnlyList<ValueKind> valueKinds)
         {
             if (valueKinds.Count == 0)

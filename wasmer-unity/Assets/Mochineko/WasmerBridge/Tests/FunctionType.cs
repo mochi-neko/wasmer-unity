@@ -12,31 +12,25 @@ namespace Mochineko.WasmerBridge.Tests
         [Test, RequiresPlayMode(false)]
         public void CreateEmptyFunctionTypeTest()
         {
-            using var functionType = FunctionType.New();
-            functionType.ParameterTypes.size.Should().Be((nuint)0);
-            functionType.ResultTypes.size.Should().Be((nuint)0);
+            using var parameters = ValueTypeVector.New();
+            using var results = ValueTypeVector.New();
             
-            //using var parameters = ValueTypeVector.New();
-            //using var results = ValueTypeVector.New();
-            
-            //using var explicitEmptyFunctionType = FunctionType.New(parameters, results);
-            //explicitEmptyFunctionType.ParameterTypes.size.Should().Be((nuint)0);
-            //explicitEmptyFunctionType.ResultTypes.size.Should().Be((nuint)0);
+            using var explicitEmptyFunctionType = FunctionType.New(parameters.DangerousGetHandle(), results.DangerousGetHandle());
+            explicitEmptyFunctionType.ParameterTypes.size.Should().Be((nuint)0);
+            explicitEmptyFunctionType.ResultTypes.size.Should().Be((nuint)0);
         }
     }
     
-    [StructLayout(LayoutKind.Sequential)]
-    internal readonly struct FunctionType
+    internal sealed class FunctionType
     {
-        private readonly IntPtr parameterTypes;
-        private readonly IntPtr resultTypes;
-        
-        internal static NativeHandle New()
-        {
-            return new NativeHandle(WasmAPIs.wasm_functype_new(IntPtr.Zero, IntPtr.Zero));
-        }
+        internal readonly IntPtr parameterTypes;
+        internal readonly IntPtr resultTypes;
         
         internal static NativeHandle New(ValueTypeVector.NativeHandle parameters, ValueTypeVector.NativeHandle results)
+        {
+            return new NativeHandle(WasmAPIs.wasm_functype_new(parameters, results));
+        }
+        internal static NativeHandle New(IntPtr parameters, IntPtr results)
         {
             return new NativeHandle(WasmAPIs.wasm_functype_new(parameters, results));
         }
@@ -54,7 +48,7 @@ namespace Mochineko.WasmerBridge.Tests
 
             protected override bool ReleaseHandle()
             {
-                WasmAPIs.wasm_functype_delete(handle);
+                //WasmAPIs.wasm_functype_delete(handle);
                 return true;
             }
 
@@ -67,7 +61,7 @@ namespace Mochineko.WasmerBridge.Tests
                         throw new ObjectDisposedException(typeof(FunctionType).FullName);
                     }
 
-                    return WasmAPIs.wasm_functype_params(this);
+                    return ValueTypeVector.FromPointer(WasmAPIs.wasm_functype_params(this));
                 }
             }
             
@@ -80,7 +74,7 @@ namespace Mochineko.WasmerBridge.Tests
                         throw new ObjectDisposedException(typeof(FunctionType).FullName);
                     }
 
-                    return WasmAPIs.wasm_functype_results(this);
+                    return ValueTypeVector.FromPointer(WasmAPIs.wasm_functype_results(this));
                 }
             }
         }
@@ -93,10 +87,10 @@ namespace Mochineko.WasmerBridge.Tests
             public static extern IntPtr wasm_functype_new(IntPtr parameters, IntPtr results);
 
             [DllImport(NativePlugin.LibraryName)]
-            public static extern ValueTypeVector.NativeHandle wasm_functype_params(NativeHandle functionType);
+            public static extern IntPtr wasm_functype_params(NativeHandle functionType);
             
             [DllImport(NativePlugin.LibraryName)]
-            public static extern ValueTypeVector.NativeHandle wasm_functype_results(NativeHandle functionType);
+            public static extern IntPtr wasm_functype_results(NativeHandle functionType);
 
             [DllImport(NativePlugin.LibraryName)]
             public static extern void wasm_functype_delete(in IntPtr functionType);

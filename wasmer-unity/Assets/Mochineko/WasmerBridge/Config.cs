@@ -1,5 +1,6 @@
 using System;
 using System.Runtime.InteropServices;
+using Microsoft.Win32.SafeHandles;
 
 namespace Mochineko.WasmerBridge
 {
@@ -19,27 +20,28 @@ namespace Mochineko.WasmerBridge
                 return handle;
             }
         }
-        
-        public Config()
+
+        private Config(IntPtr handle)
         {
-            handle = new NativeHandle(WasmAPIs.wasm_config_new());
+            this.handle = new NativeHandle(handle);
+        }
+
+        public static Config New()
+        {
+            return new Config(WasmAPIs.wasm_config_new());
         }
 
         public void Dispose()
         {
             handle.Dispose();
         }
-        
-        internal sealed class NativeHandle : SafeHandle
-        {
-            public NativeHandle(IntPtr handle)
-                : base(IntPtr.Zero,true)
-            {
-                SetHandle(handle);
-            }
 
-            public override bool IsInvalid
-                => handle == IntPtr.Zero;
+        internal sealed class NativeHandle : SafeHandleZeroOrMinusOneIsInvalid
+        {
+            public NativeHandle(IntPtr handle) : base(true)
+            {
+                this.handle = handle;
+            }
 
             protected override bool ReleaseHandle()
             {
@@ -47,7 +49,7 @@ namespace Mochineko.WasmerBridge
                 return true;
             }
         }
-        
+
         private static class WasmAPIs
         {
             [DllImport(NativePlugin.LibraryName)]

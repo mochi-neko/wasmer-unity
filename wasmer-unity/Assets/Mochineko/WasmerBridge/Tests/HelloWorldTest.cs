@@ -11,7 +11,7 @@ namespace Mochineko.WasmerBridge.Tests
         [Ignore("Not Implemented")]
         public void InstantiateModuleTest()
         {
-            using var engine = new Engine();
+            using var engine = Engine.New();
             using var store = new Store(engine);
             using var wasm = ByteVector.New(MockResource.EmptyWasmBinary);
             using var module = new Module(store, "empty", wasm);
@@ -37,7 +37,7 @@ namespace Mochineko.WasmerBridge.Tests
 )";
 
             // Specify engine.
-            using var engine = new Engine();
+            using var engine = Engine.New();
 
             // Create store.
             using var store = new Store(engine);

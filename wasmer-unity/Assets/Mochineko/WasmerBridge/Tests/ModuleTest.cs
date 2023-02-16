@@ -10,7 +10,7 @@ namespace Mochineko.WasmerBridge.Tests
         [Test, RequiresPlayMode(false)]
         public void ValidateWasmTest()
         {
-            using var engine = new Engine();
+            using var engine = Engine.New();
             using var store = new Store(engine);
             using var wasm = ByteVector.New(MockResource.EmptyWasmBinary);
 
@@ -30,7 +30,7 @@ namespace Mochineko.WasmerBridge.Tests
         [Ignore("Remains crashes")]
         public void CompileWatTest()
         {
-            using var engine = new Engine();
+            using var engine = Engine.New();
             using var store = new Store(engine);
             using var wasm = MockResource.EmptyWat.ToWasm();
 
@@ -42,7 +42,7 @@ namespace Mochineko.WasmerBridge.Tests
         [Ignore("Remains crashes")]
         public void CompileWasmTest()
         {
-            using var engine = new Engine();
+            using var engine = Engine.New();
             using var store = new Store(engine);
             using var wasm = ByteVector.New(MockResource.EmptyWasmBinary);
 
