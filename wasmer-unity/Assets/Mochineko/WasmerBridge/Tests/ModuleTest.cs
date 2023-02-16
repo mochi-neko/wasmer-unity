@@ -1,3 +1,4 @@
+using System;
 using FluentAssertions;
 using NUnit.Framework;
 using UnityEngine.TestTools;
@@ -12,18 +13,18 @@ namespace Mochineko.WasmerBridge.Tests
         {
             using var engine = Engine.New();
             using var store = new Store(engine);
-            using var wasm = ByteVector.New(MockResource.EmptyWasmBinary);
 
-            Module.Validate(store, in wasm).Should().BeTrue();
+            Module.Validate(store, MockResource.EmptyWasmBinary)
+                .Should().BeTrue();
 
-            using var notWasm = ByteVector.New(new byte[8]
-                {
-                    0x00, 0x00, 0x00, 0x00,
-                    0x00, 0x00, 0x00, 0x00,
-                }
-            );
+            var notWasm = new byte[8]
+            {
+                0x00, 0x00, 0x00, 0x00,
+                0x00, 0x00, 0x00, 0x00,
+            };
 
-            Module.Validate(store, in notWasm).Should().BeFalse();
+            Module.Validate(store, notWasm)
+                .Should().BeFalse();
         }
 
         [Test, RequiresPlayMode(false)]

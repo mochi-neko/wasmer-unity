@@ -13,7 +13,7 @@ namespace Mochineko.WasmerBridge.Tests
             using var wasmFromWat = MockResource.EmptyWat.ToWasm();
             wasmFromWat.size.Should().Be((nuint)MockResource.EmptyWasmBinary.Length);
 
-            var binary = ByteVector.ToManagedArray(wasmFromWat);
+            ByteVector.ToManagedSpan(wasmFromWat, out var binary);
             for (var i = 0; i < MockResource.EmptyWasmBinary.Length; i++)
             {
                 binary[i].Should().Be(MockResource.EmptyWasmBinary[i]);

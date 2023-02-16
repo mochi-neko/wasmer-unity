@@ -23,30 +23,17 @@ namespace Mochineko.WasmerBridge
             return vector;
         }
 
-        public static ByteVector New(byte[] byteArray)
+        public static ByteVector New(in ReadOnlySpan<byte> binary)
         {
-            // Copy bytes to block memory
-            var copied = Marshal.AllocCoTaskMem(Marshal.SizeOf<byte>() * byteArray.Length);
-            Marshal.Copy(byteArray, 0, copied, byteArray.Length);
-            
-            var array = New((nuint)byteArray.Length, (byte*)copied);
-
-            Marshal.FreeCoTaskMem(copied);
-            
-            return array;
+            fixed (byte* data = binary)
+            {
+                return New((nuint)binary.Length, data);
+            }
         }
 
-        public static byte[] ToManagedArray(in ByteVector vector)
+        internal static void ToManagedSpan(in ByteVector vector, out ReadOnlySpan<byte> binary)
         {
-            var size = (int)vector.size;
-            var array = new byte[size];
-
-            for (int i = 0; i < size; ++i)
-            {
-                array[i] = vector.data[i];
-            }
-
-            return array;
+            binary = new Span<byte>(vector.data, (int)vector.size);
         }
 
         public void Dispose()

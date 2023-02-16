@@ -24,20 +24,21 @@ namespace Mochineko.WasmerBridge
 
         // private readonly ImportType[] importTypes;
         // private readonly ExportType[] exportTypes;
-        
-        internal static bool Validate(Store store, in ByteVector binary)
+
+        public static bool Validate(Store store, ReadOnlySpan<byte> binary)
         {
             if (store is null)
             {
                 throw new ArgumentNullException(nameof(store));
             }
-            
-            if (binary.size == 0)
+            if (binary.Length == 0)
             {
                 throw new ArgumentNullException(nameof(binary));
             }
 
-            return WasmAPIs.wasm_module_validate(store.Handle, in binary);
+            using var vector = ByteVector.New(binary);
+
+            return WasmAPIs.wasm_module_validate(store.Handle, in vector);
         }
 
         internal Module(Store store, string name, in ByteVector binary)
