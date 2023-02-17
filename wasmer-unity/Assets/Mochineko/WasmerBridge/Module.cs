@@ -1,28 +1,14 @@
 using System;
 using System.Runtime.InteropServices;
+using Microsoft.Win32.SafeHandles;
 using Mochineko.WasmerBridge.OwnAttributes;
 
 namespace Mochineko.WasmerBridge
 {
-    [OwnReference]
+    [OwnPointed]
     public sealed class Module : IDisposable
     {
         public string Name { get; }
-        
-        private readonly NativeHandle handle;
-
-        internal NativeHandle Handle
-        {
-            get
-            {
-                if (handle.IsInvalid)
-                {
-                    throw new ObjectDisposedException(typeof(Module).FullName);
-                }
-
-                return handle;
-            }
-        }
 
         // private readonly ImportType[] importTypes;
         // private readonly ExportType[] exportTypes;
@@ -33,6 +19,7 @@ namespace Mochineko.WasmerBridge
             {
                 throw new ArgumentNullException(nameof(store));
             }
+
             if (binary.Length == 0)
             {
                 throw new ArgumentNullException(nameof(binary));
@@ -43,7 +30,7 @@ namespace Mochineko.WasmerBridge
             return WasmAPIs.wasm_module_validate(store.Handle, in vector);
         }
 
-        internal Module(Store store, string name, in ByteVector binary)
+        internal static Module New(Store store, string name, in ByteVector binary)
         {
             if (store is null)
             {
@@ -66,8 +53,7 @@ namespace Mochineko.WasmerBridge
                 throw new InvalidOperationException("Failed to create module.");
             }
 
-            this.Name = name;
-            this.handle = new NativeHandle(handle);
+            var module = new Module(handle, name);
 
             // WasmAPIs.wasm_module_imports(handle, out var imports);
             // using (var _ = imports)
@@ -81,6 +67,29 @@ namespace Mochineko.WasmerBridge
             // {
             //     this.exportTypes = exports.ToExportArray();
             // }
+
+            return module;
+        }
+
+        private readonly Config.NativeHandle handle;
+
+        internal Config.NativeHandle Handle
+        {
+            get
+            {
+                if (handle.IsInvalid)
+                {
+                    throw new ObjectDisposedException(typeof(Module).FullName);
+                }
+
+                return handle;
+            }
+        }
+
+        private Module(IntPtr handle, string name)
+        {
+            this.handle = new Config.NativeHandle(handle);
+            this.Name = name;
         }
 
         public void Dispose()
@@ -88,20 +97,17 @@ namespace Mochineko.WasmerBridge
             handle.Dispose();
         }
 
-        internal sealed class NativeHandle : SafeHandle
+        internal sealed class NativeHandle : SafeHandleZeroOrMinusOneIsInvalid
         {
             public NativeHandle(IntPtr handle)
-                : base(IntPtr.Zero,true)
+                : base(true)
             {
                 SetHandle(handle);
             }
 
-            public override bool IsInvalid
-                => handle == IntPtr.Zero;
-
             protected override bool ReleaseHandle()
             {
-                WasmAPIs.wasm_module_delete(in handle);
+                WasmAPIs.wasm_module_delete(handle);
                 return true;
             }
         }
@@ -109,21 +115,24 @@ namespace Mochineko.WasmerBridge
         private static class WasmAPIs
         {
             [DllImport(NativePlugin.LibraryName)]
-            public static extern bool wasm_module_validate(Store.NativeHandle store, in ByteVector binary);
-            
+            public static extern bool wasm_module_validate(Store.NativeHandle store,
+                [OwnConstVector] in ByteVector binary);
+
             [DllImport(NativePlugin.LibraryName)]
-            public static extern IntPtr wasm_module_new(Store.NativeHandle store, in ByteVector binary);
+            [return: OwnResult]
+            public static extern IntPtr
+                wasm_module_new(Store.NativeHandle store, [OwnConstVector] in ByteVector binary);
 
             // TODO:
             //[DllImport(NativePlugin.LibraryName)]
             //public static extern void wasm_module_imports(NativeHandle module, out ImportTypeArray importTypes);
-            
+
             // TODO:
             //[DllImport(NativePlugin.LibraryName)]
             //public static extern void wasm_module_exports(NativeHandle module, out ExportTypeArray exportTypes);
-            
+
             [DllImport(NativePlugin.LibraryName)]
-            public static extern void wasm_module_delete(in IntPtr module);
+            public static extern void wasm_module_delete([OwnParameter] IntPtr module);
         }
     }
 }

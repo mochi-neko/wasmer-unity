@@ -16,7 +16,7 @@ namespace Mochineko.WasmerBridge.OwnAttributes
     /// </para>
     /// </summary>
     [AttributeUsage(AttributeTargets.Class)]
-    internal sealed class OwnReferenceAttribute : OwnAttribute
+    internal sealed class OwnPointedAttribute : OwnAttribute
     {
     }
 }

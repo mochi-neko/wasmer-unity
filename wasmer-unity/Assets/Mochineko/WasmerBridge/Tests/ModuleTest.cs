@@ -28,26 +28,24 @@ namespace Mochineko.WasmerBridge.Tests
         }
 
         [Test, RequiresPlayMode(false)]
-        [Ignore("Remains crashes")]
         public void CompileWatTest()
         {
             using var engine = Engine.New();
             using var store = Store.New(engine);
             using var wasm = MockResource.EmptyWat.ToWasm();
 
-            using var module = new Module(store, "empty", in wasm);
+            using var module = Module.New(store, "empty", in wasm);
             module.Should().NotBeNull();
         }
 
         [Test, RequiresPlayMode(false)]
-        [Ignore("Remains crashes")]
         public void CompileWasmTest()
         {
             using var engine = Engine.New();
             using var store = Store.New(engine);
             using var wasm = ByteVector.New(MockResource.EmptyWasmBinary);
 
-            using var module = new Module(store, "empty", in wasm);
+            using var module = Module.New(store, "empty", in wasm);
             module.Should().NotBeNull();
         }
     }

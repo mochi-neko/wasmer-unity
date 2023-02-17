@@ -5,9 +5,14 @@ using Mochineko.WasmerBridge.OwnAttributes;
 
 namespace Mochineko.WasmerBridge
 {
-    [OwnReference]
+    [OwnPointed]
     public sealed class Config : IDisposable
     {
+        public static Config New()
+        {
+            return new Config(WasmAPIs.wasm_config_new());
+        }
+        
         private readonly NativeHandle handle;
 
         internal NativeHandle Handle
@@ -26,11 +31,6 @@ namespace Mochineko.WasmerBridge
         private Config(IntPtr handle)
         {
             this.handle = new NativeHandle(handle);
-        }
-
-        public static Config New()
-        {
-            return new Config(WasmAPIs.wasm_config_new());
         }
 
         public void Dispose()

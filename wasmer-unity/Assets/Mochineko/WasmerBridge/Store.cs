@@ -4,9 +4,19 @@ using Mochineko.WasmerBridge.OwnAttributes;
 
 namespace Mochineko.WasmerBridge
 {
-    [OwnReference]
+    [OwnPointed]
     public sealed class Store : IDisposable
     {
+        public static Store New(Engine engine)
+        {
+            if (engine is null)
+            {
+                throw new ArgumentNullException(nameof(engine));
+            }
+            
+            return new Store(WasmAPIs.wasm_store_new(engine.Handle));
+        }
+        
         private readonly NativeHandle handle;
         
         internal NativeHandle Handle
@@ -25,16 +35,6 @@ namespace Mochineko.WasmerBridge
         private Store(IntPtr handle)
         {
             this.handle = new NativeHandle(handle);
-        }
-        
-        public static Store New(Engine engine)
-        {
-            if (engine is null)
-            {
-                throw new ArgumentNullException(nameof(engine));
-            }
-            
-            return new Store(WasmAPIs.wasm_store_new(engine.Handle));
         }
 
         public void Dispose()
