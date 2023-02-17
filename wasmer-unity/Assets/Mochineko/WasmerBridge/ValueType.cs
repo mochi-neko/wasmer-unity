@@ -1,19 +1,22 @@
 using System;
 using System.Runtime.InteropServices;
+using Microsoft.Win32.SafeHandles;
+using Mochineko.WasmerBridge.OwnAttributes;
 
 namespace Mochineko.WasmerBridge
 {
+    [OwnStruct]
     [StructLayout(LayoutKind.Sequential)]
     internal readonly struct ValueType
     {
         private readonly ValueKind valueKind;
 
-        internal static NativeHandle New(ValueKind kind)
+        internal static NativeHandle NewAsHandle(ValueKind kind)
         {
             return new NativeHandle(WasmAPIs.wasm_valtype_new((byte)kind));
         }
         
-        internal static IntPtr NewAsPointer(ValueKind kind)
+        internal static IntPtr New(ValueKind kind)
         {
             return WasmAPIs.wasm_valtype_new((byte)kind);
         }
@@ -23,16 +26,13 @@ namespace Mochineko.WasmerBridge
             return WasmAPIs.wasm_valtype_kind(valueType);
         }
 
-        internal sealed class NativeHandle : SafeHandle
+        internal sealed class NativeHandle : SafeHandleZeroOrMinusOneIsInvalid
         {
             public NativeHandle(IntPtr handle)
-                : base(IntPtr.Zero,true)
+                : base(true)
             {
                 SetHandle(handle);
             }
-
-            public override bool IsInvalid
-                => handle == IntPtr.Zero;
 
             protected override bool ReleaseHandle()
             {
@@ -57,6 +57,7 @@ namespace Mochineko.WasmerBridge
         private static class WasmAPIs
         {
             [DllImport(NativePlugin.LibraryName)]
+            [return: OwnResult]
             public static extern IntPtr wasm_valtype_new(byte valueKind);
             
             [DllImport(NativePlugin.LibraryName)]
@@ -66,7 +67,11 @@ namespace Mochineko.WasmerBridge
             public static extern ValueKind wasm_valtype_kind(IntPtr valueType);
 
             [DllImport(NativePlugin.LibraryName)]
-            public static extern void wasm_valtype_delete(IntPtr valueType);
+            public static extern void wasm_valtype_delete([OwnParameter]IntPtr valueType);
+            
+            [DllImport(NativePlugin.LibraryName)]
+            [return: OwnResult]
+            public static extern IntPtr wasm_valtype_copy(IntPtr valueType);
         }
     }
 }

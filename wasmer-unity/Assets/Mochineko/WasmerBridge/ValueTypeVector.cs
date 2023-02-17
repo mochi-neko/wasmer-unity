@@ -34,7 +34,7 @@ namespace Mochineko.WasmerBridge
             var valueTypeHandles = new ValueType.NativeHandle[valueKinds.Count];
             for (var i = 0; i < valueKinds.Count; i++)
             {
-                valueTypes[i] = ValueType.NewAsPointer(valueKinds[i]);
+                valueTypes[i] = ValueType.New(valueKinds[i]);
                 valueTypeHandles[i] = new ValueType.NativeHandle(valueTypes[i]);
             }
 
