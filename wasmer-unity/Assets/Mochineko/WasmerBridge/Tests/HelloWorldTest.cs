@@ -43,7 +43,7 @@ namespace Mochineko.WasmerBridge.Tests
             using var store = Store.New(engine);
 
             // Compile wasm.
-            using var module = Module.New(store, "hello", wat.ToWasm());
+            using var module = Module.NewFromWat(store, "hello", wat);
 
             // Define "hello" function as import object.
             var importObject = new ImportObject();

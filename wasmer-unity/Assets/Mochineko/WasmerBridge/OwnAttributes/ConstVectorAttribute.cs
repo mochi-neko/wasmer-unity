@@ -7,7 +7,7 @@ namespace Mochineko.WasmerBridge.OwnAttributes
     /// neither the vector nor its elements should be modified.
     /// </summary>
     [AttributeUsage(AttributeTargets.Parameter | AttributeTargets.ReturnValue)]
-    internal sealed class OwnConstVectorAttribute : OwnAttribute
+    internal sealed class ConstVectorAttribute : OwnAttribute
     {
     }
 }

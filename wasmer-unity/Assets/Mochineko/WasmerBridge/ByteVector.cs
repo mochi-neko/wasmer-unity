@@ -27,7 +27,9 @@ namespace Mochineko.WasmerBridge
 
         public static ByteVector New(in ReadOnlySpan<byte> binary)
         {
-            fixed (byte* data = binary)
+            Span<byte> copy = stackalloc byte[binary.Length];
+            binary.CopyTo(copy);
+            fixed (byte* data = copy)
             {
                 return New((nuint)binary.Length, data);
             }
@@ -55,7 +57,7 @@ namespace Mochineko.WasmerBridge
             public static extern void wasm_byte_vec_new([OwnOut]out ByteVector vector, nuint size, [OwnParameter]byte* data);
 
             [DllImport(NativePlugin.LibraryName)]
-            public static extern void wasm_byte_vec_copy([OwnOut]out ByteVector destination, [OwnConstVector]in ByteVector source);
+            public static extern void wasm_byte_vec_copy([OwnOut]out ByteVector destination, [ConstVector]in ByteVector source);
             
             [DllImport(NativePlugin.LibraryName)]
             public static extern void wasm_byte_vec_delete([OwnParameter]in ByteVector vector);

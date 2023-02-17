@@ -13,17 +13,15 @@ namespace Mochineko.WasmerBridge.Tests
         {
             using var engine = Engine.New();
             using var store = Store.New(engine);
+            var binary = MockResource.EmptyWasmBinary;
 
-            Module.Validate(store, MockResource.EmptyWasmBinary)
+            Module.Validate(store, binary)
                 .Should().BeTrue();
 
-            var notWasm = new byte[8]
-            {
-                0x00, 0x00, 0x00, 0x00,
-                0x00, 0x00, 0x00, 0x00,
-            };
+            // Break
+            binary[1] = 0x00;
 
-            Module.Validate(store, notWasm)
+            Module.Validate(store, binary)
                 .Should().BeFalse();
         }
 
@@ -32,7 +30,7 @@ namespace Mochineko.WasmerBridge.Tests
         {
             using var engine = Engine.New();
             using var store = Store.New(engine);
-            using var wasm = MockResource.EmptyWat.ToWasm();
+            using var wasm = MockResource.EmptyWat.FromWatToWasm();
 
             using var module = Module.New(store, "empty", in wasm);
             module.Should().NotBeNull();

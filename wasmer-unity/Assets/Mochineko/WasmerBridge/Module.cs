@@ -30,6 +30,20 @@ namespace Mochineko.WasmerBridge
             return WasmAPIs.wasm_module_validate(store.Handle, in vector);
         }
 
+        public static Module NewFromBinary(Store store, string name, ReadOnlySpan<byte> wasm)
+        {
+            using var vector = ByteVector.New(wasm);
+
+            return New(store, name, vector);
+        }
+        
+        public static Module NewFromWat(Store store, string name, string wat)
+        {
+            using var vector = wat.FromWatToWasm();
+
+            return New(store, name, vector);
+        }
+
         internal static Module New(Store store, string name, in ByteVector binary)
         {
             if (store is null)
@@ -71,9 +85,9 @@ namespace Mochineko.WasmerBridge
             return module;
         }
 
-        private readonly Config.NativeHandle handle;
+        private readonly NativeHandle handle;
 
-        internal Config.NativeHandle Handle
+        internal NativeHandle Handle
         {
             get
             {
@@ -88,7 +102,7 @@ namespace Mochineko.WasmerBridge
 
         private Module(IntPtr handle, string name)
         {
-            this.handle = new Config.NativeHandle(handle);
+            this.handle = new NativeHandle(handle);
             this.Name = name;
         }
 
@@ -116,12 +130,12 @@ namespace Mochineko.WasmerBridge
         {
             [DllImport(NativePlugin.LibraryName)]
             public static extern bool wasm_module_validate(Store.NativeHandle store,
-                [OwnConstVector] in ByteVector binary);
+                [ConstVector] in ByteVector binary);
 
             [DllImport(NativePlugin.LibraryName)]
             [return: OwnResult]
             public static extern IntPtr
-                wasm_module_new(Store.NativeHandle store, [OwnConstVector] in ByteVector binary);
+                wasm_module_new(Store.NativeHandle store, [ConstVector] in ByteVector binary);
 
             // TODO:
             //[DllImport(NativePlugin.LibraryName)]
