@@ -12,7 +12,7 @@ namespace Mochineko.WasmerBridge.Tests
         public void InstantiateModuleTest()
         {
             using var engine = Engine.New();
-            using var store = new Store(engine);
+            using var store = Store.New(engine);
             using var wasm = ByteVector.New(MockResource.EmptyWasmBinary);
             using var module = new Module(store, "empty", wasm);
             //using var importObject = new ImportObject();
@@ -40,7 +40,7 @@ namespace Mochineko.WasmerBridge.Tests
             using var engine = Engine.New();
 
             // Create store.
-            using var store = new Store(engine);
+            using var store = Store.New(engine);
 
             // Compile wasm.
             using var module = new Module(store, "hello", wat.ToWasm());

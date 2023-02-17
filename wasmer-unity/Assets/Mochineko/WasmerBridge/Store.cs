@@ -1,8 +1,10 @@
 using System;
 using System.Runtime.InteropServices;
+using Mochineko.WasmerBridge.OwnAttributes;
 
 namespace Mochineko.WasmerBridge
 {
+    [OwnReference]
     public sealed class Store : IDisposable
     {
         private readonly NativeHandle handle;
@@ -19,15 +21,20 @@ namespace Mochineko.WasmerBridge
                 return handle;
             }
         }
+
+        private Store(IntPtr handle)
+        {
+            this.handle = new NativeHandle(handle);
+        }
         
-        public Store(Engine engine)
+        public static Store New(Engine engine)
         {
             if (engine is null)
             {
                 throw new ArgumentNullException(nameof(engine));
             }
             
-            handle = new NativeHandle(WasmAPIs.wasm_store_new(engine.Handle));
+            return new Store(WasmAPIs.wasm_store_new(engine.Handle));
         }
 
         public void Dispose()
@@ -56,10 +63,11 @@ namespace Mochineko.WasmerBridge
         private static class WasmAPIs
         {
             [DllImport(NativePlugin.LibraryName)]
+            [return: OwnResult]
             public static extern IntPtr wasm_store_new(Engine.NativeHandle engine);
 
             [DllImport(NativePlugin.LibraryName)]
-            public static extern void wasm_store_delete(IntPtr store);
+            public static extern void wasm_store_delete([OwnParameter]IntPtr store);
         }
     }
 }

@@ -1,9 +1,11 @@
 using System;
 using System.Runtime.InteropServices;
 using Microsoft.Win32.SafeHandles;
+using Mochineko.WasmerBridge.OwnAttributes;
 
 namespace Mochineko.WasmerBridge
 {
+    [OwnReference]
     public sealed class Config : IDisposable
     {
         private readonly NativeHandle handle;
@@ -53,10 +55,11 @@ namespace Mochineko.WasmerBridge
         private static class WasmAPIs
         {
             [DllImport(NativePlugin.LibraryName)]
+            [return: OwnResult]
             public static extern IntPtr wasm_config_new();
 
             [DllImport(NativePlugin.LibraryName)]
-            public static extern void wasm_config_delete(IntPtr config);
+            public static extern void wasm_config_delete([OwnParameter] IntPtr config);
         }
     }
 }

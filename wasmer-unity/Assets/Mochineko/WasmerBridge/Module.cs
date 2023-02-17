@@ -1,8 +1,10 @@
 using System;
 using System.Runtime.InteropServices;
+using Mochineko.WasmerBridge.OwnAttributes;
 
 namespace Mochineko.WasmerBridge
 {
+    [OwnReference]
     public sealed class Module : IDisposable
     {
         public string Name { get; }

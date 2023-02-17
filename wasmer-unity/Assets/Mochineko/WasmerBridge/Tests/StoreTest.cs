@@ -12,7 +12,7 @@ namespace Mochineko.WasmerBridge.Tests
         {
             using var engine = Engine.New();
 
-            using var store = new Store(engine);
+            using var store = Store.New(engine);
             store.Should().NotBeNull();
         }   
     }

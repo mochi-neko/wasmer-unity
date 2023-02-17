@@ -1,5 +1,6 @@
 using System;
 using System.Runtime.InteropServices;
+using Mochineko.WasmerBridge.OwnAttributes;
 
 namespace Mochineko.WasmerBridge
 {
@@ -33,7 +34,7 @@ namespace Mochineko.WasmerBridge
         private static class WasmerAPIs
         {
             [DllImport(NativePlugin.LibraryName)]
-            public static extern void wat2wasm(in ByteVector wat, out ByteVector native);
+            public static extern void wat2wasm([OwnConstVector]in ByteVector wat, [OwnOut]out ByteVector native);
         }
     }
 }

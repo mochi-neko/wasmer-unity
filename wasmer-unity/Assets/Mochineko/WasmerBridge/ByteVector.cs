@@ -1,8 +1,10 @@
 using System;
 using System.Runtime.InteropServices;
+using Mochineko.WasmerBridge.OwnAttributes;
 
 namespace Mochineko.WasmerBridge
 {
+    [OwnVector]
     [StructLayout(LayoutKind.Sequential)]
     internal readonly unsafe struct ByteVector : IDisposable
     {
@@ -44,19 +46,19 @@ namespace Mochineko.WasmerBridge
         private static class WasmAPIs
         {
             [DllImport(NativePlugin.LibraryName)]
-            public static extern void wasm_byte_vec_new_empty(out ByteVector vector);
+            public static extern void wasm_byte_vec_new_empty([OwnOut]out ByteVector vector);
             
             [DllImport(NativePlugin.LibraryName)]
-            public static extern void wasm_byte_vec_new_uninitialized(out ByteVector vector, nuint size);
+            public static extern void wasm_byte_vec_new_uninitialized([OwnOut]out ByteVector vector, nuint size);
             
             [DllImport(NativePlugin.LibraryName)]
-            public static extern void wasm_byte_vec_new(out ByteVector vector, nuint size, byte* data);
+            public static extern void wasm_byte_vec_new([OwnOut]out ByteVector vector, nuint size, [OwnParameter]byte* data);
 
             [DllImport(NativePlugin.LibraryName)]
-            public static extern void wasm_byte_vec_copy(out ByteVector destination, in ByteVector source);
+            public static extern void wasm_byte_vec_copy([OwnOut]out ByteVector destination, [OwnConstVector]in ByteVector source);
             
             [DllImport(NativePlugin.LibraryName)]
-            public static extern void wasm_byte_vec_delete(in ByteVector vector);
+            public static extern void wasm_byte_vec_delete([OwnParameter]in ByteVector vector);
         }
     }
 }

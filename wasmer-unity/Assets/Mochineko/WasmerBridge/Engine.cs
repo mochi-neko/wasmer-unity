@@ -1,9 +1,11 @@
 using System;
 using System.Runtime.InteropServices;
 using Microsoft.Win32.SafeHandles;
+using Mochineko.WasmerBridge.OwnAttributes;
 
 namespace Mochineko.WasmerBridge
 {
+    [OwnReference]
     public sealed class Engine : IDisposable
     {
         private readonly NativeHandle handle;
@@ -39,6 +41,8 @@ namespace Mochineko.WasmerBridge
             }
 
             var engine = new Engine(WasmAPIs.wasm_engine_new_with_config(config.Handle));
+
+            // NOTE: Pass ownership to native.
             config.Handle.SetHandleAsInvalid();
 
             return engine;
@@ -66,13 +70,15 @@ namespace Mochineko.WasmerBridge
         private static class WasmAPIs
         {
             [DllImport(NativePlugin.LibraryName)]
+            [return: OwnResult]
             public static extern IntPtr wasm_engine_new();
 
             [DllImport(NativePlugin.LibraryName)]
-            public static extern IntPtr wasm_engine_new_with_config(Config.NativeHandle config);
+            [return: OwnResult]
+            public static extern IntPtr wasm_engine_new_with_config([OwnParameter] Config.NativeHandle config);
 
             [DllImport(NativePlugin.LibraryName)]
-            public static extern void wasm_engine_delete(IntPtr engine);
+            public static extern void wasm_engine_delete([OwnParameter]IntPtr engine);
         }
     }
 }
