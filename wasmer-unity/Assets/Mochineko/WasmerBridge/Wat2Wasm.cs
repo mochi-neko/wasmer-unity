@@ -1,6 +1,6 @@
 using System;
 using System.Runtime.InteropServices;
-using Mochineko.WasmerBridge.OwnAttributes;
+using Mochineko.WasmerBridge.Attributes;
 
 namespace Mochineko.WasmerBridge
 {

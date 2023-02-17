@@ -1,6 +1,6 @@
 using System;
 
-namespace Mochineko.WasmerBridge.OwnAttributes
+namespace Mochineko.WasmerBridge.Attributes
 {
     /// <summary>
     /// `own` pointer parameters named `out`, which are copy-back

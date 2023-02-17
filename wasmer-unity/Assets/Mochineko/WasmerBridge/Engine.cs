@@ -1,7 +1,7 @@
 using System;
 using System.Runtime.InteropServices;
 using Microsoft.Win32.SafeHandles;
-using Mochineko.WasmerBridge.OwnAttributes;
+using Mochineko.WasmerBridge.Attributes;
 
 namespace Mochineko.WasmerBridge
 {

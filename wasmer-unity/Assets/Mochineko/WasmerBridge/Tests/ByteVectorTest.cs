@@ -10,7 +10,7 @@ namespace Mochineko.WasmerBridge.Tests
         [Test, RequiresPlayMode(false)]
         public void CreateEmptyTest()
         {
-            using var emptyArray = ByteVector.New();
+            using var emptyArray = ByteVector.NewEmpty();
             emptyArray.Should().NotBeNull();
             emptyArray.size.Should().Be((nuint)0);
         }

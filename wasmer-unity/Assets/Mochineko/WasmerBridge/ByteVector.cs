@@ -1,6 +1,6 @@
 using System;
 using System.Runtime.InteropServices;
-using Mochineko.WasmerBridge.OwnAttributes;
+using Mochineko.WasmerBridge.Attributes;
 
 namespace Mochineko.WasmerBridge
 {
@@ -11,7 +11,7 @@ namespace Mochineko.WasmerBridge
         internal readonly nuint size;
         internal readonly byte* data;
 
-        internal static ByteVector New()
+        internal static ByteVector NewEmpty()
         {
             WasmAPIs.wasm_byte_vec_new_empty(out var vector);
 

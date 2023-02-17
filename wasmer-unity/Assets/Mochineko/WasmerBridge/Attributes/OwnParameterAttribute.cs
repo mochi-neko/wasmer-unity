@@ -1,6 +1,6 @@
 using System;
 
-namespace Mochineko.WasmerBridge.OwnAttributes
+namespace Mochineko.WasmerBridge.Attributes
 {
     /// <summary>
     /// Passes ownership from caller to callee

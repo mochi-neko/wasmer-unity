@@ -1,7 +1,7 @@
 using System;
 using System.Runtime.InteropServices;
 using Microsoft.Win32.SafeHandles;
-using Mochineko.WasmerBridge.OwnAttributes;
+using Mochineko.WasmerBridge.Attributes;
 
 namespace Mochineko.WasmerBridge
 {
@@ -129,8 +129,7 @@ namespace Mochineko.WasmerBridge
         private static class WasmAPIs
         {
             [DllImport(NativePlugin.LibraryName)]
-            public static extern bool wasm_module_validate(Store.NativeHandle store,
-                [ConstVector] in ByteVector binary);
+            public static extern bool wasm_module_validate(Store.NativeHandle store, [ConstVector] in ByteVector binary);
 
             [DllImport(NativePlugin.LibraryName)]
             [return: OwnResult]
