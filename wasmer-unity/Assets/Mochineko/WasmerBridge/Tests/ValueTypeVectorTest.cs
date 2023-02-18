@@ -11,7 +11,7 @@ namespace Mochineko.WasmerBridge.Tests
         [Test, RequiresPlayMode(false)]
         public void CreateEmptyTest()
         {
-            using var vector = ValueTypeVector.New();
+            using var vector = ValueTypeVector.NewEmpty();
             vector.size.Should().Be((nuint)0);
             
             using var emptyVector = ValueTypeVector.New(ArraySegment<ValueKind>.Empty);
@@ -34,7 +34,7 @@ namespace Mochineko.WasmerBridge.Tests
             using var vector = ValueTypeVector.New(valueKinds);
             vector.size.Should().Be((nuint)valueKinds.Length);
 
-            var kinds = ValueTypeVector.ToValueKinds(vector);
+            ValueTypeVector.ToValueKinds(vector, out var kinds);
             kinds[0].Should().Be(ValueKind.Int32);
             kinds[1].Should().Be(ValueKind.Int64);
             kinds[2].Should().Be(ValueKind.Float32);

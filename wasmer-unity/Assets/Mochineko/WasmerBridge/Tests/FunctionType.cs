@@ -13,12 +13,12 @@ namespace Mochineko.WasmerBridge.Tests
         [Ignore("Remains crashes")]
         public void CreateEmptyFunctionTypeTest()
         {
-            using var parameters = ValueTypeVector.New();
-            using var results = ValueTypeVector.New();
+            using var parameters = ValueTypeVector.NewEmpty();
+            using var results = ValueTypeVector.NewEmpty();
             
-            using var explicitEmptyFunctionType = FunctionType.New(parameters.DangerousGetHandle(), results.DangerousGetHandle());
-            explicitEmptyFunctionType.ParameterTypes.size.Should().Be((nuint)0);
-            explicitEmptyFunctionType.ResultTypes.size.Should().Be((nuint)0);
+            // using var explicitEmptyFunctionType = FunctionType.New(parameters.DangerousGetHandle(), results.DangerousGetHandle());
+            // explicitEmptyFunctionType.ParameterTypes.size.Should().Be((nuint)0);
+            // explicitEmptyFunctionType.ResultTypes.size.Should().Be((nuint)0);
         }
     }
     
@@ -27,10 +27,10 @@ namespace Mochineko.WasmerBridge.Tests
         internal readonly IntPtr parameterTypes;
         internal readonly IntPtr resultTypes;
         
-        internal static NativeHandle New(ValueTypeVector.NativeHandle parameters, ValueTypeVector.NativeHandle results)
-        {
-            return new NativeHandle(WasmAPIs.wasm_functype_new(parameters, results));
-        }
+        // internal static NativeHandle New(ValueTypeVector.NativeHandle parameters, ValueTypeVector.NativeHandle results)
+        // {
+        //     return new NativeHandle(WasmAPIs.wasm_functype_new(parameters, results));
+        // }
         internal static NativeHandle New(IntPtr parameters, IntPtr results)
         {
             return new NativeHandle(WasmAPIs.wasm_functype_new(parameters, results));
@@ -53,37 +53,37 @@ namespace Mochineko.WasmerBridge.Tests
                 return true;
             }
 
-            public ValueTypeVector.NativeHandle ParameterTypes
-            {
-                get
-                {
-                    if (IsInvalid)
-                    {
-                        throw new ObjectDisposedException(typeof(FunctionType).FullName);
-                    }
-
-                    return ValueTypeVector.FromPointer(WasmAPIs.wasm_functype_params(this));
-                }
-            }
+            // public ValueTypeVector.NativeHandle ParameterTypes
+            // {
+            //     get
+            //     {
+            //         if (IsInvalid)
+            //         {
+            //             throw new ObjectDisposedException(typeof(FunctionType).FullName);
+            //         }
+            //
+            //         return ValueTypeVector.FromPointer(WasmAPIs.wasm_functype_params(this));
+            //     }
+            // }
             
-            public ValueTypeVector.NativeHandle ResultTypes
-            {
-                get
-                {
-                    if (IsInvalid)
-                    {
-                        throw new ObjectDisposedException(typeof(FunctionType).FullName);
-                    }
-
-                    return ValueTypeVector.FromPointer(WasmAPIs.wasm_functype_results(this));
-                }
-            }
+            // public ValueTypeVector.NativeHandle ResultTypes
+            // {
+            //     get
+            //     {
+            //         if (IsInvalid)
+            //         {
+            //             throw new ObjectDisposedException(typeof(FunctionType).FullName);
+            //         }
+            //
+            //         return ValueTypeVector.FromPointer(WasmAPIs.wasm_functype_results(this));
+            //     }
+            // }
         }
 
         private static class WasmAPIs
         {
-            [DllImport(NativePlugin.LibraryName)]
-            public static extern IntPtr wasm_functype_new(ValueTypeVector.NativeHandle parameters, ValueTypeVector.NativeHandle results);
+            // [DllImport(NativePlugin.LibraryName)]
+            // public static extern IntPtr wasm_functype_new(ValueTypeVector.NativeHandle parameters, ValueTypeVector.NativeHandle results);
             [DllImport(NativePlugin.LibraryName)]
             public static extern IntPtr wasm_functype_new(IntPtr parameters, IntPtr results);
 

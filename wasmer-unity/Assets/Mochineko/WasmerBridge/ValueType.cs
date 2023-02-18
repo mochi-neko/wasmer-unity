@@ -1,31 +1,51 @@
 using System;
 using System.Runtime.InteropServices;
 using Microsoft.Win32.SafeHandles;
-using Mochineko.WasmerBridge.OwnAttributes;
+using Mochineko.WasmerBridge.Attributes;
 
 namespace Mochineko.WasmerBridge
 {
-    [OwnStruct]
-    [StructLayout(LayoutKind.Sequential)]
-    internal readonly struct ValueType
+    [OwnPointed]
+    internal sealed class ValueType : IDisposable
     {
-        private readonly ValueKind valueKind;
+        internal ValueKind ValueKind 
+            => WasmAPIs.wasm_valtype_kind(handle);
 
-        internal static NativeHandle NewAsHandle(ValueKind kind)
+        internal static ValueType New(ValueKind kind)
         {
-            return new NativeHandle(WasmAPIs.wasm_valtype_new((byte)kind));
+            return new ValueType(WasmAPIs.wasm_valtype_new((byte)kind));
+        }
+
+        internal static ValueKind ToKind(ValueType valueType)
+        {
+            return WasmAPIs.wasm_valtype_kind(valueType.Handle);
         }
         
-        internal static IntPtr New(ValueKind kind)
+        private readonly NativeHandle handle;
+        
+        internal NativeHandle Handle
         {
-            return WasmAPIs.wasm_valtype_new((byte)kind);
+            get
+            {
+                if (handle.IsInvalid)
+                {
+                    throw new ObjectDisposedException(typeof(ValueType).FullName);
+                }
+
+                return handle;
+            }
+        }
+        
+        private ValueType(IntPtr handle)
+        {
+            this.handle = new NativeHandle(handle);
         }
 
-        internal static ValueKind ToKind(IntPtr valueType)
+        public void Dispose()
         {
-            return WasmAPIs.wasm_valtype_kind(valueType);
+            handle.Dispose();
         }
-
+        
         internal sealed class NativeHandle : SafeHandleZeroOrMinusOneIsInvalid
         {
             public NativeHandle(IntPtr handle)
@@ -39,19 +59,6 @@ namespace Mochineko.WasmerBridge
                 WasmAPIs.wasm_valtype_delete(handle);
                 return true;
             }
-
-            public ValueKind ValueKind
-            {
-                get
-                {
-                    if (IsInvalid)
-                    {
-                        throw new ObjectDisposedException(typeof(ValueType).FullName);
-                    }
-
-                    return WasmAPIs.wasm_valtype_kind(this);
-                }
-            }
         }
 
         private static class WasmAPIs
@@ -59,19 +66,16 @@ namespace Mochineko.WasmerBridge
             [DllImport(NativePlugin.LibraryName)]
             [return: OwnResult]
             public static extern IntPtr wasm_valtype_new(byte valueKind);
-            
-            [DllImport(NativePlugin.LibraryName)]
-            public static extern ValueKind wasm_valtype_kind(NativeHandle valueType);
-            
-            [DllImport(NativePlugin.LibraryName)]
-            public static extern ValueKind wasm_valtype_kind(IntPtr valueType);
 
             [DllImport(NativePlugin.LibraryName)]
-            public static extern void wasm_valtype_delete([OwnParameter]IntPtr valueType);
-            
+            public static extern ValueKind wasm_valtype_kind([Const] NativeHandle valueType);
+
+            [DllImport(NativePlugin.LibraryName)]
+            public static extern void wasm_valtype_delete([OwnParameter] IntPtr valueType);
+
             [DllImport(NativePlugin.LibraryName)]
             [return: OwnResult]
-            public static extern IntPtr wasm_valtype_copy(IntPtr valueType);
+            public static extern ValueType wasm_valtype_copy(IntPtr valueType);
         }
     }
 }

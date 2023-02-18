@@ -1,117 +1,84 @@
 using System;
-using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using Mochineko.WasmerBridge.Attributes;
 
 namespace Mochineko.WasmerBridge
 {
+    [OwnVector]
     [StructLayout(LayoutKind.Sequential)]
-    internal readonly unsafe struct ValueTypeVector
+    internal readonly unsafe struct ValueTypeVector : IDisposable
     {
-        private readonly nuint size;
-        private readonly IntPtr data;
+        internal readonly nuint size;
+        internal readonly IntPtr* data;
 
-        internal static NativeHandle New()
+        internal static ValueTypeVector NewEmpty()
         {
             WasmAPIs.wasm_valtype_vec_new_empty(out var vector);
 
-            return new NativeHandle(vector);
+            return vector;
         }
 
-        internal static NativeHandle FromPointer(IntPtr ptr)
+        private static ValueTypeVector New(nuint size, IntPtr* data)
         {
-            return new NativeHandle(ptr);
+            WasmAPIs.wasm_valtype_vec_new(out var vector, size, data);
+
+            return vector;
         }
 
-        internal static NativeHandle New(IReadOnlyList<ValueKind> valueKinds)
+        public static ValueTypeVector New(ReadOnlySpan<ValueKind> valueKinds)
         {
-            if (valueKinds.Count == 0)
+            var size = valueKinds.Length;
+            if (size == 0)
             {
-                return New();
+                return NewEmpty();
             }
 
-            // NOTE: Allocate block memory of ValueType array to pass native.
-            var valueTypes = stackalloc IntPtr[valueKinds.Count];
-            var valueTypeHandles = new ValueType.NativeHandle[valueKinds.Count];
-            for (var i = 0; i < valueKinds.Count; i++)
+            WasmAPIs.wasm_valtype_vec_new_uninitialized(out var vector, (nuint)size);
+
+            for (var i = 0; i < size; ++i)
             {
-                valueTypes[i] = ValueType.New(valueKinds[i]);
-                valueTypeHandles[i] = new ValueType.NativeHandle(valueTypes[i]);
+                vector.data[i] = ValueType.New(valueKinds[i]).Handle.DangerousGetHandle();
             }
 
-            WasmAPIs.wasm_valtype_vec_new(out var vector, (nuint)valueKinds.Count, *valueTypes);
-
-            return new NativeHandle(vector, (nuint)valueKinds.Count, *valueTypes, valueTypeHandles);
+            return vector;
         }
 
-        public static IReadOnlyList<ValueKind> ToValueKinds(NativeHandle valueTypes)
+        public static void ToValueKinds(in ValueTypeVector valueTypes, out ReadOnlySpan<ValueKind> valueKinds)
         {
-            var size = (int)valueTypes.size;
-            var array = new ValueKind[size];
-
-            for (int i = 0; i < size; ++i)
+            if (valueTypes.size == 0)
             {
-                array[i] = ValueType.ToKind(valueTypes.elementHandles[i].DangerousGetHandle());
+                valueKinds = new Span<ValueKind>();
             }
-
-            return array;
+            else
+            {
+                valueKinds = new Span<ValueKind>(valueTypes.data, (int)valueTypes.size);
+            }
         }
 
-        internal sealed class NativeHandle : SafeHandle
+        public void Dispose()
         {
-            internal readonly nuint size;
-            internal readonly IntPtr data;
-            internal readonly ValueType.NativeHandle[] elementHandles;
-
-            public NativeHandle(IntPtr handle)
-                : base(IntPtr.Zero, true)
-            {
-                SetHandle(handle);
-                this.size = 0;
-                this.data = IntPtr.Zero;
-                this.elementHandles = Array.Empty<ValueType.NativeHandle>();
-            }
-            
-            public NativeHandle(IntPtr handle, nuint size, IntPtr data, ValueType.NativeHandle[] elementHandles)
-                : base(IntPtr.Zero, true)
-            {
-                SetHandle(handle);
-                this.size = size;
-                this.data = data;
-                this.elementHandles = elementHandles;
-            }
-
-            public override bool IsInvalid
-                => handle == IntPtr.Zero;
-
-            protected override bool ReleaseHandle()
-            {
-                // NOTE: Use not "wasm_valtype_vec_delete" but explicit disposing of elements.
-                // WasmAPIs.wasm_valtype_vec_delete(handle);
-                foreach (var elementHandle in elementHandles)
-                {
-                    elementHandle.Dispose();
-                }
-
-                return true;
-            }
+            WasmAPIs.wasm_valtype_vec_delete(this);
         }
 
         private static class WasmAPIs
         {
             [DllImport(NativePlugin.LibraryName)]
-            public static extern void wasm_valtype_vec_new_empty(out IntPtr vector);
+            public static extern void wasm_valtype_vec_new_empty([OwnOut] out ValueTypeVector vector);
 
             [DllImport(NativePlugin.LibraryName)]
-            public static extern void wasm_valtype_vec_new_uninitialized(out IntPtr vector, nuint size);
+            public static extern void wasm_valtype_vec_new_uninitialized([OwnOut] out ValueTypeVector vector,
+                nuint size);
 
             [DllImport(NativePlugin.LibraryName)]
-            public static extern void wasm_valtype_vec_new(out IntPtr vector, nuint size, IntPtr data);
+            public static extern void wasm_valtype_vec_new([OwnOut] out ValueTypeVector vector, nuint size,
+                [OwnParameter] IntPtr* data);
 
             [DllImport(NativePlugin.LibraryName)]
-            public static extern void wasm_valtype_vec_copy(out IntPtr destination, in IntPtr source);
+            public static extern void wasm_valtype_vec_copy([OwnOut] out ValueTypeVector destination,
+                [Const] in ValueTypeVector source);
 
             [DllImport(NativePlugin.LibraryName)]
-            public static extern void wasm_valtype_vec_delete(IntPtr vector);
+            public static extern void wasm_valtype_vec_delete([OwnParameter] ValueTypeVector vector);
         }
     }
 }

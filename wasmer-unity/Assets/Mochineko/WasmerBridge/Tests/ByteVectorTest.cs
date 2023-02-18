@@ -24,7 +24,7 @@ namespace Mochineko.WasmerBridge.Tests
             nativeBinary.Should().NotBeNull();
             nativeBinary.size.Should().Be((nuint)binary.Length);
 
-            ByteVector.ToManagedSpan(nativeBinary, out var managedBinary);
+            ByteVector.ToManagedSpan(in nativeBinary, out var managedBinary);
             for (int i = 0; i < binary.Length; i++)
             {
                 managedBinary[i].Should().Be(binary[i]);
