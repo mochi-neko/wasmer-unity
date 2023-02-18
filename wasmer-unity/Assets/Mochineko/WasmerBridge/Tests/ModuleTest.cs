@@ -31,10 +31,12 @@ namespace Mochineko.WasmerBridge.Tests
         {
             using var engine = Engine.New();
             using var store = Store.New(engine);
-            using var wasm = MockResource.EmptyWat.FromWatToWasm();
-
-            using var module = Module.New(store, "empty", in wasm);
-            module.Should().NotBeNull();
+            MockResource.EmptyWat.FromWatToWasm(out var wasm);
+            using (wasm)
+            {
+                using var module = Module.New(store, "empty", in wasm);
+                module.Should().NotBeNull();
+            }
         }
 
         [Test, RequiresPlayMode(false)]
@@ -42,25 +44,30 @@ namespace Mochineko.WasmerBridge.Tests
         {
             using var engine = Engine.New();
             using var store = Store.New(engine);
-            using var wasm = ByteVector.New(MockResource.EmptyWasmBinary);
-
-            using var module = Module.New(store, "empty", in wasm);
-            module.Should().NotBeNull();
+            ByteVector.New(MockResource.EmptyWasmBinary, out var wasm);
+            using (wasm)
+            {
+                using var module = Module.New(store, "empty", in wasm);
+                module.Should().NotBeNull();
+            }
         }
-        
+
         [Test, RequiresPlayMode(false)]
         public void SerializeTest()
         {
             using var engine = Engine.New();
             using var store = Store.New(engine);
-            using var wasm = ByteVector.New(MockResource.EmptyWasmBinary);
-            using var module = Module.New(store, "empty", in wasm);
-            
-            var serialized = module.Serialize();
-            serialized.Length.Should().NotBe(0);
+            ByteVector.New(MockResource.EmptyWasmBinary, out var wasm);
+            using (wasm)
+            {
+                using var module = Module.New(store, "empty", in wasm);
 
-            var deserialized = Module.Deserialize(store, "empty", serialized);
-            deserialized.Should().NotBeNull();
+                module.Serialize(out var serialized);
+                serialized.Length.Should().NotBe(0);
+
+                var deserialized = Module.Deserialize(store, "empty", serialized);
+                deserialized.Should().NotBeNull();
+            }
         }
     }
 }

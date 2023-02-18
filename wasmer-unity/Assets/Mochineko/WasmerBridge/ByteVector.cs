@@ -11,33 +11,30 @@ namespace Mochineko.WasmerBridge
         internal readonly nuint size;
         internal readonly byte* data;
 
-        internal static ByteVector NewEmpty()
+        internal static void NewEmpty(out ByteVector vector)
         {
-            WasmAPIs.wasm_byte_vec_new_empty(out var vector);
-
-            return vector;
+            WasmAPIs.wasm_byte_vec_new_empty(out vector);
         }
         
-        private static ByteVector New(nuint size, byte* data)
+        private static void New(nuint size, byte* data, out ByteVector vector)
         {
-            WasmAPIs.wasm_byte_vec_new(out var vector, size, data);
-
-            return vector;
+            WasmAPIs.wasm_byte_vec_new(out vector, size, data);
         }
 
-        public static ByteVector New(in ReadOnlySpan<byte> binary)
+        // Avoid copy of struct by using "out"
+        public static void New(in ReadOnlySpan<byte> binary, out ByteVector vector)
         {
             Span<byte> copy = stackalloc byte[binary.Length];
             binary.CopyTo(copy);
             fixed (byte* data = copy)
             {
-                return New((nuint)binary.Length, data);
+                New((nuint)binary.Length, data, out vector);
             }
         }
 
-        internal static void ToManagedSpan(in ByteVector vector, out ReadOnlySpan<byte> binary)
+        internal void ToManagedSpan(out ReadOnlySpan<byte> binary)
         {
-            binary = new Span<byte>(vector.data, (int)vector.size);
+            binary = new Span<byte>(data, (int)size);
         }
 
         public void Dispose()

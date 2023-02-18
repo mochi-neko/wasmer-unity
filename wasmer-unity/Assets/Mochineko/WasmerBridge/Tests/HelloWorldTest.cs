@@ -13,12 +13,15 @@ namespace Mochineko.WasmerBridge.Tests
         {
             using var engine = Engine.New();
             using var store = Store.New(engine);
-            using var wasm = ByteVector.New(MockResource.EmptyWasmBinary);
-            using var module = Module.New(store, "empty", wasm);
-            //using var importObject = new ImportObject();
+            ByteVector.New(MockResource.EmptyWasmBinary, out var wasm);
+            using (wasm)
+            {
+                using var module = Module.New(store, "empty", wasm);
+                //using var importObject = new ImportObject();
 
-            //var instance = new Instantiate(store, module, inportObject);
-            //instance.Should().NotBeNull();
+                //var instance = new Instantiate(store, module, inportObject);
+                //instance.Should().NotBeNull();
+            }
         }
 
         [Test, RequiresPlayMode(false)]

@@ -6,7 +6,7 @@ namespace Mochineko.WasmerBridge
 {
     internal static class Wat2Wasm
     {
-        internal static ByteVector FromWatToWasm(this string wat)
+        internal static void FromWatToWasm(this string wat, out ByteVector wasm)
         {
             if (string.IsNullOrEmpty(wat))
             {
@@ -15,20 +15,21 @@ namespace Mochineko.WasmerBridge
 
             var watBinary = System.Text.Encoding.UTF8.GetBytes(wat);
 
-            using var watVector = ByteVector.New(watBinary);
-            if (watVector.size == 0)
+            ByteVector.New(watBinary, out var watVector);
+            using (watVector)
             {
-                throw new InvalidOperationException("Failed to get wat binary as native vector.");
-            }
+                if (watVector.size == 0)
+                {
+                    throw new InvalidOperationException("Failed to get wat binary as native vector.");
+                }
 
-            WasmerAPIs.wat2wasm(in watVector, out var wasm);
-            if (wasm.size == 0)
-            {
-                // TODO: Detailed error handling
-                throw new InvalidOperationException("Failed to convert wat to wasm.");
+                WasmerAPIs.wat2wasm(in watVector, out wasm);
+                if (wasm.size == 0)
+                {
+                    // TODO: Detailed error handling
+                    throw new InvalidOperationException("Failed to convert wat to wasm.");
+                }
             }
-
-            return wasm;
         }
 
         private static class WasmerAPIs

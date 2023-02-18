@@ -10,9 +10,12 @@ namespace Mochineko.WasmerBridge.Tests
         [Test, RequiresPlayMode(false)]
         public void CreateEmptyTest()
         {
-            using var emptyArray = ByteVector.NewEmpty();
-            emptyArray.Should().NotBeNull();
-            emptyArray.size.Should().Be((nuint)0);
+            ByteVector.NewEmpty(out var emptyArray);
+            using (emptyArray)
+            {
+                emptyArray.Should().NotBeNull();
+                emptyArray.size.Should().Be((nuint)0);
+            }
         }
 
         [Test, RequiresPlayMode(false)]
@@ -20,14 +23,17 @@ namespace Mochineko.WasmerBridge.Tests
         {
             var binary = MockResource.EmptyWasmBinary;
             
-            using var nativeBinary = ByteVector.New(binary);
-            nativeBinary.Should().NotBeNull();
-            nativeBinary.size.Should().Be((nuint)binary.Length);
-
-            ByteVector.ToManagedSpan(in nativeBinary, out var managedBinary);
-            for (int i = 0; i < binary.Length; i++)
+            ByteVector.New(binary, out var nativeBinary);
+            using (nativeBinary)
             {
-                managedBinary[i].Should().Be(binary[i]);
+                nativeBinary.Should().NotBeNull();
+                nativeBinary.size.Should().Be((nuint)binary.Length);
+
+                nativeBinary.ToManagedSpan(out var managedBinary);
+                for (int i = 0; i < binary.Length; i++)
+                {
+                    managedBinary[i].Should().Be(binary[i]);
+                }
             }
         }
     }

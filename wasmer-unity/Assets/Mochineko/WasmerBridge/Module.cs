@@ -13,7 +13,7 @@ namespace Mochineko.WasmerBridge
         // private readonly ImportType[] importTypes;
         // private readonly ExportType[] exportTypes;
 
-        public static bool Validate(Store store, ReadOnlySpan<byte> binary)
+        public static bool Validate(Store store, in ReadOnlySpan<byte> binary)
         {
             if (store is null)
             {
@@ -25,23 +25,29 @@ namespace Mochineko.WasmerBridge
                 throw new ArgumentNullException(nameof(binary));
             }
 
-            using var vector = ByteVector.New(binary);
-
-            return WasmAPIs.wasm_module_validate(store.Handle, in vector);
+            ByteVector.New(in binary, out var vector);
+            using (vector)
+            {
+                return WasmAPIs.wasm_module_validate(store.Handle, in vector);
+            }
         }
 
-        public static Module NewFromBinary(Store store, string name, ReadOnlySpan<byte> wasm)
+        public static Module NewFromBinary(Store store, string name, in ReadOnlySpan<byte> wasm)
         {
-            using var vector = ByteVector.New(wasm);
-
-            return New(store, name, vector);
+            ByteVector.New(in wasm, out var vector);
+            using (vector)
+            {
+                return New(store, name, in vector);
+            }
         }
         
         public static Module NewFromWat(Store store, string name, string wat)
         {
-            using var vector = wat.FromWatToWasm();
-
-            return New(store, name, vector);
+            wat.FromWatToWasm(out var wasm);
+            using (wasm)
+            {
+                return New(store, name, wasm);
+            }
         }
 
         internal static Module New(Store store, string name, in ByteVector binary)
@@ -85,7 +91,7 @@ namespace Mochineko.WasmerBridge
             return module;
         }
 
-        public ReadOnlySpan<byte> Serialize()
+        public void Serialize(out ReadOnlySpan<byte> serialized)
         {
             SerializeNative(out var binary);
 
@@ -96,7 +102,7 @@ namespace Mochineko.WasmerBridge
                     // Copy from native to C#
                     var array = new byte[binary.size];
                     Marshal.Copy((IntPtr)binary.data, array, 0, (int)binary.size);
-                    return array;
+                    serialized = array;
                 }
             }
         }
@@ -106,11 +112,13 @@ namespace Mochineko.WasmerBridge
             WasmAPIs.wasm_module_serialize(handle, out binary);
         }
 
-        public static Module Deserialize(Store store, string name, ReadOnlySpan<byte> binary)
+        public static Module Deserialize(Store store, string name, in ReadOnlySpan<byte> binary)
         {
-            using var vector = ByteVector.New(binary);
-            
-            return DeserializeNative(store, name, vector);
+            ByteVector.New(in binary, out var vector);
+            using (vector)
+            {
+                return DeserializeNative(store, name, vector);
+            }
         }
 
         internal static Module DeserializeNative(Store store, string name, in ByteVector binary)

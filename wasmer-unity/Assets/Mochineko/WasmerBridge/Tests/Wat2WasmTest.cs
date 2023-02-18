@@ -11,13 +11,16 @@ namespace Mochineko.WasmerBridge.Tests
         public void ConvertWat2WasmTest()
         {
             var binary = MockResource.EmptyWasmBinary;
-            using var wasmFromWat = MockResource.EmptyWat.FromWatToWasm();
-            wasmFromWat.size.Should().Be((nuint)binary.Length);
-
-            ByteVector.ToManagedSpan(wasmFromWat, out var excluded);
-            for (var i = 0; i < binary.Length; i++)
+            MockResource.EmptyWat.FromWatToWasm(out var wasm);
+            using (wasm)
             {
-                excluded[i].Should().Be(binary[i]);
+                wasm.size.Should().Be((nuint)binary.Length);
+
+                wasm.ToManagedSpan(out var excluded);
+                for (var i = 0; i < binary.Length; i++)
+                {
+                    excluded[i].Should().Be(binary[i]);
+                }
             }
         }
     }
