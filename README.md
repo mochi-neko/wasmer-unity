@@ -22,11 +22,58 @@ The following are the best features I think:
 
 ## Milestones
 
-1. Implement minimal Wasm APIs for hello world.
-2. Implement pure Wasm APIs with samples.
-3. Make demo on Unity.
-4. Prepair Wasmer build environment for Android/iOS.
-5. Implement Wasmer APIs.
+1. [ ] Implement minimal Wasm API for hello world.
+2. [ ] Implement native Wasm API with samples.
+3. [ ] Make demo on Unity.
+4. [ ] Implement headless in Wasmer API.
+5. [ ] Prepair Wasmer build environment for Android/iOS.
+6. [ ] Implement WASI API.
+7. [ ] Implement features in Wasmer API.
+
+## Implemntation
+
+### Native Wasm API
+
+- [x] Config
+- [x] Engine
+- [x] Store
+- [x] ByteVector
+- [ ] ValueType
+- [ ] FunctionType
+- [ ] GlobalType
+- [ ] TableType
+- [ ] MemoryType
+- [ ] ExternalType
+- [ ] ImportType
+- [ ] ExportType
+- [ ] Trap
+- [ ] Foreign
+- [ ] Module
+- [ ] FunctionInstance
+- [ ] GlobalInstance
+- [ ] TableInstance
+- [ ] MemoryInstance
+- [ ] External
+- [ ] ModuleInstance 
+
+### Wasmer API
+
+- [x] Wat2Wasm
+- [ ] Headless 
+- [ ] WASI
+- CPU Features
+  - [ ] Bulk Memory?
+  - [ ] Memory64?
+  - [ ] Module Linking?
+  - [ ] Multi Memory?
+  - [ ] Multi Value?
+- Featues
+  - [ ] Reference Type
+  - [ ] SIMD
+  - [ ] Tail Call
+  - [ ] Thread
+- [ ] Metering?
+- [ ] Middleware?
 
 ## Notice
 
