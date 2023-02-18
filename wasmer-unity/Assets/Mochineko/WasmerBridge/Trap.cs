@@ -18,18 +18,21 @@ namespace Mochineko.WasmerBridge
                 }
 
                 WasmAPIs.wasm_trap_message(handle, out var vector);
-
-                // ByteVector of message is managed in Trap then We don't need to release ByteVector.
-                return vector.ToString();
+                using (vector)
+                {
+                    return vector.ToString();
+                }
             }
         }
 
         internal static Trap New(Store store, string message)
         {
             ByteVector.FromString(message, out var vector);
-            
-            // ByteVector of message is managed in Trap then We don't need to release ByteVector.
-            return New(store, in vector);
+
+            using (vector)
+            {
+                return New(store, in vector);
+            }
         }
 
         private static Trap New(Store store, in ByteVector message)
@@ -83,8 +86,7 @@ namespace Mochineko.WasmerBridge
             [return: OwnReceive]
             public static extern IntPtr wasm_trap_new(
                 Store.NativeHandle store,
-                [Const] [OwnPass]
-                in ByteVector message); // NOTE: Does not attributed "own" in C++ but message also is deleted when trap is deleted. 
+                [Const] in ByteVector message);
 
             [DllImport(NativePlugin.LibraryName)]
             public static extern void wasm_trap_delete([OwnPass] IntPtr trap);
