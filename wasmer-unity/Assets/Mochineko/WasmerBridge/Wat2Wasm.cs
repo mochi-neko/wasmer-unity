@@ -12,10 +12,8 @@ namespace Mochineko.WasmerBridge
             {
                 throw new ArgumentNullException(nameof(wat));
             }
-
-            var watBinary = System.Text.Encoding.UTF8.GetBytes(wat);
-
-            ByteVector.New(watBinary, out var watVector);
+            
+            ByteVector.FromString(wat, out var watVector);
             using (watVector)
             {
                 if (watVector.size == 0)

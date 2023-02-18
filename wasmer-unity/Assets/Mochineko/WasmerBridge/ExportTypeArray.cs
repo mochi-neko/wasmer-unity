@@ -1,13 +1,13 @@
 using System;
 using System.Runtime.InteropServices;
 
-namespace Mochineko.WasmerBridge.Tests
+namespace Mochineko.WasmerBridge
 {
     [StructLayout(LayoutKind.Sequential)]
-    internal unsafe struct ExportTypeArray : IDisposable
+    internal readonly unsafe struct ExportTypeArray : IDisposable
     {
-        internal nuint size;
-        internal byte* data;
+        internal readonly nuint size;
+        internal readonly byte* data;
 
         public static ExportTypeArray New()
         {

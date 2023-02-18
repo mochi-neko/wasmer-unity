@@ -1,36 +1,16 @@
 using System;
 using System.Runtime.InteropServices;
-using FluentAssertions;
 using Microsoft.Win32.SafeHandles;
 using Mochineko.WasmerBridge.Attributes;
-using NUnit.Framework;
-using UnityEngine.TestTools;
 
-namespace Mochineko.WasmerBridge.Tests
+namespace Mochineko.WasmerBridge
 {
-    [TestFixture]
-    internal sealed class InstanceTest
-    {
-        [Test, RequiresPlayMode(false)]
-        [Ignore("Not implemented")]
-        public void InstantiateTest()
-        {
-            using var engine = Engine.New();
-            using var store = Store.New(engine);
-            ByteVector.New(MockResource.EmptyWasmBinary, out var wasm);
-            using (wasm)
-            {
-                using var module = Module.New(store, "empty", in wasm);
-                //using var instance = Instance.New(store, module,);
-            }
-        }
-    }
-    
     [OwnPointed]
     public sealed class Instance : IDisposable
     {
         internal static unsafe Instance New(Store store, Module module, in ExternalVector imports, in Trap trap)
         {
+            // TODO:
             //return new Instance(WasmAPIs.wasm_instance_new(store.Handle, module.Handle, in imports, &trap);
             throw new NotImplementedException();
         }
@@ -53,7 +33,7 @@ namespace Mochineko.WasmerBridge.Tests
             {
                 if (handle.IsInvalid)
                 {
-                    throw new ObjectDisposedException(typeof(Module).FullName);
+                    throw new ObjectDisposedException(typeof(Instance).FullName);
                 }
 
                 return handle;
@@ -83,7 +63,7 @@ namespace Mochineko.WasmerBridge.Tests
                 Store.NativeHandle store,
                 [Const] Module.NativeHandle module,
                 [ConstVector] in ExternalVector imports,
-                [OwnPass] Trap** trap);
+                [OwnPass] Trap.NativeHandle trap);
             
             [DllImport(NativePlugin.LibraryName)]
             public static extern void wasm_instance_delete([OwnPass] IntPtr instance);
@@ -93,9 +73,5 @@ namespace Mochineko.WasmerBridge.Tests
                 [Const] NativeHandle instance,
                 [OwnPass] out ExternalVector externalVector);
         }
-    }
-
-    internal struct Trap
-    {
     }
 }

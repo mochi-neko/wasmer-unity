@@ -1,9 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using Mochineko.WasmerBridge.Attributes;
 
 namespace Mochineko.WasmerBridge.Tests
 {
+    [OwnPointed]
     internal sealed class ImportFunction
     {
         internal ImportFunction(ImportType.NativeHandle importType)

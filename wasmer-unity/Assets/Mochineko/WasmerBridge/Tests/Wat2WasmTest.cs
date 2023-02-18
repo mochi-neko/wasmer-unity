@@ -16,7 +16,7 @@ namespace Mochineko.WasmerBridge.Tests
             {
                 wasm.size.Should().Be((nuint)binary.Length);
 
-                wasm.ToManagedSpan(out var excluded);
+                wasm.ToManaged(out var excluded);
                 for (var i = 0; i < binary.Length; i++)
                 {
                     excluded[i].Should().Be(binary[i]);

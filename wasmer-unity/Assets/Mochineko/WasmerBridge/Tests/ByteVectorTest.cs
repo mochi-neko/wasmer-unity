@@ -29,11 +29,25 @@ namespace Mochineko.WasmerBridge.Tests
                 nativeBinary.Should().NotBeNull();
                 nativeBinary.size.Should().Be((nuint)binary.Length);
 
-                nativeBinary.ToManagedSpan(out var managedBinary);
+                nativeBinary.ToManaged(out var managedBinary);
                 for (int i = 0; i < binary.Length; i++)
                 {
                     managedBinary[i].Should().Be(binary[i]);
                 }
+            }
+        }
+        
+        [Test, RequiresPlayMode(false)]
+        public void StringEncodingTest()
+        {
+            var message = "message";
+            
+            ByteVector.FromString(message, out var encoded);
+            encoded.size.Should().Be((nuint)7);
+            using (encoded)
+            {
+                var decoded = encoded.ToString();
+                decoded.Should().Be(message);
             }
         }
     }

@@ -11,7 +11,7 @@ namespace Mochineko.WasmerBridge
         internal readonly nuint size;
         internal readonly IntPtr* data;
 
-        public static void New(in ReadOnlySpan<ExternalKind> kinds, out ExternalVector vector)
+        internal static void New(in ReadOnlySpan<ExternalKind> kinds, out ExternalVector vector)
         {
             var size = kinds.Length;
             if (size == 0)
@@ -22,6 +22,7 @@ namespace Mochineko.WasmerBridge
 
             WasmAPIs.wasm_extern_vec_new_uninitialized(out vector, (nuint)size);
 
+            // TODO:
             for (var i = 0; i < size; ++i)
             {
                 //vector.data[i] = ValueType.New(kinds[i]).Handle.DangerousGetHandle();
@@ -70,7 +71,7 @@ namespace Mochineko.WasmerBridge
                 [Const] in ExternalVector source);
 
             [DllImport(NativePlugin.LibraryName)]
-            public static extern void wasm_extern_vec_delete([OwnPass] ExternalVector vector);
+            public static extern void wasm_extern_vec_delete([OwnPass] in ExternalVector vector);
         }
     }
 }
