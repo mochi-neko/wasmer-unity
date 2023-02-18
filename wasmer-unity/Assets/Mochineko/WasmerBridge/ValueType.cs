@@ -64,17 +64,17 @@ namespace Mochineko.WasmerBridge
         private static class WasmAPIs
         {
             [DllImport(NativePlugin.LibraryName)]
-            [return: OwnResult]
+            [return: OwnReceive]
             public static extern IntPtr wasm_valtype_new(byte valueKind);
 
             [DllImport(NativePlugin.LibraryName)]
             public static extern ValueKind wasm_valtype_kind([Const] NativeHandle valueType);
 
             [DllImport(NativePlugin.LibraryName)]
-            public static extern void wasm_valtype_delete([OwnParameter] IntPtr valueType);
+            public static extern void wasm_valtype_delete([OwnPass] IntPtr valueType);
 
             [DllImport(NativePlugin.LibraryName)]
-            [return: OwnResult]
+            [return: OwnReceive]
             public static extern ValueType wasm_valtype_copy(IntPtr valueType);
         }
     }

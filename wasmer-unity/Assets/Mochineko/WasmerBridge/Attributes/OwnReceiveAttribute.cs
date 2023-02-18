@@ -6,7 +6,7 @@ namespace Mochineko.WasmerBridge.Attributes
     /// Passes ownership from callee to caller.
     /// </summary>
     [AttributeUsage(AttributeTargets.ReturnValue)]
-    internal sealed class OwnResultAttribute : OwnAttribute
+    internal sealed class OwnReceiveAttribute : OwnAttribute
     {
     }
 }

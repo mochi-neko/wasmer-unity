@@ -13,7 +13,7 @@ namespace Mochineko.WasmerBridge.Tests
         {
             using var vector = ValueTypeVector.NewEmpty();
             vector.size.Should().Be((nuint)0);
-            
+
             using var emptyVector = ValueTypeVector.New(ArraySegment<ValueKind>.Empty);
             emptyVector.size.Should().Be((nuint)0);
         }

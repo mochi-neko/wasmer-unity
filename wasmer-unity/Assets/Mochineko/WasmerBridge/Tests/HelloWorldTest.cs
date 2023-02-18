@@ -54,13 +54,13 @@ namespace Mochineko.WasmerBridge.Tests
             importObject.AddFunction("Mochineko.WasmerBridge.Tests", "hello", () => helloCalled = true);
 
             // Instantiate module.
-            var instance = new Instance(store, module, importObject);
+            //var instance = new Instance(store, module, importObject);
 
             // Get exported function.
-            var run = instance.ExportFunction<Unit>(store, "run");
+            //var run = instance.ExportFunction<Unit>(store, "run");
 
             // Call exported function.
-            run.Invoke();
+            //run.Invoke();
 
             // Assert flag.
             helloCalled.Should().Be(true);

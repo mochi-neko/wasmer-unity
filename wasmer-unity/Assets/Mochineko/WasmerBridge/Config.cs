@@ -12,6 +12,16 @@ namespace Mochineko.WasmerBridge
         {
             return new Config(WasmAPIs.wasm_config_new());
         }
+
+        private Config(IntPtr handle)
+        {
+            this.handle = new NativeHandle(handle);
+        }
+
+        public void Dispose()
+        {
+            handle.Dispose();
+        }
         
         private readonly NativeHandle handle;
 
@@ -26,16 +36,6 @@ namespace Mochineko.WasmerBridge
 
                 return handle;
             }
-        }
-
-        private Config(IntPtr handle)
-        {
-            this.handle = new NativeHandle(handle);
-        }
-
-        public void Dispose()
-        {
-            handle.Dispose();
         }
 
         internal sealed class NativeHandle : SafeHandleZeroOrMinusOneIsInvalid
@@ -55,11 +55,11 @@ namespace Mochineko.WasmerBridge
         private static class WasmAPIs
         {
             [DllImport(NativePlugin.LibraryName)]
-            [return: OwnResult]
+            [return: OwnReceive]
             public static extern IntPtr wasm_config_new();
 
             [DllImport(NativePlugin.LibraryName)]
-            public static extern void wasm_config_delete([OwnParameter] IntPtr config);
+            public static extern void wasm_config_delete([OwnPass] IntPtr config);
         }
     }
 }

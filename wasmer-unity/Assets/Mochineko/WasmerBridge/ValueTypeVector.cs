@@ -71,14 +71,14 @@ namespace Mochineko.WasmerBridge
 
             [DllImport(NativePlugin.LibraryName)]
             public static extern void wasm_valtype_vec_new([OwnOut] out ValueTypeVector vector, nuint size,
-                [OwnParameter] IntPtr* data);
+                [OwnPass] IntPtr* data);
 
             [DllImport(NativePlugin.LibraryName)]
             public static extern void wasm_valtype_vec_copy([OwnOut] out ValueTypeVector destination,
                 [Const] in ValueTypeVector source);
 
             [DllImport(NativePlugin.LibraryName)]
-            public static extern void wasm_valtype_vec_delete([OwnParameter] ValueTypeVector vector);
+            public static extern void wasm_valtype_vec_delete([OwnPass] ValueTypeVector vector);
         }
     }
 }
