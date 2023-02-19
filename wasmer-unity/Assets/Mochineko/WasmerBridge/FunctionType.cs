@@ -20,7 +20,7 @@ namespace Mochineko.WasmerBridge
                 unsafe
                 {
                     var ptr = WasmAPIs.wasm_functype_params(handle);
-                    KindsFromPointerOfValueTypeVector((IntPtr)ptr, out var kinds);
+                    ptr->ToKinds(out var kinds);
                     return kinds;
                 }
             }
@@ -38,7 +38,7 @@ namespace Mochineko.WasmerBridge
                 unsafe
                 {
                     var ptr = WasmAPIs.wasm_functype_results(handle);
-                    KindsFromPointerOfValueTypeVector((IntPtr)ptr, out var kinds);
+                    ptr->ToKinds(out var kinds);
                     return kinds;
                 }
             }
@@ -46,7 +46,7 @@ namespace Mochineko.WasmerBridge
         
         internal static FunctionType New(in ReadOnlySpan<ValueKind> parameters, in ReadOnlySpan<ValueKind> results)
         {
-            // Passes vectors to native then vectors are released by owner:FunctionType.
+            // Passes vectors ownerships to native, then vectors are released by owner:FunctionType.
             ValueTypeVector.New(in parameters, out var parametersVector);
             ValueTypeVector.New(in results, out var resultsVector);
 
@@ -58,13 +58,6 @@ namespace Mochineko.WasmerBridge
             return new FunctionType(WasmAPIs.wasm_functype_new(in parameters, results));
         }
 
-        private static void KindsFromPointerOfValueTypeVector(IntPtr valueTypeVector, out ReadOnlySpan<ValueKind> kinds)
-        {
-            // IntPtr of ValueTypeVector is released by owner:FunctionType.
-            var vector = Marshal.PtrToStructure<ValueTypeVector>(valueTypeVector);
-            vector.ToKinds(out kinds);
-        }
-        
         internal FunctionType(IntPtr handle)
         {
             this.handle = new NativeHandle(handle);

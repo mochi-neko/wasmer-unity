@@ -95,14 +95,14 @@ namespace Mochineko.WasmerBridge
                 [OwnOut] out ByteVector vector,
                 nuint size,
                 [OwnPass] byte* data);
+            
+            [DllImport(NativePlugin.LibraryName)]
+            public static extern void wasm_byte_vec_delete([OwnPass] in ByteVector vector);
 
             [DllImport(NativePlugin.LibraryName)]
             public static extern void wasm_byte_vec_copy(
                 [OwnOut] out ByteVector destination,
                 [ConstVector] in ByteVector source);
-
-            [DllImport(NativePlugin.LibraryName)]
-            public static extern void wasm_byte_vec_delete([OwnPass] in ByteVector vector);
         }
     }
 }
