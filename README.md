@@ -39,7 +39,7 @@ The following are the best features I think:
 - [x] Store
 - [x] ByteVector
 - [x] ValueType
-- [ ] FunctionType
+- [x] FunctionType
 - [ ] GlobalType
 - [ ] TableType
 - [ ] MemoryType

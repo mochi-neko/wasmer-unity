@@ -8,6 +8,63 @@ namespace Mochineko.WasmerBridge
     [OwnPointed]
     internal sealed class FunctionType : IDisposable
     {
+        internal ReadOnlySpan<ValueKind> Parameters
+        {
+            get
+            {
+                if (handle.IsInvalid)
+                {
+                    throw new ObjectDisposedException(typeof(FunctionType).FullName);
+                }
+
+                unsafe
+                {
+                    var ptr = WasmAPIs.wasm_functype_params(handle);
+                    KindsFromPointerOfValueTypeVector((IntPtr)ptr, out var kinds);
+                    return kinds;
+                }
+            }
+        }
+        
+        internal ReadOnlySpan<ValueKind> Results
+        {
+            get
+            {
+                if (handle.IsInvalid)
+                {
+                    throw new ObjectDisposedException(typeof(FunctionType).FullName);
+                }
+
+                unsafe
+                {
+                    var ptr = WasmAPIs.wasm_functype_results(handle);
+                    KindsFromPointerOfValueTypeVector((IntPtr)ptr, out var kinds);
+                    return kinds;
+                }
+            }
+        }
+        
+        internal static FunctionType New(in ReadOnlySpan<ValueKind> parameters, in ReadOnlySpan<ValueKind> results)
+        {
+            // Passes vectors to native then vectors are released by owner:FunctionType.
+            ValueTypeVector.New(in parameters, out var parametersVector);
+            ValueTypeVector.New(in results, out var resultsVector);
+
+            return new FunctionType(WasmAPIs.wasm_functype_new(in parametersVector, resultsVector));
+        }
+
+        private static FunctionType New(in ValueTypeVector parameters, in ValueTypeVector results)
+        {
+            return new FunctionType(WasmAPIs.wasm_functype_new(in parameters, results));
+        }
+
+        private static void KindsFromPointerOfValueTypeVector(IntPtr valueTypeVector, out ReadOnlySpan<ValueKind> kinds)
+        {
+            // IntPtr of ValueTypeVector is released by owner:FunctionType.
+            var vector = Marshal.PtrToStructure<ValueTypeVector>(valueTypeVector);
+            vector.ToKinds(out kinds);
+        }
+        
         private FunctionType(IntPtr handle)
         {
             this.handle = new NativeHandle(handle);
