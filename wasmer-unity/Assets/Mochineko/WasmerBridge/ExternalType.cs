@@ -8,8 +8,31 @@ namespace Mochineko.WasmerBridge
     [OwnPointed]
     internal sealed class ExternalType : IDisposable
     {
-        private ExternalType(IntPtr handle)
+        internal ExternalKind Kind
         {
+            get
+            {
+                if (handle.IsInvalid)
+                {
+                    throw new ObjectDisposedException(typeof(ExternalType).FullName);
+                }
+
+                return (ExternalKind)WasmAPIs.wasm_externtype_kind(handle);
+            }
+        }
+
+        internal static ExternalType ToExternalType(FunctionType functionType)
+        {
+            return new ExternalType(WasmAPIs.wasm_functype_as_externtype(functionType.Handle));
+        }
+        
+        internal FunctionType ToFunctionType()
+        {
+            return new FunctionType(WasmAPIs.wasm_externtype_as_functype(handle));
+        }
+        
+        private ExternalType(IntPtr handle)
+        { 
             this.handle = new NativeHandle(handle);
         }
 
@@ -57,7 +80,7 @@ namespace Mochineko.WasmerBridge
             public static extern IntPtr wasm_externtype_copy([Const] NativeHandle externalType);
             
             [DllImport(NativePlugin.LibraryName)]
-            public static extern ExternalKind wasm_externtype_kind([Const] NativeHandle externalType);
+            public static extern byte wasm_externtype_kind([Const] NativeHandle externalType);
             
             [DllImport(NativePlugin.LibraryName)]
             public static extern IntPtr wasm_functype_as_externtype(FunctionType.NativeHandle functionType);

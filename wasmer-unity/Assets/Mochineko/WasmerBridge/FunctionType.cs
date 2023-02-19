@@ -65,7 +65,7 @@ namespace Mochineko.WasmerBridge
             vector.ToKinds(out kinds);
         }
         
-        private FunctionType(IntPtr handle)
+        internal FunctionType(IntPtr handle)
         {
             this.handle = new NativeHandle(handle);
         }
