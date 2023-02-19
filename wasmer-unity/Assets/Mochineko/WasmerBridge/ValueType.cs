@@ -8,12 +8,17 @@ namespace Mochineko.WasmerBridge
     [OwnPointed]
     internal sealed class ValueType : IDisposable
     {
-        internal ValueKind ValueKind 
+        internal ValueKind Kind 
             => (ValueKind)WasmAPIs.wasm_valtype_kind(handle);
 
         internal static ValueType New(ValueKind kind)
         {
             return new ValueType(WasmAPIs.wasm_valtype_new((byte)kind));
+        }
+
+        internal static ValueKind KindFromPtr(IntPtr valueType)
+        {
+            return (ValueKind)WasmAPIs.wasm_valtype_kind(valueType);
         }
 
         private ValueType(IntPtr handle)
@@ -71,6 +76,9 @@ namespace Mochineko.WasmerBridge
 
             [DllImport(NativePlugin.LibraryName)]
             public static extern byte wasm_valtype_kind([Const] NativeHandle valueType);
+            
+            [DllImport(NativePlugin.LibraryName)]
+            public static extern byte wasm_valtype_kind([Const] IntPtr valueType);
         }
     }
 }

@@ -11,53 +11,56 @@ namespace Mochineko.WasmerBridge
         internal readonly nuint size;
         internal readonly IntPtr* data;
 
-        internal static ValueTypeVector NewEmpty()
+        public static void New(in ReadOnlySpan<ValueKind> kinds, out ValueTypeVector vector)
         {
-            WasmAPIs.wasm_valtype_vec_new_empty(out var vector);
-
-            return vector;
-        }
-
-        private static ValueTypeVector New(nuint size, IntPtr* data)
-        {
-            WasmAPIs.wasm_valtype_vec_new(out var vector, size, data);
-
-            return vector;
-        }
-
-        public static ValueTypeVector New(ReadOnlySpan<ValueKind> valueKinds)
-        {
-            var size = valueKinds.Length;
+            var size = kinds.Length;
             if (size == 0)
             {
-                return NewEmpty();
+                NewEmpty(out vector);
+                return;
             }
 
-            WasmAPIs.wasm_valtype_vec_new_uninitialized(out var vector, (nuint)size);
+            WasmAPIs.wasm_valtype_vec_new_uninitialized(out vector, (nuint)size);
 
             for (var i = 0; i < size; ++i)
             {
-                vector.data[i] = ValueType.New(valueKinds[i]).Handle.DangerousGetHandle();
+                var valueType = ValueType.New(kinds[i]);
+                vector.data[i] = valueType.Handle.DangerousGetHandle();
+                // Memory of ValueType is released by Vector then passes ownership to native.
+                valueType.Handle.SetHandleAsInvalid();
             }
-
-            return vector;
         }
 
-        public static void ToValueKinds(in ValueTypeVector valueTypes, out ReadOnlySpan<ValueKind> valueKinds)
+        public void ToKinds(out ReadOnlySpan<ValueKind> kinds)
         {
-            if (valueTypes.size == 0)
+            if (size == 0)
             {
-                valueKinds = new Span<ValueKind>();
+                kinds = new Span<ValueKind>();
+                return;
             }
-            else
+
+            var array = new ValueKind[(int)size];
+            for (var i = 0; i < (int)size; i++)
             {
-                valueKinds = new Span<ValueKind>(valueTypes.data, (int)valueTypes.size);
+                array[i] = ValueType.KindFromPtr(data[i]);
             }
+
+            kinds = array;
+        }
+
+        internal static void NewEmpty(out ValueTypeVector vector)
+        {
+            WasmAPIs.wasm_valtype_vec_new_empty(out vector);
+        }
+
+        private static void New(nuint size, IntPtr* data, out ValueTypeVector vector)
+        {
+            WasmAPIs.wasm_valtype_vec_new(out vector, size, data);
         }
 
         public void Dispose()
         {
-            WasmAPIs.wasm_valtype_vec_delete(this);
+            WasmAPIs.wasm_valtype_vec_delete(in this);
         }
 
         private static class WasmAPIs
@@ -66,19 +69,23 @@ namespace Mochineko.WasmerBridge
             public static extern void wasm_valtype_vec_new_empty([OwnOut] out ValueTypeVector vector);
 
             [DllImport(NativePlugin.LibraryName)]
-            public static extern void wasm_valtype_vec_new_uninitialized([OwnOut] out ValueTypeVector vector,
+            public static extern void wasm_valtype_vec_new_uninitialized(
+                [OwnOut] out ValueTypeVector vector,
                 nuint size);
 
             [DllImport(NativePlugin.LibraryName)]
-            public static extern void wasm_valtype_vec_new([OwnOut] out ValueTypeVector vector, nuint size,
+            public static extern void wasm_valtype_vec_new(
+                [OwnOut] out ValueTypeVector vector,
+                nuint size,
                 [OwnPass] IntPtr* data);
 
             [DllImport(NativePlugin.LibraryName)]
-            public static extern void wasm_valtype_vec_copy([OwnOut] out ValueTypeVector destination,
+            public static extern void wasm_valtype_vec_copy(
+                [OwnOut] out ValueTypeVector destination,
                 [Const] in ValueTypeVector source);
 
             [DllImport(NativePlugin.LibraryName)]
-            public static extern void wasm_valtype_vec_delete([OwnPass] ValueTypeVector vector);
+            public static extern void wasm_valtype_vec_delete([OwnPass] in ValueTypeVector vector);
         }
     }
 }

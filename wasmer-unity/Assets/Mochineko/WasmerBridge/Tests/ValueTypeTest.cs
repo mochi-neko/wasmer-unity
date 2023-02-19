@@ -17,7 +17,7 @@ namespace Mochineko.WasmerBridge.Tests
         public void CreateValueTypeTest(ValueKind valueKind)
         {
             using var valueType = ValueType.New(valueKind);
-            valueType.ValueKind.Should().Be(valueKind);
+            valueType.Kind.Should().Be(valueKind);
         }
     }
 }

@@ -38,7 +38,7 @@ The following are the best features I think:
 - [x] Engine
 - [x] Store
 - [x] ByteVector
-- [ ] ValueType
+- [x] ValueType
 - [ ] FunctionType
 - [ ] GlobalType
 - [ ] TableType
