@@ -43,6 +43,9 @@ namespace Mochineko.WasmerBridge
                 }
             }
         }
+
+        internal static FunctionType FromPointer(IntPtr ptr)
+            => new FunctionType(ptr);
         
         internal static FunctionType New(in ReadOnlySpan<ValueKind> parameters, in ReadOnlySpan<ValueKind> results)
         {
@@ -50,15 +53,15 @@ namespace Mochineko.WasmerBridge
             ValueTypeVector.New(in parameters, out var parametersVector);
             ValueTypeVector.New(in results, out var resultsVector);
 
-            return new FunctionType(WasmAPIs.wasm_functype_new(in parametersVector, resultsVector));
+            return new FunctionType(WasmAPIs.wasm_functype_new(in parametersVector, in resultsVector));
         }
 
         private static FunctionType New(in ValueTypeVector parameters, in ValueTypeVector results)
         {
-            return new FunctionType(WasmAPIs.wasm_functype_new(in parameters, results));
+            return new FunctionType(WasmAPIs.wasm_functype_new(in parameters, in results));
         }
 
-        internal FunctionType(IntPtr handle)
+        private FunctionType(IntPtr handle)
         {
             this.handle = new NativeHandle(handle);
         }

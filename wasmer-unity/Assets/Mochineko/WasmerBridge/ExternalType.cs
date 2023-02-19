@@ -28,8 +28,11 @@ namespace Mochineko.WasmerBridge
         
         internal FunctionType ToFunctionType()
         {
-            return new FunctionType(WasmAPIs.wasm_externtype_as_functype(handle));
+            return FunctionType.FromPointer(WasmAPIs.wasm_externtype_as_functype(handle));
         }
+
+        internal static ExternalType FromPointer(IntPtr ptr)
+            => new ExternalType(ptr);
         
         private ExternalType(IntPtr handle)
         { 

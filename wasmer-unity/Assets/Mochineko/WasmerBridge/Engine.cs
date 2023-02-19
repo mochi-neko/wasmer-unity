@@ -37,7 +37,7 @@ namespace Mochineko.WasmerBridge
         {
             handle.Dispose();
         }
-        
+
         private readonly NativeHandle handle;
 
         internal NativeHandle Handle
@@ -72,9 +72,9 @@ namespace Mochineko.WasmerBridge
             [DllImport(NativePlugin.LibraryName)]
             [return: OwnReceive]
             public static extern IntPtr wasm_engine_new();
-            
+
             [DllImport(NativePlugin.LibraryName)]
-            public static extern void wasm_engine_delete([OwnPass]IntPtr engine);
+            public static extern void wasm_engine_delete([OwnPass] IntPtr engine);
 
             [DllImport(NativePlugin.LibraryName)]
             [return: OwnReceive]
