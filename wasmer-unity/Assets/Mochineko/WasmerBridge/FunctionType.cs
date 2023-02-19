@@ -6,17 +6,9 @@ using Mochineko.WasmerBridge.Attributes;
 namespace Mochineko.WasmerBridge
 {
     [OwnPointed]
-    internal sealed class ValueType : IDisposable
+    internal sealed class FunctionType : IDisposable
     {
-        internal ValueKind ValueKind 
-            => (ValueKind)WasmAPIs.wasm_valtype_kind(handle);
-
-        internal static ValueType New(ValueKind kind)
-        {
-            return new ValueType(WasmAPIs.wasm_valtype_new((byte)kind));
-        }
-
-        private ValueType(IntPtr handle)
+        private FunctionType(IntPtr handle)
         {
             this.handle = new NativeHandle(handle);
         }
@@ -27,31 +19,30 @@ namespace Mochineko.WasmerBridge
         }
         
         private readonly NativeHandle handle;
-        
+
         internal NativeHandle Handle
         {
             get
             {
                 if (handle.IsInvalid)
                 {
-                    throw new ObjectDisposedException(typeof(ValueType).FullName);
+                    throw new ObjectDisposedException(typeof(FunctionType).FullName);
                 }
 
                 return handle;
             }
         }
-        
+
         internal sealed class NativeHandle : SafeHandleZeroOrMinusOneIsInvalid
         {
-            public NativeHandle(IntPtr handle)
-                : base(true)
+            public NativeHandle(IntPtr handle) : base(true)
             {
-                SetHandle(handle);
+                this.handle = handle;
             }
 
             protected override bool ReleaseHandle()
             {
-                WasmAPIs.wasm_valtype_delete(handle);
+                WasmAPIs.wasm_functype_delete(handle);
                 return true;
             }
         }
@@ -60,17 +51,24 @@ namespace Mochineko.WasmerBridge
         {
             [DllImport(NativePlugin.LibraryName)]
             [return: OwnReceive]
-            public static extern IntPtr wasm_valtype_new(byte valueKind);
-            
-            [DllImport(NativePlugin.LibraryName)]
-            public static extern void wasm_valtype_delete([OwnPass] IntPtr valueType);
-            
-            [DllImport(NativePlugin.LibraryName)]
-            [return: OwnReceive]
-            public static extern IntPtr wasm_valtype_copy(IntPtr valueType);
+            public static extern IntPtr wasm_functype_new(
+                [OwnPass] in ValueTypeVector parameters,
+                [OwnPass] in ValueTypeVector results);
 
             [DllImport(NativePlugin.LibraryName)]
-            public static extern byte wasm_valtype_kind([Const] NativeHandle valueType);
+            public static extern void wasm_functype_delete([OwnPass] IntPtr externalType);
+
+            [DllImport(NativePlugin.LibraryName)]
+            [return: OwnReceive]
+            public static extern IntPtr wasm_functype_copy([Const] NativeHandle externalType);
+            
+            [DllImport(NativePlugin.LibraryName)]
+            [return: Const]
+            public static extern unsafe ValueTypeVector* wasm_functype_params([Const] NativeHandle functionType);
+            
+            [DllImport(NativePlugin.LibraryName)]
+            [return: Const]
+            public static extern unsafe ValueTypeVector* wasm_functype_results([Const] NativeHandle functionType);
         }
     }
 }

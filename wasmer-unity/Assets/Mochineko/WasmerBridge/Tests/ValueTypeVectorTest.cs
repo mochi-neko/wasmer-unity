@@ -6,7 +6,6 @@ using UnityEngine.TestTools;
 namespace Mochineko.WasmerBridge.Tests
 {
     [TestFixture]
-    [Ignore("Remains crashes")]
     internal sealed class ValueTypeVectorTest
     {
         [Test, RequiresPlayMode(false)]

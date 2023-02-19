@@ -183,18 +183,25 @@ namespace Mochineko.WasmerBridge
         {
             [DllImport(NativePlugin.LibraryName)]
             [return: OwnReceive]
-            public static extern IntPtr
-                wasm_module_new(Store.NativeHandle store, [ConstVector] in ByteVector binary);
+            public static extern IntPtr wasm_module_new(
+                Store.NativeHandle store,
+                [ConstVector] in ByteVector binary);
 
             [DllImport(NativePlugin.LibraryName)]
             public static extern void wasm_module_delete([OwnPass] IntPtr module);
             
             [DllImport(NativePlugin.LibraryName)]
+            [return: OwnReceive]
+            public static extern IntPtr wasm_module_copy([Const] NativeHandle module);
+
+            [DllImport(NativePlugin.LibraryName)]
+            public static extern bool wasm_module_same([Const] NativeHandle left, [Const] NativeHandle right);
+
+            [DllImport(NativePlugin.LibraryName)]
             public static extern bool wasm_module_validate(Store.NativeHandle store, [ConstVector] in ByteVector binary);
             
-            // TODO:
-            //[DllImport(NativePlugin.LibraryName)]
-            //public static extern void wasm_module_imports(NativeHandle module, out ImportTypeArray importTypes);
+            [DllImport(NativePlugin.LibraryName)]
+            public static extern void wasm_module_imports([Const]NativeHandle module, [OwnOut] out ImportTypeVector importTypes);
 
             // TODO:
             //[DllImport(NativePlugin.LibraryName)]
