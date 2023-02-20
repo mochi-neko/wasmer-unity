@@ -42,7 +42,7 @@ namespace Mochineko.WasmerBridge
             binary = copied;
         }
 
-        internal static void FromString(string text, out ByteVector vector)
+        internal static void FromText(string text, out ByteVector vector)
         {
             if (string.IsNullOrEmpty(text))
             {
@@ -55,7 +55,7 @@ namespace Mochineko.WasmerBridge
             New(textBytes, out vector);
         }
 
-        internal new string ToString()
+        internal string ToText()
         {
             if (size == 0)
             {

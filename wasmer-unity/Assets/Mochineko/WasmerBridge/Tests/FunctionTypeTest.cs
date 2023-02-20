@@ -1,3 +1,4 @@
+using System;
 using FluentAssertions;
 using NUnit.Framework;
 using UnityEngine.TestTools;
@@ -32,6 +33,8 @@ namespace Mochineko.WasmerBridge.Tests
 
             functionType.Parameters.Length.Should().Be(parameterKinds.Length);
             functionType.Results.Length.Should().Be(resultsKind.Length);
+            
+            GC.Collect();
         }
     }
 }

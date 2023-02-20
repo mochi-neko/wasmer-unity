@@ -1,3 +1,4 @@
+using System;
 using FluentAssertions;
 using NUnit.Framework;
 using UnityEngine.TestTools;
@@ -12,6 +13,8 @@ namespace Mochineko.WasmerBridge.Tests
         {
             using var config = Config.New();
             config.Should().NotBeNull();
+            
+            GC.Collect();
         }
     }
 }

@@ -1,3 +1,4 @@
+using System;
 using FluentAssertions;
 using NUnit.Framework;
 using UnityEngine.TestTools;
@@ -16,6 +17,8 @@ namespace Mochineko.WasmerBridge.Tests
                 emptyArray.Should().NotBeNull();
                 emptyArray.size.Should().Be((nuint)0);
             }
+            
+            GC.Collect();
         }
 
         [Test, RequiresPlayMode(false)]
@@ -35,6 +38,8 @@ namespace Mochineko.WasmerBridge.Tests
                     managedBinary[i].Should().Be(binary[i]);
                 }
             }
+            
+            GC.Collect();
         }
         
         [Test, RequiresPlayMode(false)]
@@ -42,13 +47,15 @@ namespace Mochineko.WasmerBridge.Tests
         {
             var message = "message";
             
-            ByteVector.FromString(message, out var encoded);
-            encoded.size.Should().Be((nuint)7);
+            ByteVector.FromText(message, out var encoded);
             using (encoded)
             {
-                var decoded = encoded.ToString();
+                encoded.size.Should().Be((nuint)7);
+                var decoded = encoded.ToText();
                 decoded.Should().Be(message);
             }
+            
+            GC.Collect();
         }
     }
 }

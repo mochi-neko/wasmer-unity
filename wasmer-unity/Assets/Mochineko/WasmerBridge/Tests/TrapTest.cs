@@ -1,3 +1,4 @@
+using System;
 using FluentAssertions;
 using NUnit.Framework;
 using UnityEngine.TestTools;
@@ -19,6 +20,8 @@ namespace Mochineko.WasmerBridge.Tests
 
             var excludedMessage = trap.Message;
             excludedMessage.Should().Be(message);
+            
+            GC.Collect();
         }
     }
 }

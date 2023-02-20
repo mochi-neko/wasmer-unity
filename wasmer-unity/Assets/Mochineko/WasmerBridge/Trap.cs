@@ -20,14 +20,14 @@ namespace Mochineko.WasmerBridge
                 WasmAPIs.wasm_trap_message(handle, out var vector);
                 using (vector)
                 {
-                    return vector.ToString();
+                    return vector.ToText();
                 }
             }
         }
 
         internal static Trap New(Store store, string message)
         {
-            ByteVector.FromString(message, out var vector);
+            ByteVector.FromText(message, out var vector);
 
             using (vector)
             {

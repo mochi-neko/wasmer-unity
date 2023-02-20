@@ -1,3 +1,4 @@
+using System;
 using FluentAssertions;
 using NUnit.Framework;
 using UnityEngine.TestTools;
@@ -12,6 +13,8 @@ namespace Mochineko.WasmerBridge.Tests
         {
             using var engine = Engine.New();
             engine.Should().NotBeNull();
+            
+            GC.Collect();
         }
 
         [Test, RequiresPlayMode(false)]
@@ -20,6 +23,8 @@ namespace Mochineko.WasmerBridge.Tests
             var config = Config.New();
             using var engine = Engine.New(config);
             engine.Should().NotBeNull();
+            
+            GC.Collect();
         }
     }
 }

@@ -12,8 +12,8 @@ namespace Mochineko.WasmerBridge
             {
                 throw new ArgumentNullException(nameof(wat));
             }
-            
-            ByteVector.FromString(wat, out var watVector);
+
+            ByteVector.FromText(wat, out var watVector);
             using (watVector)
             {
                 if (watVector.size == 0)
@@ -33,7 +33,7 @@ namespace Mochineko.WasmerBridge
         private static class WasmerAPIs
         {
             [DllImport(NativePlugin.LibraryName)]
-            public static extern void wat2wasm([ConstVector]in ByteVector wat, [OwnOut]out ByteVector native);
+            public static extern void wat2wasm([ConstVector] in ByteVector wat, [OwnOut] out ByteVector native);
         }
     }
 }

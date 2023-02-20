@@ -22,7 +22,7 @@ namespace Mochineko.WasmerBridge
 
             var engine = new Engine(WasmAPIs.wasm_engine_new_with_config(config.Handle));
 
-            // NOTE: Pass ownership to native.
+            // Passes ownership to native.
             config.Handle.SetHandleAsInvalid();
 
             return engine;

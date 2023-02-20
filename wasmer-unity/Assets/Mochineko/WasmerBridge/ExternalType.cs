@@ -23,17 +23,29 @@ namespace Mochineko.WasmerBridge
 
         internal static ExternalType ToExternalType(FunctionType functionType)
         {
+            if (functionType.Handle.IsInvalid)
+            {
+                throw new ObjectDisposedException(typeof(FunctionType).FullName);
+            }
+            
             return new ExternalType(WasmAPIs.wasm_functype_as_externtype(functionType.Handle));
         }
         
         internal FunctionType ToFunctionType()
         {
-            return FunctionType.FromPointer(WasmAPIs.wasm_externtype_as_functype(handle));
+            if (handle.IsInvalid)
+            {
+                throw new ObjectDisposedException(typeof(ExternalType).FullName);
+            }
+            
+            return FunctionType.FromPointer(WasmAPIs.wasm_externtype_as_functype_const(handle));
         }
 
         internal static ExternalType FromPointer(IntPtr ptr)
-            => new ExternalType(ptr);
-        
+        {
+            return new ExternalType(ptr);
+        }
+
         private ExternalType(IntPtr handle)
         { 
             this.handle = new NativeHandle(handle);
@@ -68,6 +80,7 @@ namespace Mochineko.WasmerBridge
 
             protected override bool ReleaseHandle()
             {
+                // ExternalType does not receive ownership from types.
                 WasmAPIs.wasm_externtype_delete(handle);
                 return true;
             }

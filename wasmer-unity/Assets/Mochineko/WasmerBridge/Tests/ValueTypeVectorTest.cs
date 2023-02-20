@@ -22,6 +22,8 @@ namespace Mochineko.WasmerBridge.Tests
             {
                 emptyVector.size.Should().Be((nuint)0);   
             }
+            
+            GC.Collect();
         }
 
         [Test, RequiresPlayMode(false)]
@@ -50,6 +52,8 @@ namespace Mochineko.WasmerBridge.Tests
                 excludedKinds[4].Should().Be(ValueKind.AnyRef);
                 excludedKinds[5].Should().Be(ValueKind.FuncRef);
             }
+            
+            GC.Collect();
         }
     }
 }

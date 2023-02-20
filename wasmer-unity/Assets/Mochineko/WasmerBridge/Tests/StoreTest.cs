@@ -1,3 +1,4 @@
+using System;
 using FluentAssertions;
 using NUnit.Framework;
 using UnityEngine.TestTools;
@@ -14,6 +15,8 @@ namespace Mochineko.WasmerBridge.Tests
 
             using var store = Store.New(engine);
             store.Should().NotBeNull();
+            
+            GC.Collect();
         }   
     }
 }

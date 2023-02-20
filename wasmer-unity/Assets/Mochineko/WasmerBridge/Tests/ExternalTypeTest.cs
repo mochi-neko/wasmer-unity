@@ -20,10 +20,16 @@ namespace Mochineko.WasmerBridge.Tests
             externalType.Should().NotBeNull();
             externalType.Kind.Should().Be(ExternalKind.Function);
 
-            var excludedFunctionType = externalType.ToFunctionType();
+            using var excludedFunctionType = externalType.ToFunctionType();
             excludedFunctionType.Should().NotBeNull();
             excludedFunctionType.Parameters.Length.Should().Be(0);
             excludedFunctionType.Results.Length.Should().Be(0);
+            
+            // Original FunctionType has ownerships of ExternalType and excluded FunctionType from ExternalType.
+            externalType.Handle.SetHandleAsInvalid();
+            excludedFunctionType.Handle.SetHandleAsInvalid();
+            
+            GC.Collect();
         }
     }
 }

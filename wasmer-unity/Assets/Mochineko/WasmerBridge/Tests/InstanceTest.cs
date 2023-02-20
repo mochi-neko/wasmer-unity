@@ -1,3 +1,4 @@
+using System;
 using NUnit.Framework;
 using UnityEngine.TestTools;
 
@@ -18,6 +19,8 @@ namespace Mochineko.WasmerBridge.Tests
                 using var module = Module.New(store, "empty", in wasm);
                 //using var instance = Instance.New(store, module,);
             }
+            
+            GC.Collect();
         }
     }
 }

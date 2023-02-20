@@ -1,3 +1,4 @@
+using System;
 using FluentAssertions;
 using NUnit.Framework;
 using UnityEngine.TestTools;
@@ -22,6 +23,8 @@ namespace Mochineko.WasmerBridge.Tests
                     excluded[i].Should().Be(binary[i]);
                 }
             }
+            
+            GC.Collect();
         }
     }
 }

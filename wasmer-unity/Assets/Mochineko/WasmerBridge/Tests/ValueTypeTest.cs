@@ -1,3 +1,4 @@
+using System;
 using FluentAssertions;
 using NUnit.Framework;
 using UnityEngine.TestTools;
@@ -19,6 +20,8 @@ namespace Mochineko.WasmerBridge.Tests
             using var valueType = ValueType.New(valueKind);
             valueType.Should().NotBeNull();
             valueType.Kind.Should().Be(valueKind);
+            
+            GC.Collect();
         }
     }
 }

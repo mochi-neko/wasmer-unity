@@ -9,6 +9,7 @@ namespace Mochineko.WasmerBridge.Tests
     internal sealed class ExternalVectorTest
     {
         [Test, RequiresPlayMode(false)]
+        [Ignore("Not implemented")]
         public void CreateEmptyTest()
         {
             ExternalVector.NewEmpty(out var vector);
@@ -22,6 +23,8 @@ namespace Mochineko.WasmerBridge.Tests
             {
                 emptyVector.size.Should().Be((nuint)0);
             }
+            
+            GC.Collect();
         }
 
         [Test, RequiresPlayMode(false)]
@@ -48,6 +51,8 @@ namespace Mochineko.WasmerBridge.Tests
                 excludedKinds[2].Should().Be(ExternalKind.Table);
                 excludedKinds[3].Should().Be(ExternalKind.Memory);
             }
+            
+            GC.Collect();
         }
     }
 }

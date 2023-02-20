@@ -8,6 +8,78 @@ namespace Mochineko.WasmerBridge
     [OwnPointed]
     internal sealed class ImportType : IDisposable
     {
+        internal string Module
+        {
+            get
+            {
+                if (handle.IsInvalid)
+                {
+                    throw new ObjectDisposedException(typeof(ImportType).FullName);
+                }
+
+                unsafe
+                {
+                    var ptr = WasmAPIs.wasm_importtype_module(handle);
+                    return ptr->ToText();
+                }
+            }
+        }
+        
+        internal string Name
+        {
+            get
+            {
+                if (handle.IsInvalid)
+                {
+                    throw new ObjectDisposedException(typeof(ImportType).FullName);
+                }
+
+                unsafe
+                {
+                    var ptr = WasmAPIs.wasm_importtype_name(handle);
+                    return ptr->ToText();
+                }
+            }
+        }
+
+        internal ExternalType Type
+        {
+            get
+            {
+                if (handle.IsInvalid)
+                {
+                    throw new ObjectDisposedException(typeof(ImportType).FullName);
+                }
+
+                var ptr = WasmAPIs.wasm_importtype_type(handle);
+                return ExternalType.FromPointer(ptr);
+            }
+        }
+
+        internal static ImportType New(string module, string functionName, FunctionType functionType)
+        {
+            return New(module, functionName, ExternalType.ToExternalType(functionType));
+        }
+
+        private static ImportType New(string module, string name, ExternalType type)
+        {
+            // Passes name vectors ownerships to native, then vectors are released by owner:ImportType.
+            ByteVector.FromText(module, out var moduleVector);
+            ByteVector.FromText(name, out var nameVector);
+
+            return New(in moduleVector, in nameVector, type);
+        }
+
+        private static ImportType New(in ByteVector module, in ByteVector name, ExternalType type)
+        {
+            var importType = new ImportType(WasmAPIs.wasm_importtype_new(in module, in name, type.Handle));
+
+            // Passes ownership to native.
+            // type.Handle.SetHandleAsInvalid();
+            
+            return importType;
+        }
+
         private ImportType(IntPtr handle)
         {
             this.handle = new NativeHandle(handle);
@@ -17,7 +89,7 @@ namespace Mochineko.WasmerBridge
         {
             handle.Dispose();
         }
-        
+
         private readonly NativeHandle handle;
 
         internal NativeHandle Handle
@@ -52,27 +124,27 @@ namespace Mochineko.WasmerBridge
             [DllImport(NativePlugin.LibraryName)]
             [return: OwnReceive]
             public static extern IntPtr wasm_importtype_new(
-                [OwnPass] Module.NativeHandle module,
+                [OwnPass] in ByteVector module,
                 [OwnPass] in ByteVector name,
-                [OwnPass] in ExternalType externalType);
-            
+                [OwnPass] ExternalType.NativeHandle type);
+
             [DllImport(NativePlugin.LibraryName)]
-            public static extern void wasm_importtype_delete([OwnPass] IntPtr external);
+            public static extern void wasm_importtype_delete([OwnPass] IntPtr importType);
 
             [DllImport(NativePlugin.LibraryName)]
             [return: OwnReceive]
-            public static extern IntPtr wasm_importtype_copy([Const] NativeHandle external);
+            public static extern IntPtr wasm_importtype_copy([Const] NativeHandle importType);
 
             [DllImport(NativePlugin.LibraryName)]
             public static extern bool wasm_importtype_same([Const] NativeHandle left, [Const] NativeHandle right);
-            
+
             [DllImport(NativePlugin.LibraryName)]
             [return: Const]
             public static extern unsafe ByteVector* wasm_importtype_module([Const] NativeHandle importType);
 
             [DllImport(NativePlugin.LibraryName)]
             [return: Const]
-            public static extern IntPtr wasm_importtype_name([Const] NativeHandle importType);
+            public static extern unsafe ByteVector* wasm_importtype_name([Const] NativeHandle importType);
 
             [DllImport(NativePlugin.LibraryName)]
             [return: Const]

@@ -1,7 +1,6 @@
 using System;
 using FluentAssertions;
 using NUnit.Framework;
-using UnityEngine;
 using UnityEngine.TestTools;
 
 namespace Mochineko.WasmerBridge.Tests
@@ -24,6 +23,8 @@ namespace Mochineko.WasmerBridge.Tests
 
             Module.Validate(store, binary)
                 .Should().BeFalse();
+            
+            GC.Collect();
         }
 
         [Test, RequiresPlayMode(false)]
@@ -37,6 +38,8 @@ namespace Mochineko.WasmerBridge.Tests
                 using var module = Module.New(store, "empty", in wasm);
                 module.Should().NotBeNull();
             }
+            
+            GC.Collect();
         }
 
         [Test, RequiresPlayMode(false)]
@@ -50,6 +53,8 @@ namespace Mochineko.WasmerBridge.Tests
                 using var module = Module.New(store, "empty", in wasm);
                 module.Should().NotBeNull();
             }
+            
+            GC.Collect();
         }
 
         [Test, RequiresPlayMode(false)]
@@ -68,6 +73,8 @@ namespace Mochineko.WasmerBridge.Tests
                 var deserialized = Module.Deserialize(store, "empty", serialized);
                 deserialized.Should().NotBeNull();
             }
+            
+            GC.Collect();
         }
     }
 }
