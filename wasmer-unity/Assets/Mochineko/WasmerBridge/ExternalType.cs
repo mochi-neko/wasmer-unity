@@ -38,7 +38,7 @@ namespace Mochineko.WasmerBridge
                 throw new ObjectDisposedException(typeof(ExternalType).FullName);
             }
 
-            return FunctionType.FromPointer(WasmAPIs.wasm_externtype_as_functype_const(handle));
+            return FunctionType.FromPointer(WasmAPIs.wasm_externtype_as_functype(handle));
         }
 
         internal static ExternalType FromPointer(IntPtr ptr)
@@ -80,7 +80,6 @@ namespace Mochineko.WasmerBridge
 
             protected override bool ReleaseHandle()
             {
-                // ExternalType does not receive ownership from types.
                 WasmAPIs.wasm_externtype_delete(handle);
                 return true;
             }

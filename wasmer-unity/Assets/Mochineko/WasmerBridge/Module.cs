@@ -93,6 +93,11 @@ namespace Mochineko.WasmerBridge
 
         public void Serialize(out ReadOnlySpan<byte> serialized)
         {
+            if (handle.IsInvalid)
+            {
+                throw new ObjectDisposedException(typeof(Module).FullName);
+            }
+            
             SerializeNative(out var binary);
 
             using (binary)
@@ -109,11 +114,31 @@ namespace Mochineko.WasmerBridge
 
         private void SerializeNative(out ByteVector binary)
         {
+            if (handle.IsInvalid)
+            {
+                throw new ObjectDisposedException(typeof(Module).FullName);
+            }
+            
             WasmAPIs.wasm_module_serialize(handle, out binary);
         }
 
         public static Module Deserialize(Store store, string name, in ReadOnlySpan<byte> binary)
         {
+            if (store is null)
+            {
+                throw new ArgumentNullException(nameof(store));
+            }
+
+            if (string.IsNullOrEmpty(name))
+            {
+                throw new ArgumentNullException(nameof(name));
+            }
+
+            if (binary.Length == 0)
+            {
+                throw new ArgumentNullException(nameof(binary));
+            }
+            
             ByteVector.New(in binary, out var vector);
             using (vector)
             {
@@ -131,6 +156,11 @@ namespace Mochineko.WasmerBridge
             if (string.IsNullOrEmpty(name))
             {
                 throw new ArgumentNullException(nameof(name));
+            }
+            
+            if (binary.size == 0)
+            {
+                throw new ArgumentNullException(nameof(binary));
             }
 
             return new Module(

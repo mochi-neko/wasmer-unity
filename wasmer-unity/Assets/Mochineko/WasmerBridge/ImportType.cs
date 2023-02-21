@@ -42,7 +42,25 @@ namespace Mochineko.WasmerBridge
             }
         }
 
-        internal ExternalType Type
+        internal ExternalKind Kind
+        {
+            get
+            {
+                if (handle.IsInvalid)
+                {
+                    throw new ObjectDisposedException(typeof(ImportType).FullName);
+                }
+
+                using var type = Type;
+                var kind = type.Kind;
+                // Does not receive ownership of ExternalType from ImportType.
+                type.Handle.SetHandleAsInvalid();
+
+                return kind;
+            }
+        }
+
+        private ExternalType Type
         {
             get
             {
@@ -58,7 +76,12 @@ namespace Mochineko.WasmerBridge
 
         internal static ImportType New(string module, string functionName, FunctionType functionType)
         {
-            return New(module, functionName, ExternalType.ToExternalType(functionType));
+            var importType = New(module, functionName, ExternalType.ToExternalType(functionType));
+
+            // Passes ownership to native.
+            functionType.Handle.SetHandleAsInvalid();
+            
+            return importType;
         }
 
         private static ImportType New(string module, string name, ExternalType type)
@@ -75,7 +98,7 @@ namespace Mochineko.WasmerBridge
             var importType = new ImportType(WasmAPIs.wasm_importtype_new(in module, in name, type.Handle));
 
             // Passes ownership to native.
-            // type.Handle.SetHandleAsInvalid();
+            type.Handle.SetHandleAsInvalid();
             
             return importType;
         }

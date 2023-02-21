@@ -10,12 +10,11 @@ namespace Mochineko.WasmerBridge.Tests
     {
         [Test]
         [RequiresPlayMode(false)]
-        [Ignore("Remains Crashes")]
         public void CreateImportTypeByEmptyFunctionTest()
         {
             var moduleName = "ModuleName";
             var functionName = "FunctionName";
-            var functionType = FunctionType.New(
+            using var functionType = FunctionType.New(
                 Array.Empty<ValueKind>(),
                 Array.Empty<ValueKind>());
 
@@ -23,7 +22,7 @@ namespace Mochineko.WasmerBridge.Tests
             importType.Should().NotBeNull();
             importType.Module.Should().Be(moduleName);
             importType.Name.Should().Be(functionName);
-            importType.Type.Kind.Should().Be(ExternalKind.Function);
+            importType.Kind.Should().Be(ExternalKind.Function);
 
             GC.Collect();
         }

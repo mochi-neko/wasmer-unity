@@ -44,7 +44,7 @@ The following are the best features I think:
 - [ ] TableType
 - [ ] MemoryType
 - [ ] ExternalType
-- [ ] ImportType
+- [x] ImportType
 - [ ] ExportType
 - [ ] Trap
 - [ ] Foreign
