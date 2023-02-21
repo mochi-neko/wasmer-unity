@@ -9,37 +9,13 @@ namespace Mochineko.WasmerBridge
     internal sealed class ExternalType : IDisposable
     {
         internal ExternalKind Kind
-        {
-            get
-            {
-                if (handle.IsInvalid)
-                {
-                    throw new ObjectDisposedException(typeof(ExternalType).FullName);
-                }
-
-                return (ExternalKind)WasmAPIs.wasm_externtype_kind(handle);
-            }
-        }
+            => (ExternalKind)WasmAPIs.wasm_externtype_kind(Handle);
 
         internal static ExternalType ToExternalType(FunctionType functionType)
-        {
-            if (functionType.Handle.IsInvalid)
-            {
-                throw new ObjectDisposedException(typeof(FunctionType).FullName);
-            }
-
-            return new ExternalType(WasmAPIs.wasm_functype_as_externtype(functionType.Handle));
-        }
+            => new ExternalType(WasmAPIs.wasm_functype_as_externtype(functionType.Handle));
 
         internal FunctionType ToFunctionType()
-        {
-            if (handle.IsInvalid)
-            {
-                throw new ObjectDisposedException(typeof(ExternalType).FullName);
-            }
-
-            return FunctionType.FromPointer(WasmAPIs.wasm_externtype_as_functype(handle));
-        }
+            => FunctionType.FromPointer(WasmAPIs.wasm_externtype_as_functype(Handle));
 
         internal static ExternalType FromPointer(IntPtr ptr)
         {

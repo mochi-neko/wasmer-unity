@@ -12,14 +12,9 @@ namespace Mochineko.WasmerBridge
         {
             get
             {
-                if (handle.IsInvalid)
-                {
-                    throw new ObjectDisposedException(typeof(FunctionType).FullName);
-                }
-
                 unsafe
                 {
-                    var ptr = WasmAPIs.wasm_functype_params(handle);
+                    var ptr = WasmAPIs.wasm_functype_params(Handle);
                     ptr->ToKinds(out var kinds);
                     return kinds;
                 }
@@ -30,14 +25,9 @@ namespace Mochineko.WasmerBridge
         {
             get
             {
-                if (handle.IsInvalid)
-                {
-                    throw new ObjectDisposedException(typeof(FunctionType).FullName);
-                }
-
                 unsafe
                 {
-                    var ptr = WasmAPIs.wasm_functype_results(handle);
+                    var ptr = WasmAPIs.wasm_functype_results(Handle);
                     ptr->ToKinds(out var kinds);
                     return kinds;
                 }

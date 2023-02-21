@@ -12,14 +12,9 @@ namespace Mochineko.WasmerBridge
         {
             get
             {
-                if (handle.IsInvalid)
-                {
-                    throw new ObjectDisposedException(typeof(ImportType).FullName);
-                }
-
                 unsafe
                 {
-                    var ptr = WasmAPIs.wasm_importtype_module(handle);
+                    var ptr = WasmAPIs.wasm_importtype_module(Handle);
                     return ptr->ToText();
                 }
             }
@@ -29,14 +24,9 @@ namespace Mochineko.WasmerBridge
         {
             get
             {
-                if (handle.IsInvalid)
-                {
-                    throw new ObjectDisposedException(typeof(ImportType).FullName);
-                }
-
                 unsafe
                 {
-                    var ptr = WasmAPIs.wasm_importtype_name(handle);
+                    var ptr = WasmAPIs.wasm_importtype_name(Handle);
                     return ptr->ToText();
                 }
             }
@@ -46,11 +36,6 @@ namespace Mochineko.WasmerBridge
         {
             get
             {
-                if (handle.IsInvalid)
-                {
-                    throw new ObjectDisposedException(typeof(ImportType).FullName);
-                }
-
                 using var type = Type;
                 var kind = type.Kind;
                 // Does not receive ownership of ExternalType from ImportType.
@@ -64,12 +49,7 @@ namespace Mochineko.WasmerBridge
         {
             get
             {
-                if (handle.IsInvalid)
-                {
-                    throw new ObjectDisposedException(typeof(ImportType).FullName);
-                }
-
-                var ptr = WasmAPIs.wasm_importtype_type(handle);
+                var ptr = WasmAPIs.wasm_importtype_type(Handle);
                 return ExternalType.FromPointer(ptr);
             }
         }

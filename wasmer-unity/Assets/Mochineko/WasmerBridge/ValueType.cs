@@ -9,17 +9,7 @@ namespace Mochineko.WasmerBridge
     internal sealed class ValueType : IDisposable
     {
         internal ValueKind Kind
-        {
-            get
-            {
-                if (handle.IsInvalid)
-                {
-                    throw new ObjectDisposedException(typeof(ValueType).FullName);
-                }
-
-                return (ValueKind)WasmAPIs.wasm_valtype_kind(handle);
-            }
-        }
+            => (ValueKind)WasmAPIs.wasm_valtype_kind(Handle);
 
         internal static ValueType New(ValueKind kind)
         {

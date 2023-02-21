@@ -12,12 +12,7 @@ namespace Mochineko.WasmerBridge
         {
             get
             {
-                if (handle.IsInvalid)
-                {
-                    throw new ObjectDisposedException(typeof(Trap).FullName);
-                }
-
-                WasmAPIs.wasm_trap_message(handle, out var vector);
+                WasmAPIs.wasm_trap_message(Handle, out var vector);
                 using (vector)
                 {
                     return vector.ToText();

@@ -10,8 +10,12 @@ namespace Mochineko.WasmerBridge
     {
         public string Name { get; }
 
-        // private readonly ImportType[] importTypes;
-        // private readonly ExportType[] exportTypes;
+        internal void ImportTypes (out ImportTypeVector vector)
+        {
+            handle.ThrowsIfObjectIsDisposed();
+            
+            WasmAPIs.wasm_module_imports(handle, out vector);
+        }
 
         public static bool Validate(Store store, in ReadOnlySpan<byte> binary)
         {
@@ -75,28 +79,12 @@ namespace Mochineko.WasmerBridge
 
             var module = new Module(handle, name);
 
-            // WasmAPIs.wasm_module_imports(handle, out var imports);
-            // using (var _ = imports)
-            // {
-            //     this.importTypes = imports.ToImportArray();
-            // }
-            //
-            // WasmAPIs.wasm_module_exports(handle, out var exports);
-            //
-            // using (var _ = exports)
-            // {
-            //     this.exportTypes = exports.ToExportArray();
-            // }
-
             return module;
         }
 
         public void Serialize(out ReadOnlySpan<byte> serialized)
         {
-            if (handle.IsInvalid)
-            {
-                throw new ObjectDisposedException(typeof(Module).FullName);
-            }
+            handle.ThrowsIfObjectIsDisposed();
             
             SerializeNative(out var binary);
 
@@ -114,10 +102,7 @@ namespace Mochineko.WasmerBridge
 
         private void SerializeNative(out ByteVector binary)
         {
-            if (handle.IsInvalid)
-            {
-                throw new ObjectDisposedException(typeof(Module).FullName);
-            }
+            handle.ThrowsIfObjectIsDisposed();
             
             WasmAPIs.wasm_module_serialize(handle, out binary);
         }
@@ -185,10 +170,7 @@ namespace Mochineko.WasmerBridge
         {
             get
             {
-                if (handle.IsInvalid)
-                {
-                    throw new ObjectDisposedException(typeof(Module).FullName);
-                }
+                handle.ThrowsIfObjectIsDisposed();
 
                 return handle;
             }
@@ -206,6 +188,14 @@ namespace Mochineko.WasmerBridge
             {
                 WasmAPIs.wasm_module_delete(handle);
                 return true;
+            }
+
+            public void ThrowsIfObjectIsDisposed()
+            {
+                if (IsInvalid)
+                {
+                    throw new ObjectDisposedException(typeof(Module).FullName);
+                }
             }
         }
 

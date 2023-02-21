@@ -76,5 +76,25 @@ namespace Mochineko.WasmerBridge.Tests
             
             GC.Collect();
         }
+        
+        [Test, RequiresPlayMode(false)]
+        public void ImportTypesTest()
+        {
+            using var engine = Engine.New();
+            using var store = Store.New(engine);
+            ByteVector.New(MockResource.EmptyWasmBinary, out var wasm);
+            using (wasm)
+            {
+                using var module = Module.New(store, "empty", in wasm);
+                
+                module.ImportTypes(out var importTypes);
+                using (importTypes)
+                {
+                    importTypes.size.Should().Be((nuint)0);
+                }
+            }
+            
+            GC.Collect();
+        }
     }
 }
