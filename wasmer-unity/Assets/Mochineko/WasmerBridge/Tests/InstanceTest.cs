@@ -1,4 +1,5 @@
 using System;
+using FluentAssertions;
 using NUnit.Framework;
 using UnityEngine.TestTools;
 
@@ -8,8 +9,7 @@ namespace Mochineko.WasmerBridge.Tests
     internal sealed class InstanceTest
     {
         [Test, RequiresPlayMode(false)]
-        [Ignore("Not implemented")]
-        public void InstantiateTest()
+        public void InstantiateEmptyModuleTest()
         {
             using var engine = Engine.New();
             using var store = Store.New(engine);
@@ -17,7 +17,23 @@ namespace Mochineko.WasmerBridge.Tests
             using (wasm)
             {
                 using var module = Module.New(store, in wasm);
-                //using var instance = Instance.New(store, module,);
+                
+                var kinds = new[]
+                {
+                    ExternalKind.Function
+                };
+                ExternalVector.New(kinds, out var imports);
+                using (imports)
+                {
+
+                    using var instance = Instance.New(store, module, in imports);
+                    instance.Should().NotBeNull();
+                    instance.Exports(out var exports);
+                    using (exports)
+                    {
+                        exports.size.Should().Be((nuint)0);
+                    }
+                }
             }
             
             GC.Collect();

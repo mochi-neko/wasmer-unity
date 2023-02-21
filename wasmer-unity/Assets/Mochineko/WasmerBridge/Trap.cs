@@ -20,6 +20,21 @@ namespace Mochineko.WasmerBridge
             }
         }
 
+        internal static Trap FromPointer(IntPtr ptr)
+        {
+            return new Trap(ptr);
+        }
+        
+        internal static Trap NewWithEmptyMessage(Store store)
+        {
+            ByteVector.NewEmpty(out var vector);
+
+            using (vector)
+            {
+                return New(store, in vector);
+            }
+        }
+
         internal static Trap New(Store store, string message)
         {
             ByteVector.FromText(message, out var vector);

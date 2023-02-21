@@ -100,12 +100,12 @@ namespace Mochineko.WasmerBridge
 
             [DllImport(NativePlugin.LibraryName)]
             public static extern void wasm_functype_delete(
-                [OwnPass] [In] IntPtr externalType);
+                [OwnPass] [In] IntPtr functionType);
 
             [DllImport(NativePlugin.LibraryName)]
             [return: OwnReceive]
             public static extern IntPtr wasm_functype_copy(
-                [Const] NativeHandle externalType);
+                [Const] NativeHandle functionType);
 
             [DllImport(NativePlugin.LibraryName)]
             [return: Const]

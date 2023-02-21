@@ -9,23 +9,6 @@ namespace Mochineko.WasmerBridge.Tests
     {
         [Test, RequiresPlayMode(false)]
         [Ignore("Not Implemented")]
-        public void InstantiateModuleTest()
-        {
-            using var engine = Engine.New();
-            using var store = Store.New(engine);
-            ByteVector.New(MockResource.EmptyWasmBinary, out var wasm);
-            using (wasm)
-            {
-                using var module = Module.New(store, wasm);
-                //using var importObject = new ImportObject();
-
-                //var instance = new Instantiate(store, module, inportObject);
-                //instance.Should().NotBeNull();
-            }
-        }
-
-        [Test, RequiresPlayMode(false)]
-        [Ignore("Not Implemented")]
         public void HelloWorld()
         {
             // WebAssembly Text Format

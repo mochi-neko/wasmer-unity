@@ -8,11 +8,18 @@ namespace Mochineko.WasmerBridge
     [OwnPointed]
     public sealed class Instance : IDisposable
     {
-        internal static unsafe Instance New(Store store, Module module, in ExternalVector imports, in Trap trap)
+        internal void Exports(out ExternalVector exports)
         {
-            // TODO:
-            //return new Instance(WasmAPIs.wasm_instance_new(store.Handle, module.Handle, in imports, &trap);
-            throw new NotImplementedException();
+            WasmAPIs.wasm_instance_exports(Handle, out exports);
+        }
+
+        internal static Instance New(Store store, Module module, in ExternalVector imports)
+        {
+            TrapPointer.New(store, out var trapPointer);
+            
+            return new Instance(WasmAPIs.wasm_instance_new(store.Handle, module.Handle, in imports, in trapPointer));
+            
+            // TODO: Error handling by TrapPointer
         }
 
         private Instance(IntPtr handle)
@@ -59,20 +66,20 @@ namespace Mochineko.WasmerBridge
         {
             [DllImport(NativePlugin.LibraryName)]
             [return: OwnReceive]
-            public static extern unsafe void wasm_instance_new(
+            public static extern IntPtr wasm_instance_new(
                 Store.NativeHandle store,
                 [Const] Module.NativeHandle module,
                 [ConstVector] in ExternalVector imports,
-                [OwnPass] [In] Trap.NativeHandle trap);
+                [OwnPass] in TrapPointer trapPinter);
 
             [DllImport(NativePlugin.LibraryName)]
             public static extern void wasm_instance_delete(
                 [OwnPass] [In] IntPtr instance);
 
             [DllImport(NativePlugin.LibraryName)]
-            public static extern unsafe void wasm_instance_exports(
+            public static extern void wasm_instance_exports(
                 [Const] NativeHandle instance,
-                [OwnOut] [Out] out ExternalVector externalVector);
+                [OwnOut] [Out] out ExternalVector exports);
         }
     }
 }
