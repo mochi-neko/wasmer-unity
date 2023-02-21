@@ -26,51 +26,63 @@ namespace Mochineko.WasmerBridge.Tests
             
             GC.Collect();
         }
+        
+        [Test, RequiresPlayMode(false)]
+        public void CompileEmptyWasmTest()
+        {
+            using var engine = Engine.New();
+            using var store = Store.New(engine);
+            ByteVector.New(MockResource.EmptyWasmBinary, out var wasm);
+            using (wasm)
+            {
+                using var module = Module.New(store, in wasm);
+                module.Should().NotBeNull();
+            }
+            
+            GC.Collect();
+        }
 
         [Test, RequiresPlayMode(false)]
-        public void CompileWatTest()
+        public void CompileEmptyWatTest()
         {
             using var engine = Engine.New();
             using var store = Store.New(engine);
             MockResource.EmptyWat.FromWatToWasm(out var wasm);
             using (wasm)
             {
-                using var module = Module.New(store, "empty", in wasm);
+                using var module = Module.New(store, in wasm);
                 module.Should().NotBeNull();
+                
+                module.Imports(out var imports);
+                using (imports)
+                {
+                    imports.size.Should().Be((nuint)0);
+                }
+                
+                module.Exports(out var exports);
+                using (exports)
+                {
+                    exports.size.Should().Be((nuint)0);
+                }
             }
             
             GC.Collect();
         }
 
         [Test, RequiresPlayMode(false)]
-        public void CompileWasmTest()
+        public void SerializeEmptyWasmTest()
         {
             using var engine = Engine.New();
             using var store = Store.New(engine);
             ByteVector.New(MockResource.EmptyWasmBinary, out var wasm);
             using (wasm)
             {
-                using var module = Module.New(store, "empty", in wasm);
-                module.Should().NotBeNull();
-            }
-            
-            GC.Collect();
-        }
-
-        [Test, RequiresPlayMode(false)]
-        public void SerializeTest()
-        {
-            using var engine = Engine.New();
-            using var store = Store.New(engine);
-            ByteVector.New(MockResource.EmptyWasmBinary, out var wasm);
-            using (wasm)
-            {
-                using var module = Module.New(store, "empty", in wasm);
+                using var module = Module.New(store, in wasm);
 
                 module.Serialize(out var serialized);
                 serialized.Length.Should().NotBe(0);
 
-                var deserialized = Module.Deserialize(store, "empty", serialized);
+                var deserialized = Module.Deserialize(store, serialized);
                 deserialized.Should().NotBeNull();
             }
             
@@ -78,19 +90,26 @@ namespace Mochineko.WasmerBridge.Tests
         }
         
         [Test, RequiresPlayMode(false)]
-        public void ImportTypesTest()
+        public void CompileHelloWorldWatTest()
         {
             using var engine = Engine.New();
             using var store = Store.New(engine);
-            ByteVector.New(MockResource.EmptyWasmBinary, out var wasm);
+            MockResource.HelloWorldWat.FromWatToWasm(out var wasm);
             using (wasm)
             {
-                using var module = Module.New(store, "empty", in wasm);
+                using var module = Module.New(store, in wasm);
+                module.Should().NotBeNull();
                 
-                module.ImportTypes(out var importTypes);
-                using (importTypes)
+                module.Imports(out var imports);
+                using (imports)
                 {
-                    importTypes.size.Should().Be((nuint)0);
+                    imports.size.Should().Be((nuint)1);
+                }
+                
+                module.Exports(out var exports);
+                using (exports)
+                {
+                    exports.size.Should().Be((nuint)1);
                 }
             }
             

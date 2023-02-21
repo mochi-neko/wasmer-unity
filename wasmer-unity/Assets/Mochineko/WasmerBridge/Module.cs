@@ -8,13 +8,14 @@ namespace Mochineko.WasmerBridge
     [OwnPointed]
     public sealed class Module : IDisposable
     {
-        public string Name { get; }
-
-        internal void ImportTypes (out ImportTypeVector vector)
+        internal void Imports (out ImportTypeVector vector)
         {
-            handle.ThrowsIfObjectIsDisposed();
-            
-            WasmAPIs.wasm_module_imports(handle, out vector);
+            WasmAPIs.wasm_module_imports(Handle, out vector);
+        }
+        
+        internal void Exports (out ExportTypeVector vector)
+        {
+            WasmAPIs.wasm_module_exports(Handle, out vector);
         }
 
         public static bool Validate(Store store, in ReadOnlySpan<byte> binary)
@@ -36,34 +37,29 @@ namespace Mochineko.WasmerBridge
             }
         }
 
-        public static Module NewFromBinary(Store store, string name, in ReadOnlySpan<byte> wasm)
+        public static Module NewFromBinary(Store store, in ReadOnlySpan<byte> wasm)
         {
             ByteVector.New(in wasm, out var vector);
             using (vector)
             {
-                return New(store, name, in vector);
+                return New(store, in vector);
             }
         }
 
-        public static Module NewFromWat(Store store, string name, string wat)
+        public static Module NewFromWat(Store store, string wat)
         {
             wat.FromWatToWasm(out var wasm);
             using (wasm)
             {
-                return New(store, name, wasm);
+                return New(store, wasm);
             }
         }
 
-        internal static Module New(Store store, string name, in ByteVector binary)
+        internal static Module New(Store store, in ByteVector binary)
         {
             if (store is null)
             {
                 throw new ArgumentNullException(nameof(store));
-            }
-
-            if (string.IsNullOrEmpty(name))
-            {
-                throw new ArgumentNullException(nameof(name));
             }
 
             if (binary.size == 0)
@@ -77,15 +73,11 @@ namespace Mochineko.WasmerBridge
                 throw new InvalidOperationException("Failed to create module.");
             }
 
-            var module = new Module(handle, name);
-
-            return module;
+            return new Module(handle);
         }
 
         public void Serialize(out ReadOnlySpan<byte> serialized)
         {
-            handle.ThrowsIfObjectIsDisposed();
-            
             SerializeNative(out var binary);
 
             using (binary)
@@ -102,21 +94,14 @@ namespace Mochineko.WasmerBridge
 
         private void SerializeNative(out ByteVector binary)
         {
-            handle.ThrowsIfObjectIsDisposed();
-            
-            WasmAPIs.wasm_module_serialize(handle, out binary);
+            WasmAPIs.wasm_module_serialize(Handle, out binary);
         }
 
-        public static Module Deserialize(Store store, string name, in ReadOnlySpan<byte> binary)
+        public static Module Deserialize(Store store, in ReadOnlySpan<byte> binary)
         {
             if (store is null)
             {
                 throw new ArgumentNullException(nameof(store));
-            }
-
-            if (string.IsNullOrEmpty(name))
-            {
-                throw new ArgumentNullException(nameof(name));
             }
 
             if (binary.Length == 0)
@@ -127,36 +112,28 @@ namespace Mochineko.WasmerBridge
             ByteVector.New(in binary, out var vector);
             using (vector)
             {
-                return DeserializeNative(store, name, vector);
+                return DeserializeNative(store, vector);
             }
         }
 
-        private static Module DeserializeNative(Store store, string name, in ByteVector binary)
+        private static Module DeserializeNative(Store store, in ByteVector binary)
         {
             if (store is null)
             {
                 throw new ArgumentNullException(nameof(store));
             }
 
-            if (string.IsNullOrEmpty(name))
-            {
-                throw new ArgumentNullException(nameof(name));
-            }
-            
             if (binary.size == 0)
             {
                 throw new ArgumentNullException(nameof(binary));
             }
 
-            return new Module(
-                WasmAPIs.wasm_module_deserialize(store.Handle, in binary),
-                name);
+            return new Module(WasmAPIs.wasm_module_deserialize(store.Handle, in binary));
         }
 
-        private Module(IntPtr handle, string name)
+        private Module(IntPtr handle)
         {
             this.handle = new NativeHandle(handle);
-            this.Name = name;
         }
 
         public void Dispose()
@@ -170,7 +147,10 @@ namespace Mochineko.WasmerBridge
         {
             get
             {
-                handle.ThrowsIfObjectIsDisposed();
+                if (handle.IsInvalid)
+                {
+                    throw new ObjectDisposedException(typeof(Module).FullName);
+                }
 
                 return handle;
             }
@@ -188,14 +168,6 @@ namespace Mochineko.WasmerBridge
             {
                 WasmAPIs.wasm_module_delete(handle);
                 return true;
-            }
-
-            public void ThrowsIfObjectIsDisposed()
-            {
-                if (IsInvalid)
-                {
-                    throw new ObjectDisposedException(typeof(Module).FullName);
-                }
             }
         }
 
@@ -231,9 +203,10 @@ namespace Mochineko.WasmerBridge
                 [Const] NativeHandle module,
                 [OwnOut] [Out] out ImportTypeVector importTypes);
 
-            // TODO:
-            //[DllImport(NativePlugin.LibraryName)]
-            //public static extern void wasm_module_exports(NativeHandle module, out ExportTypeArray exportTypes);
+            [DllImport(NativePlugin.LibraryName)]
+            public static extern void wasm_module_exports(
+                [Const] NativeHandle module,
+                [OwnOut][Out] out ExportTypeVector exportTypes);
 
             [DllImport(NativePlugin.LibraryName)]
             public static extern void wasm_module_serialize(

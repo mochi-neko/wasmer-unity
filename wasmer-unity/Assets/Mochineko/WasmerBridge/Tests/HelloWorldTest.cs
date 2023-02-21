@@ -16,7 +16,7 @@ namespace Mochineko.WasmerBridge.Tests
             ByteVector.New(MockResource.EmptyWasmBinary, out var wasm);
             using (wasm)
             {
-                using var module = Module.New(store, "empty", wasm);
+                using var module = Module.New(store, wasm);
                 //using var importObject = new ImportObject();
 
                 //var instance = new Instantiate(store, module, inportObject);
@@ -46,7 +46,7 @@ namespace Mochineko.WasmerBridge.Tests
             using var store = Store.New(engine);
 
             // Compile wasm.
-            using var module = Module.NewFromWat(store, "hello", wat);
+            using var module = Module.NewFromWat(store, wat);
 
             // Define "hello" function as import object.
             var importObject = new ImportObject();

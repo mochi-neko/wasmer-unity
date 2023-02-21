@@ -9,5 +9,15 @@ namespace Mochineko.WasmerBridge.Tests
             0x00, 0x61, 0x73, 0x6d, // WASM_BINARY_MAGIC
             0x01, 0x00, 0x00, 0x00, // WASM_BINARY_VERSION
         };
+        
+        public const string HelloWorldWat = @"
+(module
+  (type $t0 (func))
+  (import """" ""hello"" (func $.hello (type $t0)))
+  (func $run
+    call $.hello
+  )
+  (export ""run"" (func $run))
+)";
     }
 }

@@ -48,7 +48,7 @@ The following are the best features I think:
 - [x] ExportType
 - [ ] Trap
 - [ ] Foreign
-- [ ] Module
+- [x] Module
 - [ ] FunctionInstance
 - [ ] GlobalInstance
 - [ ] TableInstance

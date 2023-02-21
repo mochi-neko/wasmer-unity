@@ -16,7 +16,7 @@ namespace Mochineko.WasmerBridge.Tests
             ByteVector.New(MockResource.EmptyWasmBinary, out var wasm);
             using (wasm)
             {
-                using var module = Module.New(store, "empty", in wasm);
+                using var module = Module.New(store, in wasm);
                 //using var instance = Instance.New(store, module,);
             }
             
