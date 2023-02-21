@@ -6,21 +6,19 @@ using UnityEngine.TestTools;
 namespace Mochineko.WasmerBridge.Tests
 {
     [TestFixture]
-    internal sealed class ImportTypeTest
+    internal sealed class ExportTypeTest
     {
         [Test]
         [RequiresPlayMode(false)]
         public void CreateByEmptyFunctionTest()
         {
-            var moduleName = "ModuleName";
             var functionName = "FunctionName";
             using var functionType = FunctionType.New(
                 Array.Empty<ValueKind>(),
                 Array.Empty<ValueKind>());
 
-            using var importType = ImportType.New(moduleName, functionName, functionType);
+            using var importType = ExportType.New(functionName, functionType);
             importType.Should().NotBeNull();
-            importType.Module.Should().Be(moduleName);
             importType.Name.Should().Be(functionName);
             importType.Kind.Should().Be(ExternalKind.Function);
 
@@ -28,5 +26,3 @@ namespace Mochineko.WasmerBridge.Tests
         }
     }
 }
-
-    
