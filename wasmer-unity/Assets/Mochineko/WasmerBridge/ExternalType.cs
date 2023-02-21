@@ -27,17 +27,17 @@ namespace Mochineko.WasmerBridge
             {
                 throw new ObjectDisposedException(typeof(FunctionType).FullName);
             }
-            
+
             return new ExternalType(WasmAPIs.wasm_functype_as_externtype(functionType.Handle));
         }
-        
+
         internal FunctionType ToFunctionType()
         {
             if (handle.IsInvalid)
             {
                 throw new ObjectDisposedException(typeof(ExternalType).FullName);
             }
-            
+
             return FunctionType.FromPointer(WasmAPIs.wasm_externtype_as_functype_const(handle));
         }
 
@@ -47,7 +47,7 @@ namespace Mochineko.WasmerBridge
         }
 
         private ExternalType(IntPtr handle)
-        { 
+        {
             this.handle = new NativeHandle(handle);
         }
 
@@ -55,7 +55,7 @@ namespace Mochineko.WasmerBridge
         {
             handle.Dispose();
         }
-        
+
         private readonly NativeHandle handle;
 
         internal NativeHandle Handle
@@ -89,18 +89,22 @@ namespace Mochineko.WasmerBridge
         private static class WasmAPIs
         {
             [DllImport(NativePlugin.LibraryName)]
-            public static extern void wasm_externtype_delete([OwnPass] IntPtr externalType);
+            public static extern void wasm_externtype_delete(
+                [OwnPass] [In] IntPtr externalType);
 
             [DllImport(NativePlugin.LibraryName)]
             [return: OwnReceive]
-            public static extern IntPtr wasm_externtype_copy([Const] NativeHandle externalType);
-            
+            public static extern IntPtr wasm_externtype_copy(
+                [Const] NativeHandle externalType);
+
             [DllImport(NativePlugin.LibraryName)]
-            public static extern byte wasm_externtype_kind([Const] NativeHandle externalType);
-            
+            public static extern byte wasm_externtype_kind(
+                [Const] NativeHandle externalType);
+
             [DllImport(NativePlugin.LibraryName)]
-            public static extern IntPtr wasm_functype_as_externtype(FunctionType.NativeHandle functionType);
-            
+            public static extern IntPtr wasm_functype_as_externtype(
+                FunctionType.NativeHandle functionType);
+
             //TODO:
             // [DllImport(NativePlugin.LibraryName)]
             // public static extern IntPtr wasm_globaltype_as_externtype(GlobalType.NativeHandle functionType);
@@ -125,7 +129,8 @@ namespace Mochineko.WasmerBridge
 
             [DllImport(NativePlugin.LibraryName)]
             [return: Const]
-            public static extern IntPtr wasm_functype_as_externtype_const([Const] FunctionType.NativeHandle functionType);
+            public static extern IntPtr wasm_functype_as_externtype_const(
+                [Const] FunctionType.NativeHandle functionType);
 
             // [DllImport(NativePlugin.LibraryName)]
             // [return: Const]
@@ -154,7 +159,6 @@ namespace Mochineko.WasmerBridge
             [DllImport(NativePlugin.LibraryName)]
             [return: Const]
             public static extern IntPtr wasm_externtype_as_memorytype_const([Const] NativeHandle externalType);
-
         }
     }
 }

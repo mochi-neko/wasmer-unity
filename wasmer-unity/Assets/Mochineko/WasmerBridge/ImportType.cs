@@ -124,31 +124,38 @@ namespace Mochineko.WasmerBridge
             [DllImport(NativePlugin.LibraryName)]
             [return: OwnReceive]
             public static extern IntPtr wasm_importtype_new(
-                [OwnPass] in ByteVector module,
-                [OwnPass] in ByteVector name,
-                [OwnPass] ExternalType.NativeHandle type);
+                [OwnPass][In] in ByteVector module,
+                [OwnPass][In] in ByteVector name,
+                [OwnPass][In] ExternalType.NativeHandle type);
 
             [DllImport(NativePlugin.LibraryName)]
-            public static extern void wasm_importtype_delete([OwnPass] IntPtr importType);
+            public static extern void wasm_importtype_delete(
+                [OwnPass][In] IntPtr importType);
 
             [DllImport(NativePlugin.LibraryName)]
             [return: OwnReceive]
-            public static extern IntPtr wasm_importtype_copy([Const] NativeHandle importType);
+            public static extern IntPtr wasm_importtype_copy(
+                [Const] NativeHandle importType);
 
             [DllImport(NativePlugin.LibraryName)]
-            public static extern bool wasm_importtype_same([Const] NativeHandle left, [Const] NativeHandle right);
-
-            [DllImport(NativePlugin.LibraryName)]
-            [return: Const]
-            public static extern unsafe ByteVector* wasm_importtype_module([Const] NativeHandle importType);
-
-            [DllImport(NativePlugin.LibraryName)]
-            [return: Const]
-            public static extern unsafe ByteVector* wasm_importtype_name([Const] NativeHandle importType);
+            public static extern bool wasm_importtype_same(
+                [Const] NativeHandle left,
+                [Const] NativeHandle right);
 
             [DllImport(NativePlugin.LibraryName)]
             [return: Const]
-            public static extern IntPtr wasm_importtype_type([Const] NativeHandle importType);
+            public static extern unsafe ByteVector* wasm_importtype_module(
+                [Const] NativeHandle importType);
+
+            [DllImport(NativePlugin.LibraryName)]
+            [return: Const]
+            public static extern unsafe ByteVector* wasm_importtype_name(
+                [Const] NativeHandle importType);
+
+            [DllImport(NativePlugin.LibraryName)]
+            [return: Const]
+            public static extern IntPtr wasm_importtype_type(
+                [Const] NativeHandle importType);
         }
     }
 }

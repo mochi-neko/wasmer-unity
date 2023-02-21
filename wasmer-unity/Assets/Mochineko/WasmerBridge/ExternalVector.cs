@@ -28,7 +28,7 @@ namespace Mochineko.WasmerBridge
                 //vector.data[i] = ValueType.New(kinds[i]).Handle.DangerousGetHandle();
             }
         }
-        
+
         internal static void NewEmpty(out ExternalVector vector)
         {
             WasmAPIs.wasm_extern_vec_new_empty(out vector);
@@ -38,7 +38,7 @@ namespace Mochineko.WasmerBridge
         {
             WasmAPIs.wasm_extern_vec_new(out vector, size, data);
         }
-        
+
         public void ToKinds(out ReadOnlySpan<ExternalKind> kinds)
         {
             throw new NotImplementedException();
@@ -52,26 +52,28 @@ namespace Mochineko.WasmerBridge
         private static class WasmAPIs
         {
             [DllImport(NativePlugin.LibraryName)]
-            public static extern void wasm_extern_vec_new_empty([OwnOut] out ExternalVector vector);
+            public static extern void wasm_extern_vec_new_empty(
+                [OwnOut] [Out] out ExternalVector vector);
 
             [DllImport(NativePlugin.LibraryName)]
             public static extern void wasm_extern_vec_new_uninitialized(
-                [OwnOut] out ExternalVector vector,
+                [OwnOut] [Out] out ExternalVector vector,
                 nuint size);
 
             [DllImport(NativePlugin.LibraryName)]
             public static extern void wasm_extern_vec_new(
-                [OwnOut] out ExternalVector vector,
+                [OwnOut] [Out] out ExternalVector vector,
                 nuint size,
-                [OwnPass] IntPtr* data);
+                [OwnPass] [In] IntPtr* data);
 
             [DllImport(NativePlugin.LibraryName)]
             public static extern void wasm_extern_vec_copy(
-                [OwnOut] out ExternalVector destination,
+                [OwnOut] [Out] out ExternalVector destination,
                 [Const] in ExternalVector source);
 
             [DllImport(NativePlugin.LibraryName)]
-            public static extern void wasm_extern_vec_delete([OwnPass] in ExternalVector vector);
+            public static extern void wasm_extern_vec_delete(
+                [OwnPass] [In] in ExternalVector vector);
         }
     }
 }

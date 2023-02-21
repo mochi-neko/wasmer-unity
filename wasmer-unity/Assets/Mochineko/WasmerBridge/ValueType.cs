@@ -16,11 +16,11 @@ namespace Mochineko.WasmerBridge
                 {
                     throw new ObjectDisposedException(typeof(ValueType).FullName);
                 }
-                
+
                 return (ValueKind)WasmAPIs.wasm_valtype_kind(handle);
             }
         }
-        
+
         internal static ValueType New(ValueKind kind)
         {
             return new ValueType(WasmAPIs.wasm_valtype_new((byte)kind));
@@ -40,9 +40,9 @@ namespace Mochineko.WasmerBridge
         {
             handle.Dispose();
         }
-        
+
         private readonly NativeHandle handle;
-        
+
         internal NativeHandle Handle
         {
             get
@@ -55,7 +55,7 @@ namespace Mochineko.WasmerBridge
                 return handle;
             }
         }
-        
+
         internal sealed class NativeHandle : SafeHandleZeroOrMinusOneIsInvalid
         {
             public NativeHandle(IntPtr handle)
@@ -75,20 +75,25 @@ namespace Mochineko.WasmerBridge
         {
             [DllImport(NativePlugin.LibraryName)]
             [return: OwnReceive]
-            public static extern IntPtr wasm_valtype_new(byte valueKind);
-            
-            [DllImport(NativePlugin.LibraryName)]
-            public static extern void wasm_valtype_delete([OwnPass] IntPtr valueType);
-            
-            [DllImport(NativePlugin.LibraryName)]
-            [return: OwnReceive]
-            public static extern IntPtr wasm_valtype_copy(IntPtr valueType);
+            public static extern IntPtr wasm_valtype_new(
+                byte valueKind);
 
             [DllImport(NativePlugin.LibraryName)]
-            public static extern byte wasm_valtype_kind([Const] NativeHandle valueType);
-            
+            public static extern void wasm_valtype_delete(
+                [OwnPass] [In] IntPtr valueType);
+
             [DllImport(NativePlugin.LibraryName)]
-            public static extern byte wasm_valtype_kind([Const] IntPtr valueType);
+            [return: OwnReceive]
+            public static extern IntPtr wasm_valtype_copy(
+                IntPtr valueType);
+
+            [DllImport(NativePlugin.LibraryName)]
+            public static extern byte wasm_valtype_kind(
+                [Const] NativeHandle valueType);
+
+            [DllImport(NativePlugin.LibraryName)]
+            public static extern byte wasm_valtype_kind(
+                [Const] IntPtr valueType);
         }
     }
 }

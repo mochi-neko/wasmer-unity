@@ -19,12 +19,12 @@ namespace Mochineko.WasmerBridge
         {
             this.handle = new NativeHandle(handle);
         }
-        
+
         public void Dispose()
         {
             handle.Dispose();
         }
-        
+
         private readonly NativeHandle handle;
 
         internal NativeHandle Handle
@@ -54,7 +54,7 @@ namespace Mochineko.WasmerBridge
                 return true;
             }
         }
-        
+
         private static class WasmAPIs
         {
             [DllImport(NativePlugin.LibraryName)]
@@ -63,15 +63,16 @@ namespace Mochineko.WasmerBridge
                 Store.NativeHandle store,
                 [Const] Module.NativeHandle module,
                 [ConstVector] in ExternalVector imports,
-                [OwnPass] Trap.NativeHandle trap);
-            
+                [OwnPass] [In] Trap.NativeHandle trap);
+
             [DllImport(NativePlugin.LibraryName)]
-            public static extern void wasm_instance_delete([OwnPass] IntPtr instance);
+            public static extern void wasm_instance_delete(
+                [OwnPass] [In] IntPtr instance);
 
             [DllImport(NativePlugin.LibraryName)]
             public static extern unsafe void wasm_instance_exports(
                 [Const] NativeHandle instance,
-                [OwnPass] out ExternalVector externalVector);
+                [OwnOut] [Out] out ExternalVector externalVector);
         }
     }
 }

@@ -18,7 +18,7 @@ namespace Mochineko.WasmerBridge
         {
             handle.Dispose();
         }
-        
+
         private readonly NativeHandle handle;
 
         internal NativeHandle Handle
@@ -51,21 +51,27 @@ namespace Mochineko.WasmerBridge
         private static class WasmAPIs
         {
             [DllImport(NativePlugin.LibraryName)]
-            public static extern void wasm_extern_delete([OwnPass] IntPtr external);
-            
-            [DllImport(NativePlugin.LibraryName)]
-            [return: OwnReceive]
-            public static extern IntPtr wasm_extern_copy([Const] NativeHandle external);
-
-            [DllImport(NativePlugin.LibraryName)]
-            public static extern bool wasm_extern_same([Const] NativeHandle left, [Const] NativeHandle right);
-            
-            [DllImport(NativePlugin.LibraryName)]
-            public static extern ExternalKind wasm_extern_kind([Const] NativeHandle external);
+            public static extern void wasm_extern_delete(
+                [OwnPass] [In] IntPtr external);
 
             [DllImport(NativePlugin.LibraryName)]
             [return: OwnReceive]
-            public static extern IntPtr wasm_extern_type([Const] NativeHandle external);
+            public static extern IntPtr wasm_extern_copy(
+                [Const] NativeHandle external);
+
+            [DllImport(NativePlugin.LibraryName)]
+            public static extern bool wasm_extern_same(
+                [Const] NativeHandle left,
+                [Const] NativeHandle right);
+
+            [DllImport(NativePlugin.LibraryName)]
+            public static extern ExternalKind wasm_extern_kind(
+                [Const] NativeHandle external);
+
+            [DllImport(NativePlugin.LibraryName)]
+            [return: OwnReceive]
+            public static extern IntPtr wasm_extern_type(
+                [Const] NativeHandle external);
 
             [DllImport(NativePlugin.LibraryName)]
             public static extern IntPtr wasm_func_as_extern(IntPtr function);
@@ -78,7 +84,7 @@ namespace Mochineko.WasmerBridge
 
             [DllImport(NativePlugin.LibraryName)]
             public static extern IntPtr wasm_memory_as_extern(IntPtr memory);
-            
+
             [DllImport(NativePlugin.LibraryName)]
             public static extern IntPtr wasm_extern_as_func(NativeHandle external);
 
@@ -93,35 +99,35 @@ namespace Mochineko.WasmerBridge
 
             [DllImport(NativePlugin.LibraryName)]
             [return: Const]
-            public static extern IntPtr wasm_func_as_extern_const([Const]IntPtr function);
+            public static extern IntPtr wasm_func_as_extern_const([Const] IntPtr function);
 
             [DllImport(NativePlugin.LibraryName)]
             [return: Const]
-            public static extern IntPtr wasm_global_as_extern_const([Const]IntPtr global);
+            public static extern IntPtr wasm_global_as_extern_const([Const] IntPtr global);
 
             [DllImport(NativePlugin.LibraryName)]
             [return: Const]
-            public static extern IntPtr wasm_table_as_extern_const([Const]IntPtr table);
+            public static extern IntPtr wasm_table_as_extern_const([Const] IntPtr table);
 
             [DllImport(NativePlugin.LibraryName)]
             [return: Const]
-            public static extern IntPtr wasm_memory_as_extern_const([Const]IntPtr memory);
-            
-            [DllImport(NativePlugin.LibraryName)]
-            [return: Const]
-            public static extern IntPtr wasm_extern_as_func_const([Const]NativeHandle external);
+            public static extern IntPtr wasm_memory_as_extern_const([Const] IntPtr memory);
 
             [DllImport(NativePlugin.LibraryName)]
             [return: Const]
-            public static extern IntPtr wasm_extern_as_global_const([Const]NativeHandle external);
+            public static extern IntPtr wasm_extern_as_func_const([Const] NativeHandle external);
 
             [DllImport(NativePlugin.LibraryName)]
             [return: Const]
-            public static extern IntPtr wasm_extern_as_table_const([Const]NativeHandle external);
+            public static extern IntPtr wasm_extern_as_global_const([Const] NativeHandle external);
 
             [DllImport(NativePlugin.LibraryName)]
             [return: Const]
-            public static extern IntPtr wasm_extern_as_memory_const([Const]NativeHandle external);
+            public static extern IntPtr wasm_extern_as_table_const([Const] NativeHandle external);
+
+            [DllImport(NativePlugin.LibraryName)]
+            [return: Const]
+            public static extern IntPtr wasm_extern_as_memory_const([Const] NativeHandle external);
         }
     }
 }

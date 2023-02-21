@@ -40,7 +40,7 @@ namespace Mochineko.WasmerBridge
                 return New(store, name, in vector);
             }
         }
-        
+
         public static Module NewFromWat(Store store, string name, string wat)
         {
             wat.FromWatToWasm(out var wasm);
@@ -143,12 +143,12 @@ namespace Mochineko.WasmerBridge
             this.handle = new NativeHandle(handle);
             this.Name = name;
         }
-        
+
         public void Dispose()
         {
             handle.Dispose();
         }
-        
+
         private readonly NativeHandle handle;
 
         internal NativeHandle Handle
@@ -188,31 +188,43 @@ namespace Mochineko.WasmerBridge
                 [ConstVector] in ByteVector binary);
 
             [DllImport(NativePlugin.LibraryName)]
-            public static extern void wasm_module_delete([OwnPass] IntPtr module);
-            
+            public static extern void wasm_module_delete(
+                [OwnPass] [In] IntPtr module);
+
             [DllImport(NativePlugin.LibraryName)]
             [return: OwnReceive]
-            public static extern IntPtr wasm_module_copy([Const] NativeHandle module);
+            public static extern IntPtr wasm_module_copy(
+                [Const] NativeHandle module);
 
             [DllImport(NativePlugin.LibraryName)]
-            public static extern bool wasm_module_same([Const] NativeHandle left, [Const] NativeHandle right);
+            public static extern bool wasm_module_same(
+                [Const] NativeHandle left,
+                [Const] NativeHandle right);
 
             [DllImport(NativePlugin.LibraryName)]
-            public static extern bool wasm_module_validate(Store.NativeHandle store, [ConstVector] in ByteVector binary);
-            
+            public static extern bool wasm_module_validate(
+                Store.NativeHandle store,
+                [ConstVector] in ByteVector binary);
+
             [DllImport(NativePlugin.LibraryName)]
-            public static extern void wasm_module_imports([Const]NativeHandle module, [OwnOut] out ImportTypeVector importTypes);
+            public static extern void wasm_module_imports(
+                [Const] NativeHandle module,
+                [OwnOut] [Out] out ImportTypeVector importTypes);
 
             // TODO:
             //[DllImport(NativePlugin.LibraryName)]
             //public static extern void wasm_module_exports(NativeHandle module, out ExportTypeArray exportTypes);
 
             [DllImport(NativePlugin.LibraryName)]
-            public static extern void wasm_module_serialize([Const] NativeHandle module, [OwnOut] out ByteVector binary);
-            
+            public static extern void wasm_module_serialize(
+                [Const] NativeHandle module,
+                [OwnOut] [Out] out ByteVector binary);
+
             [DllImport(NativePlugin.LibraryName)]
             [return: OwnReceive]
-            public static extern IntPtr wasm_module_deserialize(Store.NativeHandle store, [ConstVector] in ByteVector binary);
+            public static extern IntPtr wasm_module_deserialize(
+                Store.NativeHandle store,
+                [ConstVector] in ByteVector binary);
         }
     }
 }

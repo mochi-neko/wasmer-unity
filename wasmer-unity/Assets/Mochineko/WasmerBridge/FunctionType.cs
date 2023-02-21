@@ -25,7 +25,7 @@ namespace Mochineko.WasmerBridge
                 }
             }
         }
-        
+
         internal ReadOnlySpan<ValueKind> Results
         {
             get
@@ -46,7 +46,7 @@ namespace Mochineko.WasmerBridge
 
         internal static FunctionType FromPointer(IntPtr ptr)
             => new FunctionType(ptr);
-        
+
         internal static FunctionType New(in ReadOnlySpan<ValueKind> parameters, in ReadOnlySpan<ValueKind> results)
         {
             // Passes vectors ownerships to native, then vectors are released by owner:FunctionType.
@@ -70,7 +70,7 @@ namespace Mochineko.WasmerBridge
         {
             handle.Dispose();
         }
-        
+
         private readonly NativeHandle handle;
 
         internal NativeHandle Handle
@@ -105,23 +105,27 @@ namespace Mochineko.WasmerBridge
             [DllImport(NativePlugin.LibraryName)]
             [return: OwnReceive]
             public static extern IntPtr wasm_functype_new(
-                [OwnPass] in ValueTypeVector parameters,
-                [OwnPass] in ValueTypeVector results);
+                [OwnPass] [In] in ValueTypeVector parameters,
+                [OwnPass] [In] in ValueTypeVector results);
 
             [DllImport(NativePlugin.LibraryName)]
-            public static extern void wasm_functype_delete([OwnPass] IntPtr externalType);
+            public static extern void wasm_functype_delete(
+                [OwnPass] [In] IntPtr externalType);
 
             [DllImport(NativePlugin.LibraryName)]
             [return: OwnReceive]
-            public static extern IntPtr wasm_functype_copy([Const] NativeHandle externalType);
-            
+            public static extern IntPtr wasm_functype_copy(
+                [Const] NativeHandle externalType);
+
             [DllImport(NativePlugin.LibraryName)]
             [return: Const]
-            public static extern unsafe ValueTypeVector* wasm_functype_params([Const] NativeHandle functionType);
-            
+            public static extern unsafe ValueTypeVector* wasm_functype_params(
+                [Const] NativeHandle functionType);
+
             [DllImport(NativePlugin.LibraryName)]
             [return: Const]
-            public static extern unsafe ValueTypeVector* wasm_functype_results([Const] NativeHandle functionType);
+            public static extern unsafe ValueTypeVector* wasm_functype_results(
+                [Const] NativeHandle functionType);
         }
     }
 }

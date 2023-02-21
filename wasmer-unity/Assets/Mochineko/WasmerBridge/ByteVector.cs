@@ -82,25 +82,27 @@ namespace Mochineko.WasmerBridge
         private static class WasmAPIs
         {
             [DllImport(NativePlugin.LibraryName)]
-            public static extern void wasm_byte_vec_new_empty([OwnOut] out ByteVector vector);
+            public static extern void wasm_byte_vec_new_empty(
+                [OwnOut] [Out] out ByteVector vector);
 
             [DllImport(NativePlugin.LibraryName)]
             public static extern void wasm_byte_vec_new_uninitialized(
-                [OwnOut] out ByteVector vector,
+                [OwnOut] [Out] out ByteVector vector,
                 nuint size);
 
             [DllImport(NativePlugin.LibraryName)]
             public static extern void wasm_byte_vec_new(
-                [OwnOut] out ByteVector vector,
+                [OwnOut] [Out] out ByteVector vector,
                 nuint size,
-                [OwnPass] byte* data);
-            
+                [OwnPass] [In] byte* data);
+
             [DllImport(NativePlugin.LibraryName)]
-            public static extern void wasm_byte_vec_delete([OwnPass] in ByteVector vector);
+            public static extern void wasm_byte_vec_delete(
+                [OwnPass] [In] in ByteVector vector);
 
             [DllImport(NativePlugin.LibraryName)]
             public static extern void wasm_byte_vec_copy(
-                [OwnOut] out ByteVector destination,
+                [OwnOut] [Out] out ByteVector destination,
                 [ConstVector] in ByteVector source);
         }
     }

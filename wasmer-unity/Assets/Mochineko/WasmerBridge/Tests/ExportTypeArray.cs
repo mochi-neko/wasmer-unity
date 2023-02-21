@@ -1,7 +1,7 @@
 using System;
 using System.Runtime.InteropServices;
 
-namespace Mochineko.WasmerBridge
+namespace Mochineko.WasmerBridge.Tests
 {
     [StructLayout(LayoutKind.Sequential)]
     internal readonly unsafe struct ExportTypeArray : IDisposable
