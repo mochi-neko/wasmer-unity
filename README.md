@@ -45,7 +45,7 @@ The following are the best features I think:
 - [ ] MemoryType
 - [ ] ExternalType
 - [x] ImportType
-- [ ] ExportType
+- [x] ExportType
 - [ ] Trap
 - [ ] Foreign
 - [ ] Module

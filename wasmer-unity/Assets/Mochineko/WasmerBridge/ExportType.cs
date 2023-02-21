@@ -44,12 +44,12 @@ namespace Mochineko.WasmerBridge
 
         internal static ExportType New(string functionName, FunctionType functionType)
         {
-            var importType = New(functionName, ExternalType.ToExternalType(functionType));
+            var exportType = New(functionName, ExternalType.ToExternalType(functionType));
 
             // Passes ownership to native.
             functionType.Handle.SetHandleAsInvalid();
             
-            return importType;
+            return exportType;
         }
 
         private static ExportType New(string name, ExternalType type)
@@ -62,12 +62,12 @@ namespace Mochineko.WasmerBridge
 
         private static ExportType New(in ByteVector name, ExternalType type)
         {
-            var importType = new ExportType(WasmAPIs.wasm_exporttype_new(in name, type.Handle));
+            var exportType = new ExportType(WasmAPIs.wasm_exporttype_new(in name, type.Handle));
 
             // Passes ownership to native.
             type.Handle.SetHandleAsInvalid();
             
-            return importType;
+            return exportType;
         }
 
         private ExportType(IntPtr handle)
