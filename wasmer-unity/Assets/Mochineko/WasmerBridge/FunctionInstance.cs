@@ -13,7 +13,7 @@ namespace Mochineko.WasmerBridge
 
         internal nuint ParametersArity
             => WasmAPIs.wasm_func_param_arity(Handle);
-        
+
         internal nuint ResultsArity
             => WasmAPIs.wasm_func_result_arity(Handle);
 
@@ -105,13 +105,17 @@ namespace Mochineko.WasmerBridge
             [DllImport(NativePlugin.LibraryName)]
             public static extern nuint wasm_func_result_arity(
                 [Const] NativeHandle functionInstance);
-            
+
             [DllImport(NativePlugin.LibraryName)]
             public static extern IntPtr wasm_func_call(
                 [Const] NativeHandle functionInstance,
                 [Const] in ValueInstanceVector arguments,
                 [Const] ref ValueInstanceVector results);
         }
+    }
+
+    internal readonly struct Reference
+    {
     }
 
     internal struct ValueInstanceVector
@@ -124,6 +128,5 @@ namespace Mochineko.WasmerBridge
 
     internal readonly struct FunctionCallback
     {
-        
     }
 }
