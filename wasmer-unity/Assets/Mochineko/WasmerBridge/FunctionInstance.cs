@@ -21,9 +21,22 @@ namespace Mochineko.WasmerBridge
             => new FunctionInstance(ptr);
 
         // TODO: Make wrapper
-        internal static FunctionInstance New(Store store, FunctionType type, FunctionCallback callback)
+        internal static FunctionInstance New(
+            Store store,
+            FunctionType type,
+            FunctionCallback callback)
         {
             return new FunctionInstance(WasmAPIs.wasm_func_new(store.Handle, type.Handle, callback));
+        }
+        
+        internal static FunctionInstance NewWithEnvironment(
+            Store store, 
+            FunctionType type,
+            FunctionCallbackWithEnvironment callback,
+            IntPtr environment,
+            Finalizer finalizer)
+        {
+            return new FunctionInstance(WasmAPIs.wasm_func_new_with_env(store.Handle, type.Handle, callback, environment, finalizer));
         }
 
         internal void Call(in ValueInstanceVector arguments, ref ValueInstanceVector results)
@@ -70,11 +83,17 @@ namespace Mochineko.WasmerBridge
             }
         }
 
-        internal unsafe delegate IntPtr FunctionCallback(ValueInstanceVector* args, ValueInstanceVector* results);
+        internal unsafe delegate IntPtr FunctionCallback(
+            ValueInstanceVector* arguments,
+            ValueInstanceVector* results);
 
-        internal delegate IntPtr FunctionCallbackWithEnvironment();
+        internal unsafe delegate IntPtr FunctionCallbackWithEnvironment(
+            IntPtr environment,
+            ValueInstanceVector* arguments,
+            ValueInstanceVector* results);
 
-        public delegate void FinalizerDelegate(IntPtr environment);
+        public delegate void Finalizer(
+            IntPtr environment);
         
         private static class WasmAPIs
         {
@@ -92,7 +111,7 @@ namespace Mochineko.WasmerBridge
                 [Const] FunctionType.NativeHandle functionType,
                 FunctionCallbackWithEnvironment callback,
                 IntPtr environment,
-                FinalizerDelegate finalizer);
+                Finalizer finalizer);
 
             [DllImport(NativePlugin.LibraryName)]
             public static extern void wasm_func_delete(
