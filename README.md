@@ -46,16 +46,16 @@ The following are the best features I think:
 - [ ] ExternalType
 - [x] ImportType
 - [x] ExportType
-- [ ] Trap
+- [x] Trap
 - [ ] Foreign
 - [x] Module
 - [x] ValueInstance
-- [ ] FunctionInstance
+- [x] FunctionInstance
 - [ ] GlobalInstance
 - [ ] TableInstance
 - [ ] MemoryInstance
 - [ ] ExternalInstance
-- [ ] ModuleInstance 
+- [ ] Instance 
 
 ### Wasmer API
 

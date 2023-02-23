@@ -37,15 +37,17 @@ namespace Mochineko.WasmerBridge
         internal static FunctionType FromPointer(IntPtr ptr)
             => new FunctionType(ptr);
 
+        [return: OwnReceive]
         internal static FunctionType New(in ReadOnlySpan<ValueKind> parameters, in ReadOnlySpan<ValueKind> results)
         {
             // Passes vectors ownerships to native, then vectors are released by owner:FunctionType.
             ValueTypeVector.New(in parameters, out var parametersVector);
             ValueTypeVector.New(in results, out var resultsVector);
 
-            return new FunctionType(WasmAPIs.wasm_functype_new(in parametersVector, in resultsVector));
+            return New(in parametersVector, in resultsVector);
         }
 
+        [return: OwnReceive]
         private static FunctionType New([OwnPass] in ValueTypeVector parameters, [OwnPass] in ValueTypeVector results)
         {
             return new FunctionType(WasmAPIs.wasm_functype_new(in parameters, in results));

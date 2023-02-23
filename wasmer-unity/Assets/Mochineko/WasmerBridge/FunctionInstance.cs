@@ -30,21 +30,34 @@ namespace Mochineko.WasmerBridge
         {
             return new FunctionInstance(WasmAPIs.wasm_func_new(store.Handle, type.Handle, callback));
         }
-        
+
         [return: OwnReceive]
         internal static FunctionInstance NewWithEnvironment(
-            Store store, 
+            Store store,
             FunctionType type,
             FunctionCallbackWithEnvironment callback,
             IntPtr environment,
             Finalizer finalizer)
         {
-            return new FunctionInstance(WasmAPIs.wasm_func_new_with_env(store.Handle, type.Handle, callback, environment, finalizer));
+            return new FunctionInstance(WasmAPIs.wasm_func_new_with_env(store.Handle, type.Handle, callback,
+                environment, finalizer));
         }
 
-        internal void Call(in ValueInstanceVector arguments, ref ValueInstanceVector results)
+        [return: OwnReceive]
+        internal Trap Call(in ValueInstanceVector arguments, ref ValueInstanceVector results)
         {
-            WasmAPIs.wasm_func_call(Handle, in arguments, ref results);
+            var trapPointer = WasmAPIs.wasm_func_call(Handle, in arguments, ref results);
+
+            // Succeeded
+            if (trapPointer == IntPtr.Zero)
+            {
+                return null;
+            }
+            // Failed
+            else
+            {
+                return Trap.FromPointer(trapPointer);
+            }
         }
 
         private FunctionInstance(IntPtr handle)
@@ -87,17 +100,17 @@ namespace Mochineko.WasmerBridge
         }
 
         internal unsafe delegate IntPtr FunctionCallback(
-            ValueInstanceVector* arguments,
-            ValueInstanceVector* results);
+            [Const] [In] ValueInstanceVector* arguments,
+            [OwnPass] ValueInstanceVector* results);
 
         internal unsafe delegate IntPtr FunctionCallbackWithEnvironment(
             IntPtr environment,
-            ValueInstanceVector* arguments,
-            ValueInstanceVector* results);
+            [Const] ValueInstanceVector* arguments,
+            [OwnPass] ValueInstanceVector* results);
 
         public delegate void Finalizer(
             IntPtr environment);
-        
+
         private static class WasmAPIs
         {
             [DllImport(NativePlugin.LibraryName)]
@@ -139,11 +152,11 @@ namespace Mochineko.WasmerBridge
                 [Const] NativeHandle functionInstance);
 
             [DllImport(NativePlugin.LibraryName)]
+            [return: OwnReceive]
             public static extern IntPtr wasm_func_call(
                 [Const] NativeHandle functionInstance,
                 [Const] in ValueInstanceVector arguments,
                 [Const] ref ValueInstanceVector results);
         }
     }
-
 }

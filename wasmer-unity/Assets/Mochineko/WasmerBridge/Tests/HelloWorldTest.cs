@@ -49,13 +49,4 @@ namespace Mochineko.WasmerBridge.Tests
             helloCalled.Should().Be(true);
         }
     }
-
-    public sealed class Unit
-    {
-        private Unit()
-        {
-        }
-
-        public static readonly Unit Default = new();
-    }
 }

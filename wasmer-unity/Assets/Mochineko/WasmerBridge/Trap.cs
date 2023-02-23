@@ -21,10 +21,8 @@ namespace Mochineko.WasmerBridge
         }
 
         internal static Trap FromPointer(IntPtr ptr)
-        {
-            return new Trap(ptr);
-        }
-        
+            => new Trap(ptr);
+
         [return: OwnReceive]
         internal static Trap NewWithEmptyMessage(Store store)
         {

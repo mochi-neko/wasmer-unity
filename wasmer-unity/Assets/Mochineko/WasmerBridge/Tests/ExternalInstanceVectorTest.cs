@@ -6,7 +6,7 @@ using UnityEngine.TestTools;
 namespace Mochineko.WasmerBridge.Tests
 {
     [TestFixture]
-    internal sealed class ExternalVectorTest
+    internal sealed class ExternalInstanceVectorTest
     {
         [Test, RequiresPlayMode(false)]
         [Ignore("Not implemented")]
