@@ -77,7 +77,7 @@ namespace Mochineko.WasmerBridge
 
             [DllImport(NativePlugin.LibraryName)]
             [return: OwnReceive]
-            public static extern unsafe IntPtr wasm_func_new_with_env(
+            public static extern IntPtr wasm_func_new_with_env(
                 Store.NativeHandle store,
                 [Const] FunctionType.NativeHandle functionType,
                 FunctionCallbackWithEnvironment callback,

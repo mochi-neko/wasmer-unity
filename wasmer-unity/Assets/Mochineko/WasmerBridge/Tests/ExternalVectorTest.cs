@@ -12,13 +12,13 @@ namespace Mochineko.WasmerBridge.Tests
         [Ignore("Not implemented")]
         public void CreateEmptyTest()
         {
-            ExternalVector.NewEmpty(out var vector);
+            ExternalInstanceVector.NewEmpty(out var vector);
             using (vector)
             {
                 vector.size.Should().Be((nuint)0);
             }
 
-            ExternalVector.New(ArraySegment<ExternalKind>.Empty, out var emptyVector);
+            ExternalInstanceVector.New(ArraySegment<ExternalKind>.Empty, out var emptyVector);
             using (emptyVector)
             {
                 emptyVector.size.Should().Be((nuint)0);
@@ -39,7 +39,7 @@ namespace Mochineko.WasmerBridge.Tests
                 ExternalKind.Memory,
             };
 
-            ExternalVector.New(kinds, out var vector);
+            ExternalInstanceVector.New(kinds, out var vector);
             using (vector)
             {
                 vector.size.Should().Be((nuint)kinds.Length);

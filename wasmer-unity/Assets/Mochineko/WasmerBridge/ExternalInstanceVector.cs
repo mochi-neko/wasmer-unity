@@ -6,21 +6,21 @@ namespace Mochineko.WasmerBridge
 {
     [OwnVector]
     [StructLayout(LayoutKind.Sequential)]
-    internal readonly unsafe struct ExternalVector : IDisposable
+    internal readonly unsafe struct ExternalInstanceVector : IDisposable
     {
         internal readonly nuint size;
         internal readonly IntPtr* data;
 
-        internal static void New(in ReadOnlySpan<ExternalKind> kinds, out ExternalVector vector)
+        internal static void New(in ReadOnlySpan<ExternalKind> kinds, out ExternalInstanceVector instanceVector)
         {
             var size = kinds.Length;
             if (size == 0)
             {
-                NewEmpty(out vector);
+                NewEmpty(out instanceVector);
                 return;
             }
 
-            WasmAPIs.wasm_extern_vec_new_uninitialized(out vector, (nuint)size);
+            WasmAPIs.wasm_extern_vec_new_uninitialized(out instanceVector, (nuint)size);
 
             // TODO:
             for (var i = 0; i < size; ++i)
@@ -29,14 +29,14 @@ namespace Mochineko.WasmerBridge
             }
         }
 
-        internal static void NewEmpty(out ExternalVector vector)
+        internal static void NewEmpty(out ExternalInstanceVector instanceVector)
         {
-            WasmAPIs.wasm_extern_vec_new_empty(out vector);
+            WasmAPIs.wasm_extern_vec_new_empty(out instanceVector);
         }
 
-        private static void New(nuint size, IntPtr* data, out ExternalVector vector)
+        private static void New(nuint size, IntPtr* data, out ExternalInstanceVector instanceVector)
         {
-            WasmAPIs.wasm_extern_vec_new(out vector, size, data);
+            WasmAPIs.wasm_extern_vec_new(out instanceVector, size, data);
         }
 
         public void ToKinds(out ReadOnlySpan<ExternalKind> kinds)
@@ -53,27 +53,27 @@ namespace Mochineko.WasmerBridge
         {
             [DllImport(NativePlugin.LibraryName)]
             public static extern void wasm_extern_vec_new_empty(
-                [OwnOut] [Out] out ExternalVector vector);
+                [OwnOut] [Out] out ExternalInstanceVector instanceVector);
 
             [DllImport(NativePlugin.LibraryName)]
             public static extern void wasm_extern_vec_new_uninitialized(
-                [OwnOut] [Out] out ExternalVector vector,
+                [OwnOut] [Out] out ExternalInstanceVector instanceVector,
                 nuint size);
 
             [DllImport(NativePlugin.LibraryName)]
             public static extern void wasm_extern_vec_new(
-                [OwnOut] [Out] out ExternalVector vector,
+                [OwnOut] [Out] out ExternalInstanceVector instanceVector,
                 nuint size,
                 [OwnPass] [In] IntPtr* data);
 
             [DllImport(NativePlugin.LibraryName)]
             public static extern void wasm_extern_vec_copy(
-                [OwnOut] [Out] out ExternalVector destination,
-                [Const] in ExternalVector source);
+                [OwnOut] [Out] out ExternalInstanceVector destination,
+                [Const] in ExternalInstanceVector source);
 
             [DllImport(NativePlugin.LibraryName)]
             public static extern void wasm_extern_vec_delete(
-                [OwnPass] [In] in ExternalVector vector);
+                [OwnPass] [In] in ExternalInstanceVector instanceVector);
         }
     }
 }

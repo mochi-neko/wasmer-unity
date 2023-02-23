@@ -22,7 +22,7 @@ namespace Mochineko.WasmerBridge.Tests
                 {
                     ExternalKind.Function
                 };
-                ExternalVector.New(kinds, out var imports);
+                ExternalInstanceVector.New(kinds, out var imports);
                 using (imports)
                 {
 
