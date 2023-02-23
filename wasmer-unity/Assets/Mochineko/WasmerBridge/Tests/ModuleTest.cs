@@ -47,7 +47,7 @@ namespace Mochineko.WasmerBridge.Tests
         {
             using var engine = Engine.New();
             using var store = Store.New(engine);
-            MockResource.EmptyWat.FromWatToWasm(out var wasm);
+            MockResource.EmptyWat.ToWasm(out var wasm);
             using (wasm)
             {
                 using var module = Module.New(store, in wasm);
@@ -94,7 +94,7 @@ namespace Mochineko.WasmerBridge.Tests
         {
             using var engine = Engine.New();
             using var store = Store.New(engine);
-            MockResource.HelloWorldWat.FromWatToWasm(out var wasm);
+            MockResource.HelloWorldWat.ToWasm(out var wasm);
             using (wasm)
             {
                 using var module = Module.New(store, in wasm);

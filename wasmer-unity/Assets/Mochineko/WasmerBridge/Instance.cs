@@ -9,17 +9,15 @@ namespace Mochineko.WasmerBridge
     public sealed class Instance : IDisposable
     {
         internal void Exports([OwnOut] out ExternalInstanceVector exports)
-        {
-            WasmAPIs.wasm_instance_exports(Handle, out exports);
-        }
+            => WasmAPIs.wasm_instance_exports(Handle, out exports);
 
         [return: OwnReceive]
         internal static Instance New(Store store, Module module, in ExternalInstanceVector imports)
         {
             TrapPointer.New(store, out var trapPointer);
-            
+
             return new Instance(WasmAPIs.wasm_instance_new(store.Handle, module.Handle, in imports, in trapPointer));
-            
+
             // TODO: Error handling by TrapPointer
         }
 

@@ -50,7 +50,7 @@ namespace Mochineko.WasmerBridge
         [return: OwnReceive]
         public static Module FromWat(Store store, string wat)
         {
-            wat.FromWatToWasm(out var wasm);
+            wat.ToWasm(out var wasm);
             using (wasm)
             {
                 return New(store, wasm);

@@ -15,8 +15,8 @@ namespace Mochineko.WasmerBridge
         {
             WasmAPIs.wasm_importtype_vec_new_empty(out vector);
         }
-        
-        public static void New(in ReadOnlySpan<ImportType> importTypes, [OwnOut] out ImportTypeVector vector)
+
+        public static void New([OwnPass] in ReadOnlySpan<ImportType> importTypes, [OwnOut] out ImportTypeVector vector)
         {
             var size = importTypes.Length;
             if (size == 0)

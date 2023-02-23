@@ -12,7 +12,7 @@ namespace Mochineko.WasmerBridge.Tests
         public void ConvertWat2WasmTest()
         {
             var binary = MockResource.EmptyWasmBinary;
-            MockResource.EmptyWat.FromWatToWasm(out var wasm);
+            MockResource.EmptyWat.ToWasm(out var wasm);
             using (wasm)
             {
                 wasm.size.Should().Be((nuint)binary.Length);

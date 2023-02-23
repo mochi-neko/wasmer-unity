@@ -16,7 +16,7 @@ namespace Mochineko.WasmerBridge
             WasmAPIs.wasm_exporttype_vec_new_empty(out vector);
         }
 
-        public static void New(in ReadOnlySpan<ExportType> exportTypes, [OwnOut] out ExportTypeVector vector)
+        public static void New([OwnPass] in ReadOnlySpan<ExportType> exportTypes, [OwnOut] out ExportTypeVector vector)
         {
             var size = exportTypes.Length;
             if (size == 0)

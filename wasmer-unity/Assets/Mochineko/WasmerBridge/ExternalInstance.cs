@@ -21,6 +21,9 @@ namespace Mochineko.WasmerBridge
         internal FunctionInstance ToFunction()
             => FunctionInstance.FromPointer(WasmAPIs.wasm_extern_as_func(Handle));
 
+        internal static ExternalInstance FromPointer(IntPtr ptr)
+            => new ExternalInstance(ptr);
+        
         private ExternalInstance(IntPtr handle)
         {
             this.handle = new NativeHandle(handle);
