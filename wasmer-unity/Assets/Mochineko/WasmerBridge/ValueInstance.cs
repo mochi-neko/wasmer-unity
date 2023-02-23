@@ -5,7 +5,7 @@ using Mochineko.WasmerBridge.Attributes;
 namespace Mochineko.WasmerBridge
 {
     [OwnStruct]
-    [StructLayout(LayoutKind.Explicit)]
+    [StructLayout(LayoutKind.Sequential)]
     internal readonly struct ValueInstance : IDisposable
     {
         internal readonly byte kind;

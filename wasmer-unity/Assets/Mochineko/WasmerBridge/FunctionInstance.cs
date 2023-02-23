@@ -118,10 +118,6 @@ namespace Mochineko.WasmerBridge
     {
     }
 
-    internal struct ValueInstanceVector
-    {
-    }
-
     internal sealed class FunctionCallbackWithEnvironment
     {
     }

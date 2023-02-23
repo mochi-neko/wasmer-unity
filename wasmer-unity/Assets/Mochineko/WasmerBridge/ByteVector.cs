@@ -22,7 +22,6 @@ namespace Mochineko.WasmerBridge
             WasmAPIs.wasm_byte_vec_new(out vector, size, data);
         }
 
-        // Avoid copy of struct by using "out"
         internal static void New(in ReadOnlySpan<byte> binary, out ByteVector vector)
         {
             Span<byte> copy = stackalloc byte[binary.Length];
