@@ -21,13 +21,13 @@ namespace Mochineko.WasmerBridge
             WasmAPIs.wasm_val_vec_new(out vector, size, data);
         }
 
-        internal static void New(in ReadOnlySpan<ValueInstance> binary, out ValueInstanceVector vector)
+        internal static void New(in ReadOnlySpan<ValueInstance> array, out ValueInstanceVector vector)
         {
-            Span<ValueInstance> copy = stackalloc ValueInstance[binary.Length];
-            binary.CopyTo(copy);
+            Span<ValueInstance> copy = stackalloc ValueInstance[array.Length];
+            array.CopyTo(copy);
             fixed (ValueInstance* data = copy)
             {
-                New((nuint)binary.Length, data, out vector);
+                New((nuint)array.Length, data, out vector);
             }
         }
 

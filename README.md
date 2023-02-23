@@ -49,11 +49,12 @@ The following are the best features I think:
 - [ ] Trap
 - [ ] Foreign
 - [x] Module
+- [x] ValueInstance
 - [ ] FunctionInstance
 - [ ] GlobalInstance
 - [ ] TableInstance
 - [ ] MemoryInstance
-- [ ] External
+- [ ] ExternalInstance
 - [ ] ModuleInstance 
 
 ### Wasmer API

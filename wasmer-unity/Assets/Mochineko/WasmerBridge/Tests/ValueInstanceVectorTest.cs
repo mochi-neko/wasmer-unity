@@ -6,12 +6,12 @@ using UnityEngine.TestTools;
 namespace Mochineko.WasmerBridge.Tests
 {
     [TestFixture]
-    internal sealed class ByteVectorTest
+    internal sealed class ValueInstanceVectorTest
     {
         [Test, RequiresPlayMode(false)]
         public void CreateEmptyTest()
         {
-            ByteVector.NewEmpty(out var vector);
+            ValueInstanceVector.NewEmpty(out var vector);
             using (vector)
             {
                 vector.Should().NotBeNull();
@@ -24,9 +24,17 @@ namespace Mochineko.WasmerBridge.Tests
         [Test, RequiresPlayMode(false)]
         public void CreateFromManagedArrayTest()
         {
-            var array = MockResource.EmptyWasmBinary;
+            var array = new ValueInstance[]
+            {
+                ValueInstance.NewInt32(1),
+                ValueInstance.NewInt64(2),
+                ValueInstance.NewFloat32(1.1f),
+                ValueInstance.NewFloat64(-2.2d),
+                ValueInstance.NewAnyReference(IntPtr.Zero + 3),
+                ValueInstance.NewFunctionReference(IntPtr.Zero + 4),
+            };
             
-            ByteVector.New(array, out var vector);
+            ValueInstanceVector.New(array, out var vector);
             using (vector)
             {
                 vector.Should().NotBeNull();
@@ -37,22 +45,6 @@ namespace Mochineko.WasmerBridge.Tests
                 {
                     managed[i].Should().Be(array[i]);
                 }
-            }
-            
-            GC.Collect();
-        }
-        
-        [Test, RequiresPlayMode(false)]
-        public void StringEncodingTest()
-        {
-            var message = "message";
-            
-            ByteVector.FromText(message, out var encoded);
-            using (encoded)
-            {
-                encoded.size.Should().Be((nuint)7);
-                var decoded = encoded.ToText();
-                decoded.Should().Be(message);
             }
             
             GC.Collect();
