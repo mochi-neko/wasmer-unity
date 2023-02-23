@@ -8,6 +8,7 @@ namespace Mochineko.WasmerBridge
     [OwnPointed]
     internal sealed class FunctionInstance : IDisposable
     {
+        [OwnReceive]
         internal FunctionType Type
             => FunctionType.FromPointer(WasmAPIs.wasm_func_type(Handle));
 
@@ -21,6 +22,7 @@ namespace Mochineko.WasmerBridge
             => new FunctionInstance(ptr);
 
         // TODO: Make wrapper
+        [return: OwnReceive]
         internal static FunctionInstance New(
             Store store,
             FunctionType type,
@@ -29,6 +31,7 @@ namespace Mochineko.WasmerBridge
             return new FunctionInstance(WasmAPIs.wasm_func_new(store.Handle, type.Handle, callback));
         }
         
+        [return: OwnReceive]
         internal static FunctionInstance NewWithEnvironment(
             Store store, 
             FunctionType type,

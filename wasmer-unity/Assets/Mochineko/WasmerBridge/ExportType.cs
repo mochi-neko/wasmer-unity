@@ -42,17 +42,19 @@ namespace Mochineko.WasmerBridge
             }
         }
 
-        internal static ExportType New(string functionName, FunctionType functionType)
+        [return: OwnReceive]
+        internal static ExportType New(string functionName, [OwnPass] FunctionType functionType)
         {
-            var exportType = New(functionName, ExternalType.ToExternalType(functionType));
+            var exportType = New(functionName, ExternalType.FromFunction(functionType));
 
             // Passes ownership to native.
             functionType.Handle.SetHandleAsInvalid();
-            
+
             return exportType;
         }
 
-        private static ExportType New(string name, ExternalType type)
+        [return: OwnReceive]
+        private static ExportType New(string name, [OwnPass] ExternalType type)
         {
             // Passes name vectors ownerships to native, then vectors are released by owner:ImportType.
             ByteVector.FromText(name, out var nameVector);
@@ -60,13 +62,14 @@ namespace Mochineko.WasmerBridge
             return New(in nameVector, type);
         }
 
-        private static ExportType New(in ByteVector name, ExternalType type)
+        [return: OwnReceive]
+        private static ExportType New([OwnPass] in ByteVector name, [OwnPass] ExternalType type)
         {
             var exportType = new ExportType(WasmAPIs.wasm_exporttype_new(in name, type.Handle));
 
             // Passes ownership to native.
             type.Handle.SetHandleAsInvalid();
-            
+
             return exportType;
         }
 
@@ -90,7 +93,7 @@ namespace Mochineko.WasmerBridge
                 {
                     throw new ObjectDisposedException(typeof(ExportType).FullName);
                 }
-                
+
                 return handle;
             }
         }
@@ -114,12 +117,12 @@ namespace Mochineko.WasmerBridge
             [DllImport(NativePlugin.LibraryName)]
             [return: OwnReceive]
             public static extern IntPtr wasm_exporttype_new(
-                [OwnPass][In] in ByteVector name,
-                [OwnPass][In] ExternalType.NativeHandle type);
+                [OwnPass] in ByteVector name,
+                [OwnPass] [In] ExternalType.NativeHandle type);
 
             [DllImport(NativePlugin.LibraryName)]
             public static extern void wasm_exporttype_delete(
-                [OwnPass][In] IntPtr exportType);
+                [OwnPass] [In] IntPtr exportType);
 
             [DllImport(NativePlugin.LibraryName)]
             [return: OwnReceive]

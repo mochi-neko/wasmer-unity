@@ -11,7 +11,7 @@ namespace Mochineko.WasmerBridge
         internal readonly nuint size;
         internal readonly IntPtr* data;
 
-        public static void New(in ReadOnlySpan<ValueKind> kinds, out ValueTypeVector vector)
+        public static void New(in ReadOnlySpan<ValueKind> kinds, [OwnOut] out ValueTypeVector vector)
         {
             var size = kinds.Length;
             if (size == 0)
@@ -42,18 +42,18 @@ namespace Mochineko.WasmerBridge
             var array = new ValueKind[(int)size];
             for (var i = 0; i < (int)size; i++)
             {
-                array[i] = ValueType.KindFromPtr(data[i]);
+                array[i] = ValueType.KindFromPointer(data[i]);
             }
 
             kinds = array;
         }
 
-        internal static void NewEmpty(out ValueTypeVector vector)
+        internal static void NewEmpty([OwnOut] out ValueTypeVector vector)
         {
             WasmAPIs.wasm_valtype_vec_new_empty(out vector);
         }
 
-        private static void New(nuint size, IntPtr* data, out ValueTypeVector vector)
+        private static void New(nuint size, [OwnPass] IntPtr* data, [OwnOut] out ValueTypeVector vector)
         {
             WasmAPIs.wasm_valtype_vec_new(out vector, size, data);
         }
@@ -67,26 +67,26 @@ namespace Mochineko.WasmerBridge
         {
             [DllImport(NativePlugin.LibraryName)]
             public static extern void wasm_valtype_vec_new_empty(
-                [OwnOut] [Out] out ValueTypeVector vector);
+                [OwnOut] out ValueTypeVector vector);
 
             [DllImport(NativePlugin.LibraryName)]
             public static extern void wasm_valtype_vec_new_uninitialized(
-                [OwnOut] [Out] out ValueTypeVector vector,
+                [OwnOut] out ValueTypeVector vector,
                 nuint size);
 
             [DllImport(NativePlugin.LibraryName)]
             public static extern void wasm_valtype_vec_new(
-                [OwnOut] [Out] out ValueTypeVector vector,
+                [OwnOut] out ValueTypeVector vector,
                 nuint size,
                 [OwnPass] [In] IntPtr* data);
 
             [DllImport(NativePlugin.LibraryName)]
             public static extern void wasm_valtype_vec_delete(
-                [OwnPass] [In] in ValueTypeVector vector);
+                [OwnPass] in ValueTypeVector vector);
 
             [DllImport(NativePlugin.LibraryName)]
             public static extern void wasm_valtype_vec_copy(
-                [OwnOut] [Out] out ValueTypeVector destination,
+                [OwnOut] out ValueTypeVector destination,
                 [Const] in ValueTypeVector source);
         }
     }

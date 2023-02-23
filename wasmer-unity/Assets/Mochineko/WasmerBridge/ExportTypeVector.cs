@@ -11,12 +11,12 @@ namespace Mochineko.WasmerBridge
         internal readonly nuint size;
         internal readonly IntPtr* data;
 
-        internal static void NewEmpty(out ExportTypeVector vector)
+        internal static void NewEmpty([OwnOut] out ExportTypeVector vector)
         {
             WasmAPIs.wasm_exporttype_vec_new_empty(out vector);
         }
 
-        public static void New(in ReadOnlySpan<ExportType> exportTypes, out ExportTypeVector vector)
+        public static void New(in ReadOnlySpan<ExportType> exportTypes, [OwnOut] out ExportTypeVector vector)
         {
             var size = exportTypes.Length;
             if (size == 0)
@@ -36,7 +36,7 @@ namespace Mochineko.WasmerBridge
             }
         }
 
-        private static void New(nuint size, IntPtr* data, out ExportTypeVector vector)
+        private static void New(nuint size, [OwnPass] IntPtr* data, [OwnOut] out ExportTypeVector vector)
         {
             WasmAPIs.wasm_exporttype_vec_new(out vector, size, data);
         }
@@ -50,27 +50,27 @@ namespace Mochineko.WasmerBridge
         {
             [DllImport(NativePlugin.LibraryName)]
             public static extern void wasm_exporttype_vec_new_empty(
-                [OwnOut] [Out] out ExportTypeVector vector);
+                [OwnOut] out ExportTypeVector vector);
 
             [DllImport(NativePlugin.LibraryName)]
             public static extern void wasm_exporttype_vec_new_uninitialized(
-                [OwnOut] [Out] out ExportTypeVector vector,
+                [OwnOut] out ExportTypeVector vector,
                 nuint size);
 
             [DllImport(NativePlugin.LibraryName)]
             public static extern void wasm_exporttype_vec_new(
-                [OwnOut] [Out] out ExportTypeVector vector,
+                [OwnOut] out ExportTypeVector vector,
                 nuint size,
                 [OwnPass] [In] IntPtr* data);
 
             [DllImport(NativePlugin.LibraryName)]
             public static extern void wasm_exporttype_vec_copy(
-                [OwnOut] [Out] out ExportTypeVector destination,
+                [OwnOut] out ExportTypeVector destination,
                 [Const] in ExportTypeVector source);
 
             [DllImport(NativePlugin.LibraryName)]
             public static extern void wasm_exporttype_vec_delete(
-                [OwnPass] [In] in ExportTypeVector vector);
+                [OwnPass] in ExportTypeVector vector);
         }
     }
 }

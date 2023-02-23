@@ -19,7 +19,7 @@ namespace Mochineko.WasmerBridge
                 }
             }
         }
-        
+
         internal string Name
         {
             get
@@ -54,13 +54,13 @@ namespace Mochineko.WasmerBridge
             }
         }
 
-        internal static ImportType New(string module, string functionName, FunctionType functionType)
+        internal static ImportType New(string module, string functionName, [OwnPass] FunctionType functionType)
         {
-            var importType = New(module, functionName, ExternalType.ToExternalType(functionType));
+            var importType = New(module, functionName, ExternalType.FromFunction(functionType));
 
             // Passes ownership to native.
             functionType.Handle.SetHandleAsInvalid();
-            
+
             return importType;
         }
 
@@ -73,13 +73,16 @@ namespace Mochineko.WasmerBridge
             return New(in moduleVector, in nameVector, type);
         }
 
-        private static ImportType New(in ByteVector module, in ByteVector name, ExternalType type)
+        private static ImportType New(
+            [OwnPass] in ByteVector module,
+            [OwnPass] in ByteVector name,
+            [OwnPass] ExternalType type)
         {
             var importType = new ImportType(WasmAPIs.wasm_importtype_new(in module, in name, type.Handle));
 
             // Passes ownership to native.
             type.Handle.SetHandleAsInvalid();
-            
+
             return importType;
         }
 
@@ -127,13 +130,13 @@ namespace Mochineko.WasmerBridge
             [DllImport(NativePlugin.LibraryName)]
             [return: OwnReceive]
             public static extern IntPtr wasm_importtype_new(
-                [OwnPass][In] in ByteVector module,
-                [OwnPass][In] in ByteVector name,
-                [OwnPass][In] ExternalType.NativeHandle type);
+                [OwnPass] in ByteVector module,
+                [OwnPass] in ByteVector name,
+                [OwnPass] [In] ExternalType.NativeHandle type);
 
             [DllImport(NativePlugin.LibraryName)]
             public static extern void wasm_importtype_delete(
-                [OwnPass][In] IntPtr importType);
+                [OwnPass] [In] IntPtr importType);
 
             [DllImport(NativePlugin.LibraryName)]
             [return: OwnReceive]

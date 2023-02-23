@@ -11,8 +11,15 @@ namespace Mochineko.WasmerBridge
         internal ExternalKind Kind
             => (ExternalKind)WasmAPIs.wasm_extern_kind(Handle);
 
+        [OwnReceive]
         internal ExternalType Type
             => ExternalType.FromPointer(WasmAPIs.wasm_extern_type(Handle));
+        
+        internal static ExternalInstance FromFunction(FunctionInstance instance)
+            => new ExternalInstance(WasmAPIs.wasm_func_as_extern(instance.Handle));
+
+        internal FunctionInstance ToFunction()
+            => FunctionInstance.FromPointer(WasmAPIs.wasm_extern_as_func(Handle));
 
         private ExternalInstance(IntPtr handle)
         {
@@ -81,6 +88,7 @@ namespace Mochineko.WasmerBridge
             [DllImport(NativePlugin.LibraryName)]
             public static extern IntPtr wasm_func_as_extern(FunctionInstance.NativeHandle function);
 
+            // TODO:
             // [DllImport(NativePlugin.LibraryName)]
             // public static extern IntPtr wasm_global_as_extern(GlobalInstance.NativeHandle global);
             //

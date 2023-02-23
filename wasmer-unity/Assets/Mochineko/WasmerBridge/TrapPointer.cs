@@ -13,7 +13,7 @@ namespace Mochineko.WasmerBridge
         public Trap Trap
             => Trap.FromPointer(trapPointer);
 
-        public static void New(Store store, out TrapPointer pointer)
+        public static void New(Store store, [OwnOut] out TrapPointer pointer)
         {
             var trap = Trap.NewWithEmptyMessage(store);
             pointer = new TrapPointer(trap.Handle.DangerousGetHandle());

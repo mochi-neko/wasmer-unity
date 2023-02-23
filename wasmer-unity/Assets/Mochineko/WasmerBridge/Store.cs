@@ -8,6 +8,7 @@ namespace Mochineko.WasmerBridge
     [OwnPointed]
     public sealed class Store : IDisposable
     {
+        [return: OwnReceive]
         public static Store New(Engine engine)
         {
             if (engine is null)
@@ -17,7 +18,7 @@ namespace Mochineko.WasmerBridge
 
             return new Store(WasmAPIs.wasm_store_new(engine.Handle));
         }
-
+        
         private Store(IntPtr handle)
         {
             this.handle = new NativeHandle(handle);

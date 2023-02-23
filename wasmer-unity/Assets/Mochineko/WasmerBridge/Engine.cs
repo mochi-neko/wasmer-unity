@@ -8,12 +8,14 @@ namespace Mochineko.WasmerBridge
     [OwnPointed]
     public sealed class Engine : IDisposable
     {
+        [return: OwnReceive]
         public static Engine New()
         {
             return new Engine(WasmAPIs.wasm_engine_new());
         }
 
-        public static Engine New(Config config)
+        [return: OwnReceive]
+        public static Engine New([OwnPass] Config config)
         {
             if (config is null)
             {

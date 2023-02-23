@@ -11,16 +11,14 @@ namespace Mochineko.WasmerBridge
         internal ExternalKind Kind
             => (ExternalKind)WasmAPIs.wasm_externtype_kind(Handle);
 
-        internal static ExternalType ToExternalType(FunctionType functionType)
+        internal static ExternalType FromFunction(FunctionType functionType)
             => new ExternalType(WasmAPIs.wasm_functype_as_externtype(functionType.Handle));
 
-        internal FunctionType ToFunctionType()
+        internal FunctionType ToFunction()
             => FunctionType.FromPointer(WasmAPIs.wasm_externtype_as_functype(Handle));
 
         internal static ExternalType FromPointer(IntPtr ptr)
-        {
-            return new ExternalType(ptr);
-        }
+            => new ExternalType(ptr);
 
         private ExternalType(IntPtr handle)
         {

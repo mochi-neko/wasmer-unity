@@ -46,7 +46,7 @@ namespace Mochineko.WasmerBridge
             return new FunctionType(WasmAPIs.wasm_functype_new(in parametersVector, in resultsVector));
         }
 
-        private static FunctionType New(in ValueTypeVector parameters, in ValueTypeVector results)
+        private static FunctionType New([OwnPass] in ValueTypeVector parameters, [OwnPass] in ValueTypeVector results)
         {
             return new FunctionType(WasmAPIs.wasm_functype_new(in parameters, in results));
         }
@@ -95,8 +95,8 @@ namespace Mochineko.WasmerBridge
             [DllImport(NativePlugin.LibraryName)]
             [return: OwnReceive]
             public static extern IntPtr wasm_functype_new(
-                [OwnPass] [In] in ValueTypeVector parameters,
-                [OwnPass] [In] in ValueTypeVector results);
+                [OwnPass] in ValueTypeVector parameters,
+                [OwnPass] in ValueTypeVector results);
 
             [DllImport(NativePlugin.LibraryName)]
             public static extern void wasm_functype_delete(

@@ -1,8 +1,10 @@
 using System;
 using System.Runtime.InteropServices;
+using Mochineko.WasmerBridge.Attributes;
 
 namespace Mochineko.WasmerBridge
 {
+    [OwnStruct]
     [StructLayout(LayoutKind.Explicit)]
     internal readonly struct ValueUnion
     {

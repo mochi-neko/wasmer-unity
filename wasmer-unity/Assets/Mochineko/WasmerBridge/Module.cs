@@ -8,12 +8,12 @@ namespace Mochineko.WasmerBridge
     [OwnPointed]
     public sealed class Module : IDisposable
     {
-        internal void Imports (out ImportTypeVector vector)
+        internal void Imports([OwnOut] out ImportTypeVector vector)
         {
             WasmAPIs.wasm_module_imports(Handle, out vector);
         }
-        
-        internal void Exports (out ExportTypeVector vector)
+
+        internal void Exports([OwnOut] out ExportTypeVector vector)
         {
             WasmAPIs.wasm_module_exports(Handle, out vector);
         }
@@ -37,7 +37,8 @@ namespace Mochineko.WasmerBridge
             }
         }
 
-        public static Module NewFromBinary(Store store, in ReadOnlySpan<byte> wasm)
+        [return: OwnReceive]
+        public static Module FromBinary(Store store, in ReadOnlySpan<byte> wasm)
         {
             ByteVector.New(in wasm, out var vector);
             using (vector)
@@ -46,7 +47,8 @@ namespace Mochineko.WasmerBridge
             }
         }
 
-        public static Module NewFromWat(Store store, string wat)
+        [return: OwnReceive]
+        public static Module FromWat(Store store, string wat)
         {
             wat.FromWatToWasm(out var wasm);
             using (wasm)
@@ -55,6 +57,7 @@ namespace Mochineko.WasmerBridge
             }
         }
 
+        [return: OwnReceive]
         internal static Module New(Store store, in ByteVector binary)
         {
             if (store is null)
@@ -92,11 +95,12 @@ namespace Mochineko.WasmerBridge
             }
         }
 
-        private void SerializeNative(out ByteVector binary)
+        private void SerializeNative([OwnOut] out ByteVector binary)
         {
             WasmAPIs.wasm_module_serialize(Handle, out binary);
         }
 
+        [return: OwnReceive]
         public static Module Deserialize(Store store, in ReadOnlySpan<byte> binary)
         {
             if (store is null)
@@ -108,7 +112,7 @@ namespace Mochineko.WasmerBridge
             {
                 throw new ArgumentNullException(nameof(binary));
             }
-            
+
             ByteVector.New(in binary, out var vector);
             using (vector)
             {
@@ -116,6 +120,7 @@ namespace Mochineko.WasmerBridge
             }
         }
 
+        [return: OwnReceive]
         private static Module DeserializeNative(Store store, in ByteVector binary)
         {
             if (store is null)
@@ -201,17 +206,17 @@ namespace Mochineko.WasmerBridge
             [DllImport(NativePlugin.LibraryName)]
             public static extern void wasm_module_imports(
                 [Const] NativeHandle module,
-                [OwnOut] [Out] out ImportTypeVector imports);
+                [OwnOut] out ImportTypeVector imports);
 
             [DllImport(NativePlugin.LibraryName)]
             public static extern void wasm_module_exports(
                 [Const] NativeHandle module,
-                [OwnOut][Out] out ExportTypeVector exports);
+                [OwnOut] out ExportTypeVector exports);
 
             [DllImport(NativePlugin.LibraryName)]
             public static extern void wasm_module_serialize(
                 [Const] NativeHandle module,
-                [OwnOut] [Out] out ByteVector binary);
+                [OwnOut] out ByteVector binary);
 
             [DllImport(NativePlugin.LibraryName)]
             [return: OwnReceive]

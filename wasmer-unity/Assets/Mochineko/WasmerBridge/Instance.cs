@@ -8,11 +8,12 @@ namespace Mochineko.WasmerBridge
     [OwnPointed]
     public sealed class Instance : IDisposable
     {
-        internal void Exports(out ExternalInstanceVector exports)
+        internal void Exports([OwnOut] out ExternalInstanceVector exports)
         {
             WasmAPIs.wasm_instance_exports(Handle, out exports);
         }
 
+        [return: OwnReceive]
         internal static Instance New(Store store, Module module, in ExternalInstanceVector imports)
         {
             TrapPointer.New(store, out var trapPointer);
@@ -79,7 +80,7 @@ namespace Mochineko.WasmerBridge
             [DllImport(NativePlugin.LibraryName)]
             public static extern void wasm_instance_exports(
                 [Const] NativeHandle instance,
-                [OwnOut] [Out] out ExternalInstanceVector exports);
+                [OwnOut] out ExternalInstanceVector exports);
         }
     }
 }

@@ -25,6 +25,7 @@ namespace Mochineko.WasmerBridge
             return new Trap(ptr);
         }
         
+        [return: OwnReceive]
         internal static Trap NewWithEmptyMessage(Store store)
         {
             ByteVector.NewEmpty(out var vector);
@@ -35,6 +36,7 @@ namespace Mochineko.WasmerBridge
             }
         }
 
+        [return: OwnReceive]
         internal static Trap New(Store store, string message)
         {
             ByteVector.FromText(message, out var vector);
@@ -45,6 +47,7 @@ namespace Mochineko.WasmerBridge
             }
         }
 
+        [return: OwnReceive]
         private static Trap New(Store store, in ByteVector message)
         {
             return new Trap(WasmAPIs.wasm_trap_new(store.Handle, in message));
@@ -105,7 +108,7 @@ namespace Mochineko.WasmerBridge
             [DllImport(NativePlugin.LibraryName)]
             public static extern void wasm_trap_message(
                 [Const] NativeHandle trap,
-                [OwnOut] [Out] out ByteVector message);
+                [OwnOut] out ByteVector message);
 
             [DllImport(NativePlugin.LibraryName)]
             [return: OwnReceive]

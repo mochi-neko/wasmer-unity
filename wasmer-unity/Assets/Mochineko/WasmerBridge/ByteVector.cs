@@ -12,17 +12,17 @@ namespace Mochineko.WasmerBridge
         internal readonly nuint size;
         internal readonly byte* data;
 
-        internal static void NewEmpty(out ByteVector vector)
+        internal static void NewEmpty([OwnOut] out ByteVector vector)
         {
             WasmAPIs.wasm_byte_vec_new_empty(out vector);
         }
 
-        private static void New(nuint size, byte* data, out ByteVector vector)
+        private static void New(nuint size, [OwnPass] byte* data, [OwnOut] out ByteVector vector)
         {
             WasmAPIs.wasm_byte_vec_new(out vector, size, data);
         }
 
-        internal static void New(in ReadOnlySpan<byte> binary, out ByteVector vector)
+        internal static void New(in ReadOnlySpan<byte> binary, [OwnOut] out ByteVector vector)
         {
             Span<byte> copy = stackalloc byte[binary.Length];
             binary.CopyTo(copy);
@@ -41,7 +41,7 @@ namespace Mochineko.WasmerBridge
             binary = copied;
         }
 
-        internal static void FromText(string text, out ByteVector vector)
+        internal static void FromText(string text, [OwnOut] out ByteVector vector)
         {
             if (string.IsNullOrEmpty(text))
             {
@@ -82,26 +82,26 @@ namespace Mochineko.WasmerBridge
         {
             [DllImport(NativePlugin.LibraryName)]
             public static extern void wasm_byte_vec_new_empty(
-                [OwnOut] [Out] out ByteVector vector);
+                [OwnOut] out ByteVector vector);
 
             [DllImport(NativePlugin.LibraryName)]
             public static extern void wasm_byte_vec_new_uninitialized(
-                [OwnOut] [Out] out ByteVector vector,
+                [OwnOut] out ByteVector vector,
                 nuint size);
 
             [DllImport(NativePlugin.LibraryName)]
             public static extern void wasm_byte_vec_new(
-                [OwnOut] [Out] out ByteVector vector,
+                [OwnOut] out ByteVector vector,
                 nuint size,
                 [OwnPass] [In] byte* data);
 
             [DllImport(NativePlugin.LibraryName)]
             public static extern void wasm_byte_vec_delete(
-                [OwnPass] [In] in ByteVector vector);
+                [OwnPass] in ByteVector vector);
 
             [DllImport(NativePlugin.LibraryName)]
             public static extern void wasm_byte_vec_copy(
-                [OwnOut] [Out] out ByteVector destination,
+                [OwnOut] out ByteVector destination,
                 [ConstVector] in ByteVector source);
         }
     }

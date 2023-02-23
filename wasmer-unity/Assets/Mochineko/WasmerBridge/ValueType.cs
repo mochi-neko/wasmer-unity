@@ -11,12 +11,13 @@ namespace Mochineko.WasmerBridge
         internal ValueKind Kind
             => (ValueKind)WasmAPIs.wasm_valtype_kind(Handle);
 
+        [return: OwnReceive]
         internal static ValueType New(ValueKind kind)
         {
             return new ValueType(WasmAPIs.wasm_valtype_new((byte)kind));
         }
 
-        internal static ValueKind KindFromPtr(IntPtr valueType)
+        internal static ValueKind KindFromPointer(IntPtr valueType)
         {
             return (ValueKind)WasmAPIs.wasm_valtype_kind(valueType);
         }

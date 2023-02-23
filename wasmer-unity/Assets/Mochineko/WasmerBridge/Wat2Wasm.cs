@@ -6,7 +6,7 @@ namespace Mochineko.WasmerBridge
 {
     internal static class Wat2Wasm
     {
-        internal static void FromWatToWasm(this string wat, out ByteVector wasm)
+        internal static void FromWatToWasm(this string wat, [OwnOut] out ByteVector wasm)
         {
             if (string.IsNullOrEmpty(wat))
             {
@@ -35,7 +35,7 @@ namespace Mochineko.WasmerBridge
             [DllImport(NativePlugin.LibraryName)]
             public static extern void wat2wasm(
                 [ConstVector] in ByteVector wat,
-                [OwnOut] [Out] out ByteVector native);
+                [OwnOut] out ByteVector native);
         }
     }
 }

@@ -8,6 +8,7 @@ namespace Mochineko.WasmerBridge
     [OwnPointed]
     public sealed class Config : IDisposable
     {
+        [return: OwnReceive]
         public static Config New()
         {
             return new Config(WasmAPIs.wasm_config_new());

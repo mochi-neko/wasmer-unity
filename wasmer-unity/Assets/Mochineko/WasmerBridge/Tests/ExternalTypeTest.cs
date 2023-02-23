@@ -16,11 +16,11 @@ namespace Mochineko.WasmerBridge.Tests
                 Array.Empty<ValueKind>(),
                 Array.Empty<ValueKind>());
 
-            using var externalType = ExternalType.ToExternalType(functionType);
+            using var externalType = ExternalType.FromFunction(functionType);
             externalType.Should().NotBeNull();
             externalType.Kind.Should().Be(ExternalKind.Function);
 
-            using var excludedFunctionType = externalType.ToFunctionType();
+            using var excludedFunctionType = externalType.ToFunction();
             excludedFunctionType.Should().NotBeNull();
             excludedFunctionType.Parameters.Length.Should().Be(0);
             excludedFunctionType.Results.Length.Should().Be(0);

@@ -11,17 +11,17 @@ namespace Mochineko.WasmerBridge
         internal readonly nuint size;
         internal readonly ValueInstance* data;
 
-        internal static void NewEmpty(out ValueInstanceVector vector)
+        internal static void NewEmpty([OwnOut] out ValueInstanceVector vector)
         {
             WasmAPIs.wasm_val_vec_new_empty(out vector);
         }
 
-        private static void New(nuint size, ValueInstance* data, out ValueInstanceVector vector)
+        private static void New(nuint size, [OwnPass] ValueInstance* data, [OwnOut] out ValueInstanceVector vector)
         {
             WasmAPIs.wasm_val_vec_new(out vector, size, data);
         }
 
-        internal static void New(in ReadOnlySpan<ValueInstance> array, out ValueInstanceVector vector)
+        internal static void New(in ReadOnlySpan<ValueInstance> array, [OwnOut] out ValueInstanceVector vector)
         {
             Span<ValueInstance> copy = stackalloc ValueInstance[array.Length];
             array.CopyTo(copy);
@@ -49,26 +49,26 @@ namespace Mochineko.WasmerBridge
         {
             [DllImport(NativePlugin.LibraryName)]
             public static extern void wasm_val_vec_new_empty(
-                [OwnOut] [Out] out ValueInstanceVector vector);
+                [OwnOut] out ValueInstanceVector vector);
 
             [DllImport(NativePlugin.LibraryName)]
             public static extern void wasm_val_vec_new_uninitialized(
-                [OwnOut] [Out] out ValueInstanceVector vector,
+                [OwnOut] out ValueInstanceVector vector,
                 nuint size);
 
             [DllImport(NativePlugin.LibraryName)]
             public static extern void wasm_val_vec_new(
-                [OwnOut] [Out] out ValueInstanceVector vector,
+                [OwnOut] out ValueInstanceVector vector,
                 nuint size,
                 [OwnPass] [In] ValueInstance* data);
 
             [DllImport(NativePlugin.LibraryName)]
             public static extern void wasm_val_vec_delete(
-                [OwnPass] [In] in ValueInstanceVector vector);
+                [OwnPass] in ValueInstanceVector vector);
 
             [DllImport(NativePlugin.LibraryName)]
             public static extern void wasm_val_vec_copy(
-                [OwnOut] [Out] out ValueInstanceVector destination,
+                [OwnOut] out ValueInstanceVector destination,
                 [ConstVector] in ValueInstanceVector source);
         }
     }

@@ -79,7 +79,7 @@ namespace Mochineko.WasmerBridge
 
             [DllImport(NativePlugin.LibraryName)]
             public static extern void wasm_val_copy(
-                [OwnOut] [Out] out ValueInstance copy,
+                [OwnOut] out ValueInstance copy,
                 [OwnPass] in ValueInstance value);
         }
     }
