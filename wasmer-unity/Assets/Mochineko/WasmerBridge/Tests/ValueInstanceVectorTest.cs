@@ -17,7 +17,7 @@ namespace Mochineko.WasmerBridge.Tests
                 vector.Should().NotBeNull();
                 vector.size.Should().Be((nuint)0);
             }
-            
+
             GC.Collect();
         }
 
@@ -33,7 +33,7 @@ namespace Mochineko.WasmerBridge.Tests
                 ValueInstance.NewAnyReference(IntPtr.Zero + 3),
                 ValueInstance.NewFunctionReference(IntPtr.Zero + 4),
             };
-            
+
             ValueInstanceVector.New(array, out var vector);
             using (vector)
             {
@@ -46,7 +46,7 @@ namespace Mochineko.WasmerBridge.Tests
                     managed[i].Should().Be(array[i]);
                 }
             }
-            
+
             GC.Collect();
         }
     }

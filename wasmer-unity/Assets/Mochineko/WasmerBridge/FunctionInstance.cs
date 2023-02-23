@@ -20,9 +20,15 @@ namespace Mochineko.WasmerBridge
         internal static FunctionInstance FromPointer(IntPtr ptr)
             => new FunctionInstance(ptr);
 
+        // TODO: Make wrapper
         internal static FunctionInstance New(Store store, FunctionType type, FunctionCallback callback)
         {
             return new FunctionInstance(WasmAPIs.wasm_func_new(store.Handle, type.Handle, callback));
+        }
+
+        internal void Call(in ValueInstanceVector arguments, ref ValueInstanceVector results)
+        {
+            WasmAPIs.wasm_func_call(Handle, in arguments, ref results);
         }
 
         private FunctionInstance(IntPtr handle)
@@ -64,10 +70,14 @@ namespace Mochineko.WasmerBridge
             }
         }
 
+        internal unsafe delegate IntPtr FunctionCallback(ValueInstanceVector* args, ValueInstanceVector* results);
+
+        internal delegate IntPtr FunctionCallbackWithEnvironment();
+
+        public delegate void FinalizerDelegate(IntPtr environment);
+        
         private static class WasmAPIs
         {
-            public delegate void FinalizerDelegate(IntPtr environment);
-
             [DllImport(NativePlugin.LibraryName)]
             [return: OwnReceive]
             public static extern IntPtr wasm_func_new(
@@ -114,15 +124,4 @@ namespace Mochineko.WasmerBridge
         }
     }
 
-    internal readonly struct Reference
-    {
-    }
-
-    internal sealed class FunctionCallbackWithEnvironment
-    {
-    }
-
-    internal readonly struct FunctionCallback
-    {
-    }
 }
