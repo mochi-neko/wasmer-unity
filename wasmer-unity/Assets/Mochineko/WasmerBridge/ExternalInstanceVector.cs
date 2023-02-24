@@ -12,22 +12,24 @@ namespace Mochineko.WasmerBridge
         internal readonly IntPtr* data;
 
         internal static void New(
-            in ReadOnlySpan<ExternalKind> kinds,
-            [OwnOut] out ExternalInstanceVector instanceVector)
+            [OwnPass] in ReadOnlySpan<ExternalInstance> instances,
+            [OwnOut] out ExternalInstanceVector vector)
         {
-            var size = kinds.Length;
+            var size = instances.Length;
             if (size == 0)
             {
-                NewEmpty(out instanceVector);
+                NewEmpty(out vector);
                 return;
             }
 
-            WasmAPIs.wasm_extern_vec_new_uninitialized(out instanceVector, (nuint)size);
-
-            // TODO:
+            WasmAPIs.wasm_extern_vec_new_uninitialized(out vector, (nuint)size);
+            
             for (var i = 0; i < size; ++i)
             {
-                //vector.data[i] = ValueType.New(kinds[i]).Handle.DangerousGetHandle();
+                var instance = instances[i];
+                vector.data[i] = instance.Handle.DangerousGetHandle();
+                // Memory of ExternalInstance is released by Vector then passes ownership to native.
+                instance.Handle.SetHandleAsInvalid();
             }
         }
 
@@ -36,15 +38,26 @@ namespace Mochineko.WasmerBridge
             WasmAPIs.wasm_extern_vec_new_empty(out instanceVector);
         }
 
-        private static void New(nuint size, [OwnPass] IntPtr* data, [OwnOut]  out ExternalInstanceVector instanceVector)
+        private static void New(nuint size, [OwnPass] IntPtr* data, [OwnOut] out ExternalInstanceVector instanceVector)
         {
             WasmAPIs.wasm_extern_vec_new(out instanceVector, size, data);
         }
 
-        public void ToKinds(out ReadOnlySpan<ExternalKind> kinds)
+        internal void ToManaged(out ReadOnlySpan<ExternalInstance> managed)
         {
-            // TODO:
-            throw new NotImplementedException();
+            if (size == 0)
+            {
+                managed = new Span<ExternalInstance>();
+                return;
+            }
+
+            var array = new ExternalInstance[(int)size];
+            for (var i = 0; i < (int)size; i++)
+            {
+                array[i] = ExternalInstance.FromPointer(data[i]);
+            }
+
+            managed = array;
         }
 
         public void Dispose()
@@ -56,27 +69,22 @@ namespace Mochineko.WasmerBridge
         {
             [DllImport(NativePlugin.LibraryName)]
             public static extern void wasm_extern_vec_new_empty(
-                [OwnOut] out ExternalInstanceVector instanceVector);
+                [OwnOut] out ExternalInstanceVector vector);
 
             [DllImport(NativePlugin.LibraryName)]
             public static extern void wasm_extern_vec_new_uninitialized(
-                [OwnOut] out ExternalInstanceVector instanceVector,
+                [OwnOut] out ExternalInstanceVector vector,
                 nuint size);
 
             [DllImport(NativePlugin.LibraryName)]
             public static extern void wasm_extern_vec_new(
-                [OwnOut] out ExternalInstanceVector instanceVector,
+                [OwnOut] out ExternalInstanceVector vector,
                 nuint size,
                 [OwnPass] [In] IntPtr* data);
 
             [DllImport(NativePlugin.LibraryName)]
-            public static extern void wasm_extern_vec_copy(
-                [OwnOut] out ExternalInstanceVector destination,
-                [Const] in ExternalInstanceVector source);
-
-            [DllImport(NativePlugin.LibraryName)]
             public static extern void wasm_extern_vec_delete(
-                [OwnPass] in ExternalInstanceVector instanceVector);
+                [OwnPass] in ExternalInstanceVector handle);
         }
     }
 }

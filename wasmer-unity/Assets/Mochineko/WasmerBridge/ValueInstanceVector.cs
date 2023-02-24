@@ -64,12 +64,7 @@ namespace Mochineko.WasmerBridge
 
             [DllImport(NativePlugin.LibraryName)]
             public static extern void wasm_val_vec_delete(
-                [OwnPass] in ValueInstanceVector vector);
-
-            [DllImport(NativePlugin.LibraryName)]
-            public static extern void wasm_val_vec_copy(
-                [OwnOut] out ValueInstanceVector destination,
-                [ConstVector] in ValueInstanceVector source);
+                [OwnPass] in ValueInstanceVector handle);
         }
     }
 }

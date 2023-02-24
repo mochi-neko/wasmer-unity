@@ -67,12 +67,7 @@ namespace Mochineko.WasmerBridge
         {
             [DllImport(NativePlugin.LibraryName)]
             public static extern void wasm_extern_delete(
-                [OwnPass] [In] IntPtr external);
-
-            [DllImport(NativePlugin.LibraryName)]
-            [return: OwnReceive]
-            public static extern IntPtr wasm_extern_copy(
-                [Const] NativeHandle external);
+                [OwnPass] [In] IntPtr handle);
 
             [DllImport(NativePlugin.LibraryName)]
             public static extern bool wasm_extern_same(

@@ -63,7 +63,7 @@ namespace Mochineko.WasmerBridge
         {
             [DllImport(NativePlugin.LibraryName)]
             public static extern void wasm_externtype_delete(
-                [OwnPass] [In] IntPtr externalType);
+                [OwnPass] [In] IntPtr handle);
 
             [DllImport(NativePlugin.LibraryName)]
             [return: OwnReceive]

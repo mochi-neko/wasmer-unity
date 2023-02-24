@@ -101,7 +101,7 @@ namespace Mochineko.WasmerBridge
 
             [DllImport(NativePlugin.LibraryName)]
             public static extern void wasm_trap_delete(
-                [OwnPass] IntPtr trap);
+                [OwnPass] [In] IntPtr handle);
 
             [DllImport(NativePlugin.LibraryName)]
             public static extern void wasm_trap_message(

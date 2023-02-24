@@ -64,13 +64,8 @@ namespace Mochineko.WasmerBridge
                 [OwnPass] [In] IntPtr* data);
 
             [DllImport(NativePlugin.LibraryName)]
-            public static extern void wasm_exporttype_vec_copy(
-                [OwnOut] out ExportTypeVector destination,
-                [Const] in ExportTypeVector source);
-
-            [DllImport(NativePlugin.LibraryName)]
             public static extern void wasm_exporttype_vec_delete(
-                [OwnPass] in ExportTypeVector vector);
+                [OwnPass] in ExportTypeVector handle);
         }
     }
 }

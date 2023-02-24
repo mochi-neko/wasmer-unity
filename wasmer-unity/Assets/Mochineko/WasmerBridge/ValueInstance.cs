@@ -75,7 +75,7 @@ namespace Mochineko.WasmerBridge
         {
             [DllImport(NativePlugin.LibraryName)]
             public static extern void wasm_val_delete(
-                [OwnPass] in ValueInstance value);
+                [OwnPass] in ValueInstance handle);
 
             [DllImport(NativePlugin.LibraryName)]
             public static extern void wasm_val_copy(

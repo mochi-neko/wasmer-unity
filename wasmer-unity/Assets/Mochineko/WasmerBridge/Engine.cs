@@ -76,13 +76,13 @@ namespace Mochineko.WasmerBridge
             public static extern IntPtr wasm_engine_new();
 
             [DllImport(NativePlugin.LibraryName)]
-            public static extern void wasm_engine_delete(
-                [OwnPass] [In] IntPtr engine);
-
-            [DllImport(NativePlugin.LibraryName)]
             [return: OwnReceive]
             public static extern IntPtr wasm_engine_new_with_config(
                 [OwnPass] [In] Config.NativeHandle config);
+            
+            [DllImport(NativePlugin.LibraryName)]
+            public static extern void wasm_engine_delete(
+                [OwnPass] [In] IntPtr handle);
         }
     }
 }
