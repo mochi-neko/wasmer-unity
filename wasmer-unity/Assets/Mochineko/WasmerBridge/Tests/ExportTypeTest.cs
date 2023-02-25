@@ -18,6 +18,8 @@ namespace Mochineko.WasmerBridge.Tests
                 Array.Empty<ValueKind>());
 
             using var importType = ExportType.New(functionName, functionType);
+            // TODO: Check ownership
+            // functionType.Handle.IsInvalid.Should().BeTrue();
             importType.Should().NotBeNull();
             importType.Name.Should().Be(functionName);
             importType.Kind.Should().Be(ExternalKind.Function);

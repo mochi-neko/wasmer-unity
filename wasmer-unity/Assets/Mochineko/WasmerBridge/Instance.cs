@@ -16,14 +16,16 @@ namespace Mochineko.WasmerBridge
         {
             TrapPointer.New(store, out var trapPointer);
 
-            return new Instance(WasmAPIs.wasm_instance_new(store.Handle, module.Handle, in imports, in trapPointer));
+            return new Instance(
+                WasmAPIs.wasm_instance_new(store.Handle, module.Handle, in imports, in trapPointer),
+                hasOwnership: true);
 
             // TODO: Error handling by TrapPointer
         }
 
-        private Instance(IntPtr handle)
+        private Instance(IntPtr handle, bool hasOwnership)
         {
-            this.handle = new NativeHandle(handle);
+            this.handle = new NativeHandle(handle, hasOwnership);
         }
 
         public void Dispose()
@@ -48,8 +50,8 @@ namespace Mochineko.WasmerBridge
 
         internal sealed class NativeHandle : SafeHandleZeroOrMinusOneIsInvalid
         {
-            public NativeHandle(IntPtr handle)
-                : base(true)
+            public NativeHandle(IntPtr handle, bool ownsHandle)
+                : base(ownsHandle)
             {
                 SetHandle(handle);
             }

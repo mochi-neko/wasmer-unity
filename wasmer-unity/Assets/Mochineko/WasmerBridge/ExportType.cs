@@ -26,8 +26,6 @@ namespace Mochineko.WasmerBridge
             {
                 using var type = Type;
                 var kind = type.Kind;
-                // Does not receive ownership of ExternalType from ImportType.
-                type.Handle.SetHandleAsInvalid();
 
                 return kind;
             }
@@ -38,14 +36,21 @@ namespace Mochineko.WasmerBridge
             get
             {
                 var ptr = WasmAPIs.wasm_exporttype_type(Handle);
-                return ExternalType.FromPointer(ptr);
+                return ExternalType.FromPointer(ptr, hasOwnership: false);
             }
         }
 
         [return: OwnReceive]
         internal static ExportType New(string functionName, [OwnPass] FunctionType functionType)
         {
-            var exportType = New(functionName, ExternalType.FromFunction(functionType));
+            // Passes name vectors ownerships to native, then vectors are released by owner:ImportType.
+            ByteVector.FromText(functionName, out var nameVector);
+            
+            using var type = ExternalType.FromFunction(functionType);
+            
+            var exportType = new ExportType(
+                WasmAPIs.wasm_exporttype_new(in nameVector, type.Handle),
+                hasOwnership: true);
 
             // Passes ownership to native.
             functionType.Handle.SetHandleAsInvalid();
@@ -54,18 +59,11 @@ namespace Mochineko.WasmerBridge
         }
 
         [return: OwnReceive]
-        private static ExportType New(string name, [OwnPass] ExternalType type)
-        {
-            // Passes name vectors ownerships to native, then vectors are released by owner:ImportType.
-            ByteVector.FromText(name, out var nameVector);
-
-            return New(in nameVector, type);
-        }
-
-        [return: OwnReceive]
         private static ExportType New([OwnPass] in ByteVector name, [OwnPass] ExternalType type)
         {
-            var exportType = new ExportType(WasmAPIs.wasm_exporttype_new(in name, type.Handle));
+            var exportType = new ExportType(
+                WasmAPIs.wasm_exporttype_new(in name, type.Handle),
+                hasOwnership: true);
 
             // Passes ownership to native.
             type.Handle.SetHandleAsInvalid();
@@ -73,9 +71,9 @@ namespace Mochineko.WasmerBridge
             return exportType;
         }
 
-        private ExportType(IntPtr handle)
+        private ExportType(IntPtr handle, bool hasOwnership)
         {
-            this.handle = new NativeHandle(handle);
+            this.handle = new NativeHandle(handle, hasOwnership);
         }
 
         public void Dispose()
@@ -100,9 +98,10 @@ namespace Mochineko.WasmerBridge
 
         internal sealed class NativeHandle : SafeHandleZeroOrMinusOneIsInvalid
         {
-            public NativeHandle(IntPtr handle) : base(true)
+            public NativeHandle(IntPtr handle, bool ownsHandle)
+                : base(ownsHandle)
             {
-                this.handle = handle;
+                SetHandle(handle);
             }
 
             protected override bool ReleaseHandle()
@@ -118,7 +117,7 @@ namespace Mochineko.WasmerBridge
             [return: OwnReceive]
             public static extern IntPtr wasm_exporttype_new(
                 [OwnPass] in ByteVector name,
-                [OwnPass] [In] ExternalType.NativeHandle type);
+                [OwnPass] ExternalType.NativeHandle type);
 
             [DllImport(NativePlugin.LibraryName)]
             public static extern void wasm_exporttype_delete(

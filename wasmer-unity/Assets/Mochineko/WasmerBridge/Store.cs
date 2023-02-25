@@ -16,12 +16,12 @@ namespace Mochineko.WasmerBridge
                 throw new ArgumentNullException(nameof(engine));
             }
 
-            return new Store(WasmAPIs.wasm_store_new(engine.Handle));
+            return new Store(WasmAPIs.wasm_store_new(engine.Handle), hasOwnership: true);
         }
-        
-        private Store(IntPtr handle)
+
+        private Store(IntPtr handle, bool hasOwnership)
         {
-            this.handle = new NativeHandle(handle);
+            this.handle = new NativeHandle(handle, hasOwnership);
         }
 
         public void Dispose()
@@ -46,8 +46,8 @@ namespace Mochineko.WasmerBridge
 
         internal sealed class NativeHandle : SafeHandleZeroOrMinusOneIsInvalid
         {
-            public NativeHandle(IntPtr handle)
-                : base(true)
+            public NativeHandle(IntPtr handle, bool ownsHandle)
+                : base(ownsHandle)
             {
                 SetHandle(handle);
             }

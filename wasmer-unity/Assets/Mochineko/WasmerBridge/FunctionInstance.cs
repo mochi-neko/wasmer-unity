@@ -10,16 +10,15 @@ namespace Mochineko.WasmerBridge
     {
         [OwnReceive]
         internal FunctionType Type
-            => FunctionType.FromPointer(WasmAPIs.wasm_func_type(Handle));
+            => FunctionType.FromPointer(
+                WasmAPIs.wasm_func_type(Handle),
+                hasOwnership: true);
 
         internal nuint ParametersArity
             => WasmAPIs.wasm_func_param_arity(Handle);
 
         internal nuint ResultsArity
             => WasmAPIs.wasm_func_result_arity(Handle);
-
-        internal static FunctionInstance FromPointer(IntPtr ptr)
-            => new FunctionInstance(ptr);
 
         // TODO: Make wrapper
         [return: OwnReceive]
@@ -28,7 +27,9 @@ namespace Mochineko.WasmerBridge
             FunctionType type,
             FunctionCallback callback)
         {
-            return new FunctionInstance(WasmAPIs.wasm_func_new(store.Handle, type.Handle, callback));
+            return new FunctionInstance(
+                WasmAPIs.wasm_func_new(store.Handle, type.Handle, callback),
+                hasOwnership: true);
         }
 
         [return: OwnReceive]
@@ -39,8 +40,10 @@ namespace Mochineko.WasmerBridge
             IntPtr environment,
             Finalizer finalizer)
         {
-            return new FunctionInstance(WasmAPIs.wasm_func_new_with_env(store.Handle, type.Handle, callback,
-                environment, finalizer));
+            return new FunctionInstance(
+                WasmAPIs.wasm_func_new_with_env(
+                    store.Handle, type.Handle, callback, environment, finalizer),
+                hasOwnership: true);
         }
 
         [return: OwnReceive]
@@ -56,13 +59,16 @@ namespace Mochineko.WasmerBridge
             // Failed
             else
             {
-                return Trap.FromPointer(trapPointer);
+                return Trap.FromPointer(trapPointer, true);
             }
         }
 
-        private FunctionInstance(IntPtr handle)
+        internal static FunctionInstance FromPointer(IntPtr ptr, bool hasOwnership)
+            => new FunctionInstance(ptr, hasOwnership);
+
+        private FunctionInstance(IntPtr handle, bool hasOwnership)
         {
-            this.handle = new NativeHandle(handle);
+            this.handle = new NativeHandle(handle, hasOwnership);
         }
 
         public void Dispose()
@@ -87,9 +93,10 @@ namespace Mochineko.WasmerBridge
 
         internal sealed class NativeHandle : SafeHandleZeroOrMinusOneIsInvalid
         {
-            public NativeHandle(IntPtr handle) : base(true)
+            public NativeHandle(IntPtr handle, bool ownsHandle)
+                : base(ownsHandle)
             {
-                this.handle = handle;
+                SetHandle(handle);
             }
 
             protected override bool ReleaseHandle()

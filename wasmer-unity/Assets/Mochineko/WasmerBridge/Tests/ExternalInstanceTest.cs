@@ -30,11 +30,10 @@ namespace Mochineko.WasmerBridge.Tests
             externalInstance.Should().NotBeNull();
             externalInstance.Kind.Should().Be(ExternalKind.Function);
             using var type = externalInstance.Type;
+            type.Handle.IsInvalid.Should().BeFalse();
             type.Kind.Should().Be(ExternalKind.Function);
 
             using var excluded = externalInstance.ToFunction();
-            externalInstance.Handle.SetHandleAsInvalid();
-
             excluded.Should().NotBeNull();
             excluded.ParametersArity.Should().Be((nuint)0);
             excluded.ResultsArity.Should().Be((nuint)0);
@@ -48,8 +47,6 @@ namespace Mochineko.WasmerBridge.Tests
                 trap.Should().BeNull();
                 callbackCalled.Should().BeTrue();
             }
-            
-            excluded.Handle.SetHandleAsInvalid();
 
             GC.Collect();
         }

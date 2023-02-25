@@ -11,7 +11,9 @@ namespace Mochineko.WasmerBridge
         [return: OwnReceive]
         public static Engine New()
         {
-            return new Engine(WasmAPIs.wasm_engine_new());
+            return new Engine(
+                WasmAPIs.wasm_engine_new(),
+                hasOwnership: true);
         }
 
         [return: OwnReceive]
@@ -22,7 +24,9 @@ namespace Mochineko.WasmerBridge
                 throw new ArgumentNullException(nameof(config));
             }
 
-            var engine = new Engine(WasmAPIs.wasm_engine_new_with_config(config.Handle));
+            var engine = new Engine(
+                WasmAPIs.wasm_engine_new_with_config(config.Handle),
+                hasOwnership: true);
 
             // Passes ownership to native.
             config.Handle.SetHandleAsInvalid();
@@ -30,9 +34,9 @@ namespace Mochineko.WasmerBridge
             return engine;
         }
 
-        private Engine(IntPtr handle)
+        private Engine(IntPtr handle, bool hasOwnership)
         {
-            this.handle = new NativeHandle(handle);
+            this.handle = new NativeHandle(handle, hasOwnership);
         }
 
         public void Dispose()
@@ -57,9 +61,10 @@ namespace Mochineko.WasmerBridge
 
         internal sealed class NativeHandle : SafeHandleZeroOrMinusOneIsInvalid
         {
-            public NativeHandle(IntPtr handle) : base(true)
+            public NativeHandle(IntPtr handle, bool ownsHandle)
+                : base(ownsHandle)
             {
-                this.handle = handle;
+                SetHandle(handle);
             }
 
             protected override bool ReleaseHandle()
@@ -79,7 +84,7 @@ namespace Mochineko.WasmerBridge
             [return: OwnReceive]
             public static extern IntPtr wasm_engine_new_with_config(
                 [OwnPass] [In] Config.NativeHandle config);
-            
+
             [DllImport(NativePlugin.LibraryName)]
             public static extern void wasm_engine_delete(
                 [OwnPass] [In] IntPtr handle);

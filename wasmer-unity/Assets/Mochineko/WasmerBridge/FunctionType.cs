@@ -34,9 +34,6 @@ namespace Mochineko.WasmerBridge
             }
         }
 
-        internal static FunctionType FromPointer(IntPtr ptr)
-            => new FunctionType(ptr);
-
         [return: OwnReceive]
         internal static FunctionType New(in ReadOnlySpan<ValueKind> parameters, in ReadOnlySpan<ValueKind> results)
         {
@@ -50,12 +47,17 @@ namespace Mochineko.WasmerBridge
         [return: OwnReceive]
         private static FunctionType New([OwnPass] in ValueTypeVector parameters, [OwnPass] in ValueTypeVector results)
         {
-            return new FunctionType(WasmAPIs.wasm_functype_new(in parameters, in results));
+            return new FunctionType(
+                WasmAPIs.wasm_functype_new(in parameters, in results),
+                hasOwnership: true);
         }
 
-        private FunctionType(IntPtr handle)
+        internal static FunctionType FromPointer(IntPtr ptr, bool hasOwnership)
+            => new FunctionType(ptr, hasOwnership);
+
+        private FunctionType(IntPtr handle, bool hasOwnership)
         {
-            this.handle = new NativeHandle(handle);
+            this.handle = new NativeHandle(handle, hasOwnership);
         }
 
         public void Dispose()
@@ -80,9 +82,10 @@ namespace Mochineko.WasmerBridge
 
         internal sealed class NativeHandle : SafeHandleZeroOrMinusOneIsInvalid
         {
-            public NativeHandle(IntPtr handle) : base(true)
+            public NativeHandle(IntPtr handle, bool ownsHandle)
+                : base(ownsHandle)
             {
-                this.handle = handle;
+                SetHandle(handle);
             }
 
             protected override bool ReleaseHandle()

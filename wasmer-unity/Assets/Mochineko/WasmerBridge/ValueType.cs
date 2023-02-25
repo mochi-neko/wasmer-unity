@@ -14,7 +14,9 @@ namespace Mochineko.WasmerBridge
         [return: OwnReceive]
         internal static ValueType New(ValueKind kind)
         {
-            return new ValueType(WasmAPIs.wasm_valtype_new((byte)kind));
+            return new ValueType(
+                WasmAPIs.wasm_valtype_new((byte)kind),
+                hasOwnership: true);
         }
 
         internal static ValueKind KindFromPointer(IntPtr valueType)
@@ -22,9 +24,9 @@ namespace Mochineko.WasmerBridge
             return (ValueKind)WasmAPIs.wasm_valtype_kind(valueType);
         }
 
-        private ValueType(IntPtr handle)
+        private ValueType(IntPtr handle, bool hasOwnership)
         {
-            this.handle = new NativeHandle(handle);
+            this.handle = new NativeHandle(handle, hasOwnership);
         }
 
         public void Dispose()
@@ -49,8 +51,8 @@ namespace Mochineko.WasmerBridge
 
         internal sealed class NativeHandle : SafeHandleZeroOrMinusOneIsInvalid
         {
-            public NativeHandle(IntPtr handle)
-                : base(true)
+            public NativeHandle(IntPtr handle, bool ownsHandle)
+                : base(ownsHandle)
             {
                 SetHandle(handle);
             }

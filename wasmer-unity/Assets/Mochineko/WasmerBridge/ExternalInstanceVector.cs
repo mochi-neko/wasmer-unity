@@ -54,7 +54,7 @@ namespace Mochineko.WasmerBridge
             var array = new ExternalInstance[(int)size];
             for (var i = 0; i < (int)size; i++)
             {
-                array[i] = ExternalInstance.FromPointer(data[i]);
+                array[i] = ExternalInstance.FromPointer(data[i], false);
             }
 
             managed = array;

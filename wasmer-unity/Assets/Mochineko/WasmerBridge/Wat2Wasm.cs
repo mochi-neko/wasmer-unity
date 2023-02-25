@@ -22,7 +22,11 @@ namespace Mochineko.WasmerBridge
                 }
 
                 WasmerAPIs.wat2wasm(in watVector, out wasm);
-                if (wasm.size == 0)
+                if (wasm.size != 0)
+                {
+                    return;
+                }
+                else
                 {
                     // TODO: Detailed error handling
                     throw new InvalidOperationException("Failed to convert wat to wasm.");

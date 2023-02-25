@@ -10,12 +10,12 @@ namespace Mochineko.WasmerBridge
     {
         private readonly IntPtr trapPointer;
 
-        public Trap Trap
-            => Trap.FromPointer(trapPointer);
+        public Trap Trap(bool hasOwnership)
+            => WasmerBridge.Trap.FromPointer(trapPointer, hasOwnership);
 
         public static void New(Store store, [OwnOut] out TrapPointer pointer)
         {
-            var trap = Trap.NewWithEmptyMessage(store);
+            var trap = WasmerBridge.Trap.NewWithEmptyMessage(store);
             pointer = new TrapPointer(trap.Handle.DangerousGetHandle());
         }
 

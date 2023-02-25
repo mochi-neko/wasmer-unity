@@ -12,17 +12,21 @@ namespace Mochineko.WasmerBridge
             => (ExternalKind)WasmAPIs.wasm_externtype_kind(Handle);
 
         internal static ExternalType FromFunction(FunctionType functionType)
-            => new ExternalType(WasmAPIs.wasm_functype_as_externtype(functionType.Handle));
+            => new ExternalType(
+                WasmAPIs.wasm_functype_as_externtype(functionType.Handle),
+                hasOwnership: false);
 
         internal FunctionType ToFunction()
-            => FunctionType.FromPointer(WasmAPIs.wasm_externtype_as_functype(Handle));
+            => FunctionType.FromPointer(
+                WasmAPIs.wasm_externtype_as_functype(Handle),
+                hasOwnership: false);
 
-        internal static ExternalType FromPointer(IntPtr ptr)
-            => new ExternalType(ptr);
+        internal static ExternalType FromPointer(IntPtr pointer, bool hasOwnership)
+            => new ExternalType(pointer, hasOwnership);
 
-        private ExternalType(IntPtr handle)
+        private ExternalType(IntPtr handle, bool hasOwnership)
         {
-            this.handle = new NativeHandle(handle);
+            this.handle = new NativeHandle(handle, hasOwnership);
         }
 
         public void Dispose()
@@ -47,9 +51,10 @@ namespace Mochineko.WasmerBridge
 
         internal sealed class NativeHandle : SafeHandleZeroOrMinusOneIsInvalid
         {
-            public NativeHandle(IntPtr handle) : base(true)
+            public NativeHandle(IntPtr handle, bool ownsHandle)
+                : base(ownsHandle)
             {
-                this.handle = handle;
+                SetHandle(handle);
             }
 
             protected override bool ReleaseHandle()

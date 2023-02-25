@@ -76,7 +76,7 @@ namespace Mochineko.WasmerBridge
                 throw new InvalidOperationException("Failed to create module.");
             }
 
-            return new Module(handle);
+            return new Module(handle, hasOwnership: true);
         }
 
         public void Serialize(out ReadOnlySpan<byte> serialized)
@@ -133,12 +133,14 @@ namespace Mochineko.WasmerBridge
                 throw new ArgumentNullException(nameof(binary));
             }
 
-            return new Module(WasmAPIs.wasm_module_deserialize(store.Handle, in binary));
+            return new Module(
+                WasmAPIs.wasm_module_deserialize(store.Handle, in binary),
+                hasOwnership: true);
         }
 
-        private Module(IntPtr handle)
+        private Module(IntPtr handle, bool hasOwnership)
         {
-            this.handle = new NativeHandle(handle);
+            this.handle = new NativeHandle(handle, hasOwnership);
         }
 
         public void Dispose()
@@ -163,8 +165,8 @@ namespace Mochineko.WasmerBridge
 
         internal sealed class NativeHandle : SafeHandleZeroOrMinusOneIsInvalid
         {
-            public NativeHandle(IntPtr handle)
-                : base(true)
+            public NativeHandle(IntPtr handle, bool ownsHandle)
+                : base(ownsHandle)
             {
                 SetHandle(handle);
             }

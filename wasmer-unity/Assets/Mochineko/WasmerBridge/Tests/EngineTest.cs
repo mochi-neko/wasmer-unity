@@ -13,17 +13,20 @@ namespace Mochineko.WasmerBridge.Tests
         {
             using var engine = Engine.New();
             engine.Should().NotBeNull();
-            
+
             GC.Collect();
         }
 
         [Test, RequiresPlayMode(false)]
         public void CreateEngineWithConfigTest()
         {
-            var config = Config.New();
+            using var config = Config.New();
+
             using var engine = Engine.New(config);
+            // TODO: Check ownership
+            // config.Handle.IsInvalid.Should().BeTrue();
             engine.Should().NotBeNull();
-            
+
             GC.Collect();
         }
     }

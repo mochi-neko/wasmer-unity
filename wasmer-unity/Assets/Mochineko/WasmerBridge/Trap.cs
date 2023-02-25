@@ -20,9 +20,6 @@ namespace Mochineko.WasmerBridge
             }
         }
 
-        internal static Trap FromPointer(IntPtr ptr)
-            => new Trap(ptr);
-
         [return: OwnReceive]
         internal static Trap NewWithEmptyMessage(Store store)
         {
@@ -48,12 +45,15 @@ namespace Mochineko.WasmerBridge
         [return: OwnReceive]
         private static Trap New(Store store, in ByteVector message)
         {
-            return new Trap(WasmAPIs.wasm_trap_new(store.Handle, in message));
+            return new Trap(WasmAPIs.wasm_trap_new(store.Handle, in message), hasOwnership: true);
         }
 
-        private Trap(IntPtr handle)
+        internal static Trap FromPointer(IntPtr ptr, bool hasOwnership)
+            => new Trap(ptr, hasOwnership);
+
+        private Trap(IntPtr handle, bool hasOwnership)
         {
-            this.handle = new NativeHandle(handle);
+            this.handle = new NativeHandle(handle, hasOwnership);
         }
 
         public void Dispose()
@@ -78,8 +78,8 @@ namespace Mochineko.WasmerBridge
 
         internal sealed class NativeHandle : SafeHandleMinusOneIsInvalid
         {
-            public NativeHandle(IntPtr handle)
-                : base(true)
+            public NativeHandle(IntPtr handle, bool ownsHandle)
+                : base(ownsHandle)
             {
                 SetHandle(handle);
             }

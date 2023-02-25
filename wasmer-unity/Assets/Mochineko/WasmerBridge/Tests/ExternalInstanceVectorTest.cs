@@ -9,7 +9,6 @@ namespace Mochineko.WasmerBridge.Tests
     internal sealed class ExternalInstanceVectorTest
     {
         [Test, RequiresPlayMode(false)]
-        [Ignore("Not implemented")]
         public void CreateEmptyTest()
         {
             ExternalInstanceVector.NewEmpty(out var vector);
@@ -18,7 +17,7 @@ namespace Mochineko.WasmerBridge.Tests
                 vector.size.Should().Be((nuint)0);
             }
 
-            ExternalInstanceVector.New(ArraySegment<ExternalKind>.Empty, out var emptyVector);
+            ExternalInstanceVector.New(ArraySegment<ExternalInstance>.Empty, out var emptyVector);
             using (emptyVector)
             {
                 emptyVector.size.Should().Be((nuint)0);
@@ -28,28 +27,42 @@ namespace Mochineko.WasmerBridge.Tests
         }
 
         [Test, RequiresPlayMode(false)]
-        [Ignore("Not implemented")]
-        public void CreateFromManagedArrayTest()
+        [Ignore("Remains crashes")]
+        public unsafe void CreateFromManagedArrayTest()
         {
-            var kinds = new[]
-            {
-                ExternalKind.Function,
-                ExternalKind.Global,
-                ExternalKind.Table,
-                ExternalKind.Memory,
-            };
+            using var engine = Engine.New();
+            using var store = Store.New(engine);
+            using var functionType = FunctionType.New(
+                Array.Empty<ValueKind>(),
+                Array.Empty<ValueKind>());
+            bool callbackCalled = false;
+            using var functionInstance = FunctionInstance.New(
+                store,
+                functionType,
+                callback: (_, _) =>
+                {
+                    callbackCalled = true;
+                    return IntPtr.Zero;
+                });
+            var externalInstance = ExternalInstance.FromFunction(functionInstance);
+            var externalInstances = new[] { externalInstance };
 
-            ExternalInstanceVector.New(kinds, out var vector);
+            ExternalInstanceVector.New(externalInstances, out var vector);
             using (vector)
             {
-                vector.size.Should().Be((nuint)kinds.Length);
+                vector.size.Should().Be((nuint)externalInstances.Length);
+                vector.ToManaged(out var managed);
 
-                vector.ToKinds(out var excludedKinds);
-
-                excludedKinds[0].Should().Be(ExternalKind.Function);
-                excludedKinds[1].Should().Be(ExternalKind.Global);
-                excludedKinds[2].Should().Be(ExternalKind.Table);
-                excludedKinds[3].Should().Be(ExternalKind.Memory);
+                var excludedFunctionInstance = managed[0].ToFunction();
+                ValueInstanceVector.NewEmpty(out var arguments);
+                ValueInstanceVector.NewEmpty(out var results);
+                using (arguments)
+                using (results)
+                {
+                    var trap = excludedFunctionInstance.Call(in arguments, ref results);
+                    trap.Should().BeNull();
+                    callbackCalled.Should().BeTrue();
+                }
             }
             
             GC.Collect();

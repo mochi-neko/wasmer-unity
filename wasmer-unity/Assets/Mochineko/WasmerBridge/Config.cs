@@ -11,12 +11,12 @@ namespace Mochineko.WasmerBridge
         [return: OwnReceive]
         public static Config New()
         {
-            return new Config(WasmAPIs.wasm_config_new());
+            return new Config(WasmAPIs.wasm_config_new(), hasOwnership: true);
         }
 
-        private Config(IntPtr handle)
+        private Config(IntPtr handle, bool hasOwnership)
         {
-            this.handle = new NativeHandle(handle);
+            this.handle = new NativeHandle(handle, hasOwnership);
         }
 
         public void Dispose()
@@ -41,9 +41,10 @@ namespace Mochineko.WasmerBridge
 
         internal sealed class NativeHandle : SafeHandleZeroOrMinusOneIsInvalid
         {
-            public NativeHandle(IntPtr handle) : base(true)
+            public NativeHandle(IntPtr handle, bool ownsHandle)
+                : base(ownsHandle)
             {
-                this.handle = handle;
+                SetHandle(handle);
             }
 
             protected override bool ReleaseHandle()

@@ -34,7 +34,6 @@ namespace Mochineko.WasmerBridge.Tests
                 Array.Empty<ValueKind>(),
                 Array.Empty<ValueKind>());
             using var exportType = ExportType.New(functionName, functionType);
-            
             var exportTypes = new[]
             {
                 exportType

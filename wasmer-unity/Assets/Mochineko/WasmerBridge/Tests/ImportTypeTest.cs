@@ -19,6 +19,8 @@ namespace Mochineko.WasmerBridge.Tests
                 Array.Empty<ValueKind>());
 
             using var importType = ImportType.New(moduleName, functionName, functionType);
+            // TODO: Check ownership
+            // functionType.Handle.IsInvalid.Should().BeTrue();
             importType.Should().NotBeNull();
             importType.Module.Should().Be(moduleName);
             importType.Name.Should().Be(functionName);
