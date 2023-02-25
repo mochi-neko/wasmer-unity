@@ -22,12 +22,11 @@ namespace Mochineko.WasmerBridge.Tests
             {
                 emptyVector.size.Should().Be((nuint)0);
             }
-            
+
             GC.Collect();
         }
 
         [Test, RequiresPlayMode(false)]
-        [Ignore("Remains crashes")]
         public unsafe void CreateFromManagedArrayTest()
         {
             using var engine = Engine.New();
@@ -44,27 +43,31 @@ namespace Mochineko.WasmerBridge.Tests
                     callbackCalled = true;
                     return IntPtr.Zero;
                 });
-            var externalInstance = ExternalInstance.FromFunction(functionInstance);
+            using var externalInstance = ExternalInstance.FromFunction(functionInstance);
             var externalInstances = new[] { externalInstance };
 
             ExternalInstanceVector.New(externalInstances, out var vector);
             using (vector)
             {
+                // Passes ownership of element
+                functionInstance.Handle.SetHandleAsInvalid();
+
                 vector.size.Should().Be((nuint)externalInstances.Length);
                 vector.ToManaged(out var managed);
+                managed.Length.Should().Be(externalInstances.Length);
 
-                var excludedFunctionInstance = managed[0].ToFunction();
+                using var excludedFunctionInstance = managed[0].ToFunction();
                 ValueInstanceVector.NewEmpty(out var arguments);
                 ValueInstanceVector.NewEmpty(out var results);
                 using (arguments)
                 using (results)
                 {
-                    var trap = excludedFunctionInstance.Call(in arguments, ref results);
+                    using var trap = excludedFunctionInstance.Call(in arguments, ref results);
                     trap.Should().BeNull();
                     callbackCalled.Should().BeTrue();
                 }
             }
-            
+
             GC.Collect();
         }
     }

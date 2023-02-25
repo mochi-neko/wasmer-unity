@@ -43,7 +43,7 @@ namespace Mochineko.WasmerBridge.Tests
             using (arguments)
             using (results)
             {
-                var trap = excluded.Call(in arguments, ref results);
+                using var trap = excluded.Call(in arguments, ref results);
                 trap.Should().BeNull();
                 callbackCalled.Should().BeTrue();
             }

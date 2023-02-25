@@ -38,7 +38,7 @@ namespace Mochineko.WasmerBridge.Tests
             using (arguments)
             using (results)
             {
-                var trap = functionInstance.Call(in arguments, ref results);
+                using var trap = functionInstance.Call(in arguments, ref results);
                 trap.Should().BeNull();
                 callbackCalled.Should().BeTrue();
             }
@@ -80,7 +80,7 @@ namespace Mochineko.WasmerBridge.Tests
             using (arguments)
             using (results)
             {
-                var trap = functionInstance.Call(in arguments, ref results);
+                using var trap = functionInstance.Call(in arguments, ref results);
                 trap.Should().BeNull();
                 callbackCalled.Should().BeTrue();
             }
