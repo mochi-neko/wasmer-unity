@@ -22,7 +22,7 @@ The following are the best features I think:
 
 ## Milestones
 
-1. [ ] Implement minimal Wasm API for hello world.
+1. [x] Implement minimal Wasm API for hello world.
 2. [ ] Implement native Wasm API with samples.
 3. [ ] Make demo on Unity.
 4. [ ] Implement headless in Wasmer API.
@@ -43,7 +43,7 @@ The following are the best features I think:
 - [ ] GlobalType
 - [ ] TableType
 - [ ] MemoryType
-- [ ] ExternalType
+- [x] ExternalType
 - [x] ImportType
 - [x] ExportType
 - [x] Trap
@@ -54,8 +54,8 @@ The following are the best features I think:
 - [ ] GlobalInstance
 - [ ] TableInstance
 - [ ] MemoryInstance
-- [ ] ExternalInstance
-- [ ] Instance 
+- [x] ExternalInstance
+- [x] Instance 
 
 ### Wasmer API
 
@@ -75,6 +75,38 @@ The following are the best features I think:
   - [ ] Thread
 - [ ] Metering?
 - [ ] Middleware?
+
+### Examples
+
+- Basics
+  - [ ] Hello World
+  - [ ] Instanting a module
+  - [ ] Handling errors
+  - [ ] Interacting with memory
+- Exports
+  - [ ] Exproted global
+  - [ ] Exproted function
+  - [ ] Exproted memory
+- Imports
+  - [ ] Imported global
+  - [ ] Imported function
+- Externs
+  - [ ] Table
+  - [ ] Memory
+- Tunables
+  - [ ] Limit memory
+- Engines
+  - [ ] Engine
+  - [ ] Headless engines
+  - [ ] Cross-compilation
+  - [ ] Features
+- Compilers
+  - [ ] Singlepass compiler
+  - [ ] Cranelift compiler
+  - [ ] LLVM compiler
+- Integrations
+  - [ ] WASI
+  - [ ] WASI Pipes
 
 ## Notice
 
