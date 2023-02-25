@@ -43,15 +43,12 @@ namespace Mochineko.WasmerBridge.Tests
                     callbackCalled = true;
                     return IntPtr.Zero;
                 });
-            using var externalInstance = ExternalInstance.FromFunction(functionInstance);
+            using var externalInstance = ExternalInstance.FromFunctionWithOwnership(functionInstance);
             var externalInstances = new[] { externalInstance };
 
             ExternalInstanceVector.New(externalInstances, out var vector);
             using (vector)
             {
-                // Passes ownership of element
-                functionInstance.Handle.SetHandleAsInvalid();
-
                 vector.size.Should().Be((nuint)externalInstances.Length);
                 vector.ToManaged(out var managed);
                 managed.Length.Should().Be(externalInstances.Length);

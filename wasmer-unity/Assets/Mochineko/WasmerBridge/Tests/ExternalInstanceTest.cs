@@ -26,7 +26,7 @@ namespace Mochineko.WasmerBridge.Tests
                     return IntPtr.Zero;
                 });
 
-            using var externalInstance = ExternalInstance.FromFunction(functionInstance);
+            using var externalInstance = ExternalInstance.FromFunctionWithOwnership(functionInstance);
             externalInstance.Should().NotBeNull();
             externalInstance.Kind.Should().Be(ExternalKind.Function);
             using var type = externalInstance.Type;

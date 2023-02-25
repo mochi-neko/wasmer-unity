@@ -17,15 +17,26 @@ namespace Mochineko.WasmerBridge
                 WasmAPIs.wasm_extern_type(Handle),
                 hasOwnership: true);
 
-        internal static ExternalInstance FromFunction(FunctionInstance instance)
-            => new ExternalInstance(
+        // Pass ownership because ExternalInstanceVector releases not "FunctionInstance" but "ExternalInstance".
+        [return: OwnReceive]
+        internal static ExternalInstance FromFunctionWithOwnership([OwnPass] FunctionInstance instance)
+        {
+            var externalInstance = new ExternalInstance(
                 WasmAPIs.wasm_func_as_extern(instance.Handle),
-                hasOwnership: false);
+                hasOwnership: true);
+
+            // Passes ownership from FunctionInstance to ExternalInstance
+            instance.Handle.SetHandleAsInvalid();
+            
+            return externalInstance;
+        }
 
         internal FunctionInstance ToFunction()
-            => FunctionInstance.FromPointer(
+        {
+            return FunctionInstance.FromPointer(
                 WasmAPIs.wasm_extern_as_func(Handle),
                 hasOwnership: false);
+        }
 
         internal static ExternalInstance FromPointer(IntPtr ptr, bool hasOwnership)
             => new ExternalInstance(ptr, hasOwnership);
