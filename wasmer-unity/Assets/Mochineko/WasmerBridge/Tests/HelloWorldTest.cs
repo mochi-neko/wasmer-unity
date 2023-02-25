@@ -1,3 +1,4 @@
+using System;
 using FluentAssertions;
 using NUnit.Framework;
 using UnityEngine.TestTools;
@@ -5,7 +6,7 @@ using UnityEngine.TestTools;
 namespace Mochineko.WasmerBridge.Tests
 {
     [TestFixture]
-    internal sealed class HelloWorldTest
+    internal unsafe sealed class HelloWorldTest
     {
         [Test, RequiresPlayMode(false)]
         [Ignore("Not Implemented")]
@@ -32,21 +33,38 @@ namespace Mochineko.WasmerBridge.Tests
             using var module = Module.FromWat(store, wat);
 
             // Define "hello" function as import object.
-            var importObject = new ImportObject();
+            // TODO: Improve interface to create ExternalInstanceVector.
+            using var functionType = FunctionType.New(
+                Array.Empty<ValueKind>(),
+                Array.Empty<ValueKind>());
             bool helloCalled = false;
-            importObject.AddFunction("Mochineko.WasmerBridge.Tests", "hello", () => helloCalled = true);
+            using var functionInstance = FunctionInstance.New(
+                store,
+                functionType,
+                callback: (_, _) =>
+                {
+                    helloCalled = true;
+                    return IntPtr.Zero;
+                });
+            using var externalInstance = ExternalInstance.FromFunctionWithOwnership(functionInstance);
+            var externalInstances = new[] { externalInstance };
 
-            // Instantiate module.
-            //var instance = new Instance(store, module, importObject);
+            ExternalInstanceVector.New(externalInstances, out var imports);
+            using (imports)
+            {
+                // Instantiate module.
+                using var instance = Instance.New(store, module, in imports);
 
-            // Get exported function.
-            //var run = instance.ExportFunction<Unit>(store, "run");
+                // Get exported function.
+                //var run = instance.ExportFunction<Unit>(store, "run");
 
-            // Call exported function.
-            //run.Invoke();
+                // Call exported function.
+                //run.Invoke();
 
-            // Assert flag.
-            helloCalled.Should().Be(true);
+                // Assert flag.
+                helloCalled.Should().Be(true);
+            }
         }
+        
     }
 }

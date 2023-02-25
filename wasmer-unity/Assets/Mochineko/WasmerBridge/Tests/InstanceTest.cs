@@ -35,8 +35,7 @@ namespace Mochineko.WasmerBridge.Tests
         }
 
         [Test, RequiresPlayMode(false)]
-        [Ignore("Implementing")]
-        public void InstantiateModuleWithFunctionTest()
+        public unsafe void InstantiateModuleWithFunctionTest()
         {
             // Imports -> imported_function
             // Exports -> exported_function
@@ -55,8 +54,24 @@ namespace Mochineko.WasmerBridge.Tests
             using (wasm)
             {
                 using var module = Module.New(store, in wasm);
+                
+                // TODO: Improve interface to create ExternalInstanceVector.
+                using var functionType = FunctionType.New(
+                    Array.Empty<ValueKind>(),
+                    Array.Empty<ValueKind>());
+                bool importFunctionCalled = false;
+                using var importedFunction = FunctionInstance.New(
+                    store,
+                    functionType,
+                    callback: (_, _) =>
+                    {
+                        importFunctionCalled = true;
+                        return IntPtr.Zero;
+                    });
+                using var externalInstance = ExternalInstance.FromFunction(importedFunction);
+                var externalInstances = new[] { externalInstance };
 
-                ExternalInstanceVector.NewEmpty(out var imports);
+                ExternalInstanceVector.New(externalInstances, out var imports);
                 using (imports)
                 {
                     using var instance = Instance.New(store, module, in imports);
@@ -64,7 +79,28 @@ namespace Mochineko.WasmerBridge.Tests
                     instance.Exports(out var exports);
                     using (exports)
                     {
-                        exports.size.Should().Be((nuint)0);
+                        exports.size.Should().Be((nuint)externalInstances.Length);
+                        exports.ToManaged(out var exportInstances);
+                        using var export = exportInstances[0];
+                        export.Should().NotBeNull();
+
+                        using var exportedFunction = export.ToFunction();
+                        exportedFunction.Should().NotBeNull();
+                        
+                        // TODO: Improve interface to run function.
+                        ValueInstanceVector.NewEmpty(out var arguments);
+                        ValueInstanceVector.NewEmpty(out var results);
+                        using (arguments)
+                        using (results)
+                        {
+                            using var trap = importedFunction.Call(in arguments, ref results);
+                            trap.Should().BeNull();
+                            
+                            importFunctionCalled.Should().BeTrue();
+                            
+                            // TODO: Improve ownership management
+                            importedFunction.Handle.SetHandleAsInvalid();
+                        }
                     }
                 }
             }

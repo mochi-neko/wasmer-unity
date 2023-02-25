@@ -27,8 +27,15 @@ namespace Mochineko.WasmerBridge
 
             // Passes ownership from FunctionInstance to ExternalInstance
             instance.Handle.SetHandleAsInvalid();
-            
+
             return externalInstance;
+        }
+        
+        internal static ExternalInstance FromFunction(FunctionInstance instance)
+        {
+            return new ExternalInstance(
+                WasmAPIs.wasm_func_as_extern(instance.Handle),
+                hasOwnership: true);
         }
 
         internal FunctionInstance ToFunction()
