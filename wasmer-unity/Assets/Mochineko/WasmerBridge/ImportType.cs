@@ -41,13 +41,13 @@ namespace Mochineko.WasmerBridge
             }
         }
 
-        private ExternalType Type
+        internal ExternalType Type
             => ExternalType.FromPointer(
                 WasmAPIs.wasm_importtype_type(Handle),
                 hasOwnership: false);
 
         [return: OwnReceive]
-        internal static ImportType New(string module, string functionName, [OwnPass] FunctionType functionType)
+        internal static ImportType FromFunction(string module, string functionName, [OwnPass] FunctionType functionType)
         {
             using var externalType = ExternalType.FromFunction(functionType);
             var importType = New(module, functionName, externalType);
@@ -59,7 +59,19 @@ namespace Mochineko.WasmerBridge
         }
 
         [return: OwnReceive]
-        private static ImportType New(string module, string name, ExternalType type)
+        internal static ImportType FromGlobal(string module, string functionName, [OwnPass] GlobalType globalType)
+        {
+            using var externalType = ExternalType.FromGlobal(globalType);
+            var importType = New(module, functionName, externalType);
+
+            // Passes ownership to native.
+            globalType.Handle.SetHandleAsInvalid();
+
+            return importType;
+        }
+
+        [return: OwnReceive]
+        private static ImportType New(string module, string name, [OwnPass] ExternalType type)
         {
             // Passes name vectors ownerships to native, then vectors are released by owner:ImportType.
             ByteVector.FromText(module, out var moduleVector);

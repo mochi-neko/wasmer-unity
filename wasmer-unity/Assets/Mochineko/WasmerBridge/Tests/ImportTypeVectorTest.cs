@@ -30,15 +30,22 @@ namespace Mochineko.WasmerBridge.Tests
         public void CreateFromManagedArrayTest()
         {
             var moduleName = "ModuleName";
+            
             var functionName = "FunctionName";
             using var functionType = FunctionType.New(
                 Array.Empty<ValueKind>(),
                 Array.Empty<ValueKind>());
-            using var importType = ImportType.New(moduleName, functionName, functionType);
+            using var asFunction = ImportType.FromFunction(moduleName, functionName, functionType);
+            
+            var globalName = "GlobalName";
+            using var valueType = ValueType.New(ValueKind.Int32);
+            using var globalType = GlobalType.New(valueType, Mutability.Constant);
+            using var asGlobal = ImportType.FromGlobal(moduleName, globalName, globalType);
             
             var importTypes = new[]
             {
-                importType
+                asFunction,
+                asGlobal,
             };
 
             ImportTypeVector.New(importTypes, out var vector);

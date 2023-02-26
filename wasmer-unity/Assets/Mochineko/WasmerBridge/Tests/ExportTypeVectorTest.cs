@@ -33,10 +33,17 @@ namespace Mochineko.WasmerBridge.Tests
             using var functionType = FunctionType.New(
                 Array.Empty<ValueKind>(),
                 Array.Empty<ValueKind>());
-            using var exportType = ExportType.New(functionName, functionType);
+            using var asFunction = ExportType.FromFunction(functionName, functionType);
+            
+            var globalName = "GlobalName";
+            using var valueType = ValueType.New(ValueKind.Int32);
+            using var globalType = GlobalType.New(valueType, Mutability.Constant);
+            using var asGlobal = ExportType.FromGlobal(globalName, globalType);
+            
             var exportTypes = new[]
             {
-                exportType
+                asFunction,
+                asGlobal,
             };
 
             ExportTypeVector.New(exportTypes, out var vector);

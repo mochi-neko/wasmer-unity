@@ -31,29 +31,43 @@ namespace Mochineko.WasmerBridge
             }
         }
 
-        private ExternalType Type
-        {
-            get
-            {
-                var ptr = WasmAPIs.wasm_exporttype_type(Handle);
-                return ExternalType.FromPointer(ptr, hasOwnership: false);
-            }
-        }
+        internal ExternalType Type
+            => ExternalType.FromPointer(
+                WasmAPIs.wasm_exporttype_type(Handle),
+                hasOwnership: false);
 
         [return: OwnReceive]
-        internal static ExportType New(string functionName, [OwnPass] FunctionType functionType)
+        internal static ExportType FromFunction(string functionName, [OwnPass] FunctionType functionType)
         {
             // Passes name vectors ownerships to native, then vectors are released by owner:ImportType.
             ByteVector.FromText(functionName, out var nameVector);
-            
+
             using var type = ExternalType.FromFunction(functionType);
-            
+
             var exportType = new ExportType(
                 WasmAPIs.wasm_exporttype_new(in nameVector, type.Handle),
                 hasOwnership: true);
 
             // Passes ownership to native.
             functionType.Handle.SetHandleAsInvalid();
+
+            return exportType;
+        }
+
+        [return: OwnReceive]
+        internal static ExportType FromGlobal(string globalName, [OwnPass] GlobalType globalType)
+        {
+            // Passes name vectors ownerships to native, then vectors are released by owner:ImportType.
+            ByteVector.FromText(globalName, out var nameVector);
+
+            using var type = ExternalType.FromGlobal(globalType);
+
+            var exportType = new ExportType(
+                WasmAPIs.wasm_exporttype_new(in nameVector, type.Handle),
+                hasOwnership: true);
+
+            // Passes ownership to native.
+            globalType.Handle.SetHandleAsInvalid();
 
             return exportType;
         }
