@@ -23,8 +23,7 @@ namespace Mochineko.WasmerBridge.Tests
             using var config = Config.New();
 
             using var engine = Engine.New(config);
-            // TODO: Check ownership
-            // config.Handle.IsInvalid.Should().BeTrue();
+            config.Handle.IsClosed.Should().BeTrue();
             engine.Should().NotBeNull();
 
             GC.Collect();
