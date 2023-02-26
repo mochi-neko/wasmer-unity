@@ -19,13 +19,7 @@ namespace Mochineko.WasmerBridge.Tests
             // Do not dispose because ValueInstance is created at C#, not native.
             var valueInstance = ValueInstance.NewInt32(value);
             valueInstance.Kind.Should().Be(ValueKind.Int32);
-            valueInstance.OfInt32.Should().NotBeNull();
-            valueInstance.OfInt32.Value.Should().Be(value);
-
-            valueInstance.OfInt64.Should().BeNull();
-            valueInstance.OfFloat32.Should().BeNull();
-            valueInstance.OfFloat64.Should().BeNull();
-            valueInstance.OfReference.Should().BeNull();
+            valueInstance.OfInt32.Should().Be(value);
 
             GC.Collect();
         }
@@ -41,13 +35,7 @@ namespace Mochineko.WasmerBridge.Tests
             // Do not dispose because ValueInstance is created at C#, not native.
             var valueInstance = ValueInstance.NewInt64(value);
             valueInstance.Kind.Should().Be(ValueKind.Int64);
-            valueInstance.OfInt64.Should().NotBeNull();
-            valueInstance.OfInt64.Value.Should().Be(value);
-
-            valueInstance.OfInt32.Should().BeNull();
-            valueInstance.OfFloat32.Should().BeNull();
-            valueInstance.OfFloat64.Should().BeNull();
-            valueInstance.OfReference.Should().BeNull();
+            valueInstance.OfInt64.Should().Be(value);
 
             GC.Collect();
         }
@@ -63,13 +51,7 @@ namespace Mochineko.WasmerBridge.Tests
             // Do not dispose because ValueInstance is created at C#, not native.
             var valueInstance = ValueInstance.NewFloat32(value);
             valueInstance.Kind.Should().Be(ValueKind.Float32);
-            valueInstance.OfFloat32.Should().NotBeNull();
-            valueInstance.OfFloat32.Value.Should().Be(value);
-
-            valueInstance.OfInt32.Should().BeNull();
-            valueInstance.OfInt64.Should().BeNull();
-            valueInstance.OfFloat64.Should().BeNull();
-            valueInstance.OfReference.Should().BeNull();
+            valueInstance.OfFloat32.Should().Be(value);
 
             GC.Collect();
         }
@@ -85,18 +67,13 @@ namespace Mochineko.WasmerBridge.Tests
             // Do not dispose because ValueInstance is created at C#, not native.
             var valueInstance = ValueInstance.NewFloat64(value);
             valueInstance.Kind.Should().Be(ValueKind.Float64);
-            valueInstance.OfFloat64.Should().NotBeNull();
-            valueInstance.OfFloat64.Value.Should().Be(value);
-
-            valueInstance.OfInt32.Should().BeNull();
-            valueInstance.OfInt64.Should().BeNull();
-            valueInstance.OfFloat32.Should().BeNull();
-            valueInstance.OfReference.Should().BeNull();
+            valueInstance.OfFloat64.Should().Be(value);
 
             GC.Collect();
         }
 
-        [Test] [RequiresPlayMode(false)]
+        [Test]
+        [RequiresPlayMode(false)]
         public void CreateAnyReferenceTestSuite()
         {
             CreateAnyReferenceTest(IntPtr.Zero);
@@ -111,18 +88,13 @@ namespace Mochineko.WasmerBridge.Tests
             // Do not dispose because ValueInstance is created at C#, not native.
             var valueInstance = ValueInstance.NewAnyReference(value);
             valueInstance.Kind.Should().Be(ValueKind.AnyRef);
-            valueInstance.OfReference.Should().NotBeNull();
-            valueInstance.OfReference.Value.Should().Be(value);
-
-            valueInstance.OfInt32.Should().BeNull();
-            valueInstance.OfInt64.Should().BeNull();
-            valueInstance.OfFloat32.Should().BeNull();
-            valueInstance.OfFloat64.Should().BeNull();
+            valueInstance.OfReference.Should().Be(value);
 
             GC.Collect();
         }
-        
-        [Test] [RequiresPlayMode(false)]
+
+        [Test]
+        [RequiresPlayMode(false)]
         public void CreateFunctionReferenceTestSuite()
         {
             CreateFunctionReferenceTest(IntPtr.Zero);
@@ -137,13 +109,7 @@ namespace Mochineko.WasmerBridge.Tests
             // Do not dispose because ValueInstance is created at C#, not native.
             var valueInstance = ValueInstance.NewFunctionReference(value);
             valueInstance.Kind.Should().Be(ValueKind.FuncRef);
-            valueInstance.OfReference.Should().NotBeNull();
-            valueInstance.OfReference.Value.Should().Be(value);
-
-            valueInstance.OfInt32.Should().BeNull();
-            valueInstance.OfInt64.Should().BeNull();
-            valueInstance.OfFloat32.Should().BeNull();
-            valueInstance.OfFloat64.Should().BeNull();
+            valueInstance.OfReference.Should().Be(value);
 
             GC.Collect();
         }

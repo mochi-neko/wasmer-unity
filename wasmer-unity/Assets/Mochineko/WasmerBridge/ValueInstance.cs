@@ -12,11 +12,77 @@ namespace Mochineko.WasmerBridge
         public ValueKind Kind => (ValueKind)kind;
 
         private readonly ValueUnion of;
-        internal int? OfInt32 => Kind is ValueKind.Int32 ? of.i32 : null;
-        internal long? OfInt64 => Kind is ValueKind.Int64 ? of.i64 : null;
-        internal float? OfFloat32 => Kind is ValueKind.Float32 ? of.f32 : null;
-        internal double? OfFloat64 => Kind is ValueKind.Float64 ? of.f64 : null;
-        internal IntPtr? OfReference => Kind is ValueKind.AnyRef or ValueKind.FuncRef ? of.reference : null;
+
+        internal int OfInt32 => Kind is ValueKind.Int32
+            ? of.i32
+            : throw new InvalidCastException($"ValueKind is not {ValueKind.Int32} but {Kind}.");
+
+        internal long OfInt64 => Kind is ValueKind.Int64
+            ? of.i64
+            : throw new InvalidCastException($"ValueKind is not {ValueKind.Int64} but {Kind}.");
+
+        internal float OfFloat32 => Kind is ValueKind.Float32
+            ? of.f32
+            : throw new InvalidCastException($"ValueKind is not {ValueKind.Float32} but {Kind}.");
+
+        internal double OfFloat64 => Kind is ValueKind.Float64
+            ? of.f64
+            : throw new InvalidCastException($"ValueKind is not {ValueKind.Float64} but {Kind}.");
+
+        internal IntPtr OfReference => Kind is ValueKind.AnyRef or ValueKind.FuncRef
+            ? of.reference
+            : throw new InvalidCastException($"ValueKind is not {ValueKind.AnyRef} or {ValueKind.FuncRef} but {Kind}.");
+
+        // NOTE: Boxing via "object".
+        internal object Of
+            => Kind switch
+            {
+                ValueKind.Int32 => of.i32,
+                ValueKind.Int64 => of.i64,
+                ValueKind.Float32 => of.f32,
+                ValueKind.Float64 => of.f64,
+                ValueKind.AnyRef => of.reference,
+                ValueKind.FuncRef => of.reference,
+                _ => throw new ArgumentOutOfRangeException()
+            };
+
+        // NOTE: Boxing via "object".
+        internal static ValueInstance New(ValueKind kind, object value)
+        {
+            if (value is null)
+            {
+                throw new ArgumentNullException(nameof(value));
+            }
+
+            return kind switch
+            {
+                ValueKind.Int32 => value is int int32
+                    ? NewInt32(int32)
+                    : throw new InvalidCastException($"From {value.GetType()} to {typeof(int).FullName}"),
+
+                ValueKind.Int64 => value is long int64
+                    ? NewInt64(int64)
+                    : throw new InvalidCastException($"From {value.GetType()} to {typeof(long).FullName}"),
+
+                ValueKind.Float32 => value is float float32
+                    ? NewFloat32(float32)
+                    : throw new InvalidCastException($"From {value.GetType()} to {typeof(float).FullName}"),
+
+                ValueKind.Float64 => value is double float64
+                    ? NewFloat64(float64)
+                    : throw new InvalidCastException($"From {value.GetType()} to {typeof(double).FullName}"),
+
+                ValueKind.AnyRef => value is IntPtr anyReference
+                    ? NewAnyReference(anyReference)
+                    : throw new InvalidCastException($"From {value.GetType()} to {typeof(IntPtr).FullName}"),
+
+                ValueKind.FuncRef => value is IntPtr functionReference
+                    ? NewFunctionReference(functionReference)
+                    : throw new InvalidCastException($"From {value.GetType()} to {typeof(IntPtr).FullName}"),
+
+                _ => throw new ArgumentOutOfRangeException(nameof(kind), kind, null)
+            };
+        }
 
         public static ValueInstance NewInt32(int int32)
             => new ValueInstance(int32);

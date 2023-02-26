@@ -50,5 +50,31 @@ namespace Mochineko.WasmerBridge.Tests
 
             GC.Collect();
         }
+        
+        [Test, RequiresPlayMode(false)]
+        public unsafe void CreateInstanceFromGlobalTest()
+        {
+            using var engine = Engine.New();
+            using var store = Store.New(engine);
+            using var valueType = ValueType.New(ValueKind.Int32);
+            using var globalType = GlobalType.New(valueType, Mutability.Variable);
+            var value = ValueInstance.NewInt32(1);
+            using var globalInstance = GlobalInstance.New(store, globalType, in value);
+            
+            using var externalInstance = ExternalInstance.FromGlobalWithOwnership(globalInstance);
+            externalInstance.Should().NotBeNull();
+            externalInstance.Kind.Should().Be(ExternalKind.Global);
+            using var type = externalInstance.Type;
+            type.Handle.IsInvalid.Should().BeFalse();
+            type.Kind.Should().Be(ExternalKind.Global);
+
+            using var excluded = externalInstance.ToGlobal();
+            excluded.Should().NotBeNull();
+            excluded.Get(out var excludedValue);
+            excludedValue.Kind.Should().Be(ValueKind.Int32);
+            excludedValue.OfInt32.Should().Be(1);
+
+            GC.Collect();
+        }
     }
 }
