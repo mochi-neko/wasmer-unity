@@ -39,7 +39,7 @@ namespace Mochineko.WasmerBridge
             [DllImport(NativePlugin.LibraryName)]
             public static extern void wat2wasm(
                 [ConstVector] in ByteVector wat,
-                [OwnOut] out ByteVector native);
+                [OwnOut] out ByteVector wasm);
         }
     }
 }

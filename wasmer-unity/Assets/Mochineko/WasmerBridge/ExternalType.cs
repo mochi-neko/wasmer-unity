@@ -71,17 +71,12 @@ namespace Mochineko.WasmerBridge
                 [OwnPass] [In] IntPtr handle);
 
             [DllImport(NativePlugin.LibraryName)]
-            [return: OwnReceive]
-            public static extern IntPtr wasm_externtype_copy(
-                [Const] NativeHandle externalType);
-
-            [DllImport(NativePlugin.LibraryName)]
             public static extern byte wasm_externtype_kind(
-                [Const] NativeHandle externalType);
+                [Const] NativeHandle handle);
 
             [DllImport(NativePlugin.LibraryName)]
             public static extern IntPtr wasm_functype_as_externtype(
-                FunctionType.NativeHandle functionType);
+                FunctionType.NativeHandle function);
 
             //TODO:
             // [DllImport(NativePlugin.LibraryName)]
@@ -94,7 +89,8 @@ namespace Mochineko.WasmerBridge
             // public static extern IntPtr wasm_memorytype_as_externtype(MemoryType.NativeHandle functionType);
 
             [DllImport(NativePlugin.LibraryName)]
-            public static extern IntPtr wasm_externtype_as_functype(NativeHandle externalType);
+            public static extern IntPtr wasm_externtype_as_functype(
+                NativeHandle externalType);
 
             [DllImport(NativePlugin.LibraryName)]
             public static extern IntPtr wasm_externtype_as_globaltype(NativeHandle externalType);

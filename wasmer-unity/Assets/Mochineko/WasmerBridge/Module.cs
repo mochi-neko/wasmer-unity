@@ -202,17 +202,17 @@ namespace Mochineko.WasmerBridge
 
             [DllImport(NativePlugin.LibraryName)]
             public static extern void wasm_module_imports(
-                [Const] NativeHandle module,
+                [Const] NativeHandle handle,
                 [OwnOut] out ImportTypeVector imports);
 
             [DllImport(NativePlugin.LibraryName)]
             public static extern void wasm_module_exports(
-                [Const] NativeHandle module,
+                [Const] NativeHandle handle,
                 [OwnOut] out ExportTypeVector exports);
 
             [DllImport(NativePlugin.LibraryName)]
             public static extern void wasm_module_serialize(
-                [Const] NativeHandle module,
+                [Const] NativeHandle handle,
                 [OwnOut] out ByteVector binary);
 
             [DllImport(NativePlugin.LibraryName)]

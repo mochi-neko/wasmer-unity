@@ -110,12 +110,12 @@ namespace Mochineko.WasmerBridge
             [DllImport(NativePlugin.LibraryName)]
             [return: Const]
             public static extern unsafe ValueTypeVector* wasm_functype_params(
-                [Const] NativeHandle functionType);
+                [Const] NativeHandle handle);
 
             [DllImport(NativePlugin.LibraryName)]
             [return: Const]
             public static extern unsafe ValueTypeVector* wasm_functype_results(
-                [Const] NativeHandle functionType);
+                [Const] NativeHandle handle);
         }
     }
 }

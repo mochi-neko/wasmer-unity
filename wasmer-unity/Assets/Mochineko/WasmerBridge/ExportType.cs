@@ -124,11 +124,6 @@ namespace Mochineko.WasmerBridge
                 [OwnPass] [In] IntPtr handle);
 
             [DllImport(NativePlugin.LibraryName)]
-            [return: OwnReceive]
-            public static extern IntPtr wasm_exporttype_copy(
-                [Const] NativeHandle exportType);
-
-            [DllImport(NativePlugin.LibraryName)]
             public static extern bool wasm_exporttype_same(
                 [Const] NativeHandle left,
                 [Const] NativeHandle right);
@@ -136,12 +131,12 @@ namespace Mochineko.WasmerBridge
             [DllImport(NativePlugin.LibraryName)]
             [return: Const]
             public static extern unsafe ByteVector* wasm_exporttype_name(
-                [Const] NativeHandle exportType);
+                [Const] NativeHandle handle);
 
             [DllImport(NativePlugin.LibraryName)]
             [return: Const]
             public static extern IntPtr wasm_exporttype_type(
-                [Const] NativeHandle exportType);
+                [Const] NativeHandle handle);
         }
     }
 }

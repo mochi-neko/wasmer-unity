@@ -143,20 +143,20 @@ namespace Mochineko.WasmerBridge
             [DllImport(NativePlugin.LibraryName)]
             [return: OwnReceive]
             public static extern IntPtr wasm_func_type(
-                [Const] NativeHandle functionInstance);
+                [Const] NativeHandle handle);
 
             [DllImport(NativePlugin.LibraryName)]
             public static extern nuint wasm_func_param_arity(
-                [Const] NativeHandle functionInstance);
+                [Const] NativeHandle handle);
 
             [DllImport(NativePlugin.LibraryName)]
             public static extern nuint wasm_func_result_arity(
-                [Const] NativeHandle functionInstance);
+                [Const] NativeHandle handle);
 
             [DllImport(NativePlugin.LibraryName)]
             [return: OwnReceive]
             public static extern IntPtr wasm_func_call(
-                [Const] NativeHandle functionInstance,
+                [Const] NativeHandle handle,
                 [Const] in ValueInstanceVector arguments,
                 [Const] ref ValueInstanceVector results);
         }

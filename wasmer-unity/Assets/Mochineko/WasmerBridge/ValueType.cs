@@ -77,7 +77,7 @@ namespace Mochineko.WasmerBridge
 
             [DllImport(NativePlugin.LibraryName)]
             public static extern byte wasm_valtype_kind(
-                [Const] NativeHandle valueType);
+                [Const] NativeHandle handle);
 
             [DllImport(NativePlugin.LibraryName)]
             public static extern byte wasm_valtype_kind(

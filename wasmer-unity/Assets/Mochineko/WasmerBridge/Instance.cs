@@ -79,7 +79,7 @@ namespace Mochineko.WasmerBridge
 
             [DllImport(NativePlugin.LibraryName)]
             public static extern void wasm_instance_exports(
-                [Const] NativeHandle instance,
+                [Const] NativeHandle handle,
                 [OwnOut] out ExternalInstanceVector exports);
         }
     }

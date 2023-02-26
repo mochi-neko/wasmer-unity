@@ -105,13 +105,13 @@ namespace Mochineko.WasmerBridge
 
             [DllImport(NativePlugin.LibraryName)]
             public static extern void wasm_trap_message(
-                [Const] NativeHandle trap,
+                [Const] NativeHandle handle,
                 [OwnOut] out ByteVector message);
 
             [DllImport(NativePlugin.LibraryName)]
             [return: OwnReceive]
             public static extern IntPtr wasm_trap_origin(
-                [Const] NativeHandle trap);
+                [Const] NativeHandle handle);
 
             // TODO:
             // [DllImport(NativePlugin.LibraryName)]

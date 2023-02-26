@@ -145,17 +145,17 @@ namespace Mochineko.WasmerBridge
             [DllImport(NativePlugin.LibraryName)]
             [return: Const]
             public static extern unsafe ByteVector* wasm_importtype_module(
-                [Const] NativeHandle importType);
+                [Const] NativeHandle handle);
 
             [DllImport(NativePlugin.LibraryName)]
             [return: Const]
             public static extern unsafe ByteVector* wasm_importtype_name(
-                [Const] NativeHandle importType);
+                [Const] NativeHandle handle);
 
             [DllImport(NativePlugin.LibraryName)]
             [return: Const]
             public static extern IntPtr wasm_importtype_type(
-                [Const] NativeHandle importType);
+                [Const] NativeHandle handle);
         }
     }
 }

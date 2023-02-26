@@ -2,7 +2,7 @@ namespace Mochineko.WasmerBridge
 {
     internal enum Mutability : byte
     {
-        Const,
+        Constant,
         Variable,
     }
 }
