@@ -1,0 +1,21 @@
+{
+    "name": "Mochineko.WasmerUnity.Wasmer",
+    "rootNamespace": "",
+    "references": [
+        "GUID:81c9b76bd3a5c43e8b7077fd2f268cb2"
+    ],
+    "includePlatforms": [
+        "Editor",
+        "LinuxStandalone64",
+        "macOSStandalone",
+        "WindowsStandalone64"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": true,
+    "overrideReferences": true,
+    "precompiledReferences": [],
+    "autoReferenced": false,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": true
+}
