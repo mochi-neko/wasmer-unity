@@ -24,6 +24,9 @@ namespace Mochineko.WasmerBridge
             return (ValueKind)WasmAPIs.wasm_valtype_kind(valueType);
         }
 
+        internal static ValueType FromPointer(IntPtr pointer, bool hasOwnership)
+            => new ValueType(pointer, hasOwnership);
+
         private ValueType(IntPtr handle, bool hasOwnership)
         {
             this.handle = new NativeHandle(handle, hasOwnership);

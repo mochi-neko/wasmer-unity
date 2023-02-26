@@ -40,7 +40,7 @@ The following are the best features I think:
 - [x] ByteVector
 - [x] ValueType
 - [x] FunctionType
-- [ ] GlobalType
+- [x] GlobalType
 - [ ] TableType
 - [ ] MemoryType
 - [x] ExternalType
