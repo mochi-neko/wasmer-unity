@@ -20,7 +20,7 @@ namespace Mochineko.WasmerUnity.Wasm
         }
 
         [return: OwnReceive]
-        public static Store New()
+        public static Store Default()
         {
             var engine = Engine.New();
 

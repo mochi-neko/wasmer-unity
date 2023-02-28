@@ -42,7 +42,7 @@ namespace Mochineko.WasmerUnity.Examples.Tests
             // However for the purposes of showing what's happening, we create a compiler
             // (`Cranelift`) and pass it to an engine (`Universal`). We then pass the engine to
             // the store and are now ready to compile and run WebAssembly!
-            using var store = Store.New();
+            using var store = Store.Default();
 
             // We then use our store and Wasm bytes to compile a `Module`.
             // A `Module` is a compiled WebAssembly module that isn't ready to execute yet.
@@ -63,8 +63,7 @@ namespace Mochineko.WasmerUnity.Examples.Tests
                 {
                     ["env"] = new Dictionary<string, ExternalInstance>
                     {
-                        ["say_hello"] =
-                            ExternalInstance.FromFunctionWithOwnership(FunctionInstance.New(store, SayHelloWorld))
+                        ["say_hello"] = FunctionInstance.New(store, SayHelloWorld).AsExternal()
                     }
                 });
 
@@ -74,7 +73,7 @@ namespace Mochineko.WasmerUnity.Examples.Tests
             // and is ready to execute.
             using var instance = Instance.New(store, module, importObject);
 
-            // We get the `TypedFunction` with no parameters and no results from the instance.
+            // We get the `Function` with no parameters and no results from the instance.
             //
             // Recall that the Wasm module exported a function named "run", this is getting
             // that exported function from the `Instance`.

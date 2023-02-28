@@ -6,7 +6,7 @@ using Microsoft.Win32.SafeHandles;
 namespace Mochineko.WasmerUnity.Wasm
 {
     [OwnPointed]
-    internal sealed class FunctionInstance : IDisposable
+    public sealed class FunctionInstance : IDisposable
     {
         [OwnReceive]
         internal FunctionType Type

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Mochineko.WasmerUnity.Wasm.Attributes;
 
 namespace Mochineko.WasmerUnity.Wasm
 {
@@ -7,7 +8,7 @@ namespace Mochineko.WasmerUnity.Wasm
     {
         private readonly IReadOnlyDictionary<string, IReadOnlyDictionary<string, ExternalInstance>> imports;
 
-        internal void GetImports(out ExternalInstanceVector imports)
+        internal void GetImports([OwnOut] out ExternalInstanceVector imports)
         {
             var instances = new List<ExternalInstance>();
 
