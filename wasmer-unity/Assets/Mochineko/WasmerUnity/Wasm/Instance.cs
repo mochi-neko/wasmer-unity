@@ -15,7 +15,7 @@ namespace Mochineko.WasmerUnity.Wasm
         internal void Exports([OwnOut] out ExternalInstanceVector exports)
             => WasmAPIs.wasm_instance_exports(Handle, out exports);
 
-        internal FunctionInstance GetFunction(Store store, string name)
+        public FunctionInstance GetFunction(Store store, string name)
         {
             if (!nameToInstanceMap.TryGetValue(name, out var externalInstance))
             {
@@ -31,7 +31,7 @@ namespace Mochineko.WasmerUnity.Wasm
         }
 
         [return: OwnReceive]
-        internal static Instance New(Store store, Module module, ImportObject importObject)
+        public static Instance New(Store store, Module module, ImportObject importObject)
         {
             importObject.GetImports(out var imports);
 

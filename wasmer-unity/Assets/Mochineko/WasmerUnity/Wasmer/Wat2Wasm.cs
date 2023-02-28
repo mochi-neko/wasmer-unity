@@ -5,7 +5,7 @@ using Mochineko.WasmerUnity.Wasm.Attributes;
 
 namespace Mochineko.WasmerUnity.Wasmer
 {
-    internal static class Wat2Wasm
+    public static class Wat2Wasm
     {
         public static ReadOnlySpan<byte> WatToWasm(this string wat)
         {
