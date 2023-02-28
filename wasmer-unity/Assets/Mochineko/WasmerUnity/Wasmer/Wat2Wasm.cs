@@ -7,7 +7,7 @@ namespace Mochineko.WasmerUnity.Wasmer
 {
     internal static class Wat2Wasm
     {
-        public static ReadOnlySpan<byte> ToWasm(this string wat)
+        public static ReadOnlySpan<byte> WatToWasm(this string wat)
         {
             if (string.IsNullOrEmpty(wat))
             {

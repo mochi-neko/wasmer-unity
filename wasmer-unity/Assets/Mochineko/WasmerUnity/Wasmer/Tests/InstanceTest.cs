@@ -25,8 +25,8 @@ namespace Mochineko.WasmerUnity.Wasmer.Tests
 
             using var engine = Engine.New();
             using var store = Store.New(engine);
-            var wasm = wat.ToWasm();
-            using var module = Module.FromBinary(store, wasm);
+            var wasm = wat.WatToWasm();
+            using var module = Module.New(store, wasm);
 
             // TODO: Improve interface to create ExternalInstanceVector.
             using var functionType = FunctionType.New(

@@ -19,17 +19,33 @@ namespace Mochineko.WasmerUnity.Wasm
             return new Store(WasmAPIs.wasm_store_new(engine.Handle), hasOwnership: true);
         }
 
+        [return: OwnReceive]
+        public static Store New()
+        {
+            var engine = Engine.New();
+
+            return new Store(WasmAPIs.wasm_store_new(engine.Handle), hasOwnership: true, engine);
+        }
+
         private Store(IntPtr handle, bool hasOwnership)
         {
             this.handle = new NativeHandle(handle, hasOwnership);
         }
 
+        private Store(IntPtr handle, bool hasOwnership, Engine engine)
+        {
+            this.handle = new NativeHandle(handle, hasOwnership);
+            this.engine = engine;
+        }
+
         public void Dispose()
         {
             handle.Dispose();
+            engine?.Dispose();
         }
 
         private readonly NativeHandle handle;
+        private readonly IDisposable engine;
 
         internal NativeHandle Handle
         {

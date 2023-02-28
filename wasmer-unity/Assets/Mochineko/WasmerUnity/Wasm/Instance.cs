@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using Mochineko.WasmerUnity.Wasm.Attributes;
 using Microsoft.Win32.SafeHandles;
@@ -8,19 +9,95 @@ namespace Mochineko.WasmerUnity.Wasm
     [OwnPointed]
     public sealed class Instance : IDisposable
     {
+        private IReadOnlyDictionary<string, ExternalInstance> nameToInstanceMap;
+        private IDisposable destructor;
+
         internal void Exports([OwnOut] out ExternalInstanceVector exports)
             => WasmAPIs.wasm_instance_exports(Handle, out exports);
+
+        internal FunctionInstance GetFunction(Store store, string name)
+        {
+            if (!nameToInstanceMap.TryGetValue(name, out var externalInstance))
+            {
+                throw new Exception();
+            }
+
+            if (externalInstance.Kind != ExternalKind.Function)
+            {
+                throw new Exception();
+            }
+
+            return externalInstance.ToFunction();
+        }
+
+        [return: OwnReceive]
+        internal static Instance New(Store store, Module module, ImportObject importObject)
+        {
+            importObject.GetImports(out var imports);
+
+            TrapPointer.New(store, out var trapPointer);
+
+            var instance = new Instance(
+                WasmAPIs.wasm_instance_new(store.Handle, module.Handle, in imports, in trapPointer),
+                hasOwnership: true);
+
+            // TODO: Error handling by TrapPointer
+            
+            var construction = ConstructNameToExternalInstanceMap(module, instance);
+            instance.nameToInstanceMap = construction.map;
+            instance.destructor = construction.destructor;
+
+            return instance;
+        }
 
         [return: OwnReceive]
         internal static Instance New(Store store, Module module, in ExternalInstanceVector imports)
         {
             TrapPointer.New(store, out var trapPointer);
 
-            return new Instance(
+            var instance = new Instance(
                 WasmAPIs.wasm_instance_new(store.Handle, module.Handle, in imports, in trapPointer),
                 hasOwnership: true);
-
+            
             // TODO: Error handling by TrapPointer
+
+            var construction = ConstructNameToExternalInstanceMap(module, instance);
+            instance.nameToInstanceMap = construction.map;
+            instance.destructor = construction.destructor;
+
+            return instance;
+        }
+
+        private static (IReadOnlyDictionary<string, ExternalInstance> map, IDisposable destructor)
+            ConstructNameToExternalInstanceMap(Module module, Instance instance)
+        {
+            var nameToInstanceMap = new Dictionary<string, ExternalInstance>();
+
+            module.Exports(out var exportTypes);
+            using (exportTypes)
+            {
+                instance.Exports(out var exportInstances);
+                for (var i = 0; i < (int)exportInstances.size; i++)
+                {
+                    unsafe
+                    {
+                        using var exportType = 
+                            ExportType.FromPointer(exportTypes.data[i], hasOwnership: false);
+                        var externalInstance =
+                            ExternalInstance.FromPointer(exportInstances.data[i], hasOwnership: false);
+
+                        if (exportType.Kind != externalInstance.Kind)
+                        {
+                            // TODO:
+                            throw new Exception();
+                        }
+                        
+                        nameToInstanceMap.Add(exportType.Name, externalInstance);
+                    }
+                }
+                
+                return (nameToInstanceMap, exportInstances);
+            }
         }
 
         private Instance(IntPtr handle, bool hasOwnership)
@@ -31,6 +108,7 @@ namespace Mochineko.WasmerUnity.Wasm
         public void Dispose()
         {
             handle.Dispose();
+            destructor?.Dispose();
         }
 
         private readonly NativeHandle handle;

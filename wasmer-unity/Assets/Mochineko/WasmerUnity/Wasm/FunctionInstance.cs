@@ -20,6 +20,27 @@ namespace Mochineko.WasmerUnity.Wasm
         internal nuint ResultsArity
             => WasmAPIs.wasm_func_result_arity(Handle);
 
+        [return: OwnReceive]
+        public static FunctionInstance New(Store store, Action callback)
+        {
+            var type = FunctionType.New(
+                Array.Empty<ValueKind>(),
+                Array.Empty<ValueKind>());
+
+            unsafe
+            {
+                IntPtr FunctionCallback(ValueInstanceVector* args, ValueInstanceVector* rets)
+                {
+                    callback.Invoke();
+                    return IntPtr.Zero;
+                }
+
+                var handle = WasmAPIs.wasm_func_new(store.Handle, type.Handle, FunctionCallback);
+
+                return new FunctionInstance(handle, hasOwnership: true, type);
+            }
+        }
+        
         // TODO: Make wrapper
         [return: OwnReceive]
         internal static FunctionInstance New(
@@ -46,6 +67,22 @@ namespace Mochineko.WasmerUnity.Wasm
                 hasOwnership: true);
         }
 
+        public void Call()
+        {
+            ValueInstanceVector.NewEmpty(out var arguments);
+            ValueInstanceVector.NewEmpty(out var results);
+            using (arguments)
+            using (results)
+            {
+                using var trap = Call(in arguments, ref results);
+                if (trap != null)
+                {
+                    // TODO:
+                    throw new Exception();
+                }
+            }
+        }
+
         [return: OwnReceive]
         internal Trap Call(in ValueInstanceVector arguments, ref ValueInstanceVector results)
         {
@@ -70,13 +107,21 @@ namespace Mochineko.WasmerUnity.Wasm
         {
             this.handle = new NativeHandle(handle, hasOwnership);
         }
+        
+        private FunctionInstance(IntPtr handle, bool hasOwnership, FunctionType type)
+        {
+            this.handle = new NativeHandle(handle, hasOwnership);
+            this.type = type;
+        }
 
         public void Dispose()
         {
             handle.Dispose();
+            type?.Dispose();
         }
 
         private readonly NativeHandle handle;
+        private readonly FunctionType type;
 
         internal NativeHandle Handle
         {

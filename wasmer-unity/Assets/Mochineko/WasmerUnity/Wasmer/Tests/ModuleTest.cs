@@ -24,9 +24,9 @@ namespace Mochineko.WasmerUnity.Wasmer.Tests
 
             using var engine = Engine.New();
             using var store = Store.New(engine);
-            var wasm = HelloWorldWat.ToWasm();
+            var wasm = HelloWorldWat.WatToWasm();
 
-            using var module = Module.FromBinary(store, wasm);
+            using var module = Module.New(store, wasm);
             module.Should().NotBeNull();
 
             module.Imports(out var imports);

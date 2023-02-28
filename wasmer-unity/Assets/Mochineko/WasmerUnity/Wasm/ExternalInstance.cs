@@ -6,7 +6,7 @@ using Microsoft.Win32.SafeHandles;
 namespace Mochineko.WasmerUnity.Wasm
 {
     [OwnPointed]
-    internal sealed class ExternalInstance : IDisposable
+    public sealed class ExternalInstance : IDisposable
     {
         internal ExternalKind Kind
             => (ExternalKind)WasmAPIs.wasm_extern_kind(Handle);

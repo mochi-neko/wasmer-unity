@@ -85,6 +85,9 @@ namespace Mochineko.WasmerUnity.Wasm
             return exportType;
         }
 
+        internal static ExportType FromPointer(IntPtr handle, bool hasOwnership)
+            => new ExportType(handle, hasOwnership);
+
         private ExportType(IntPtr handle, bool hasOwnership)
         {
             this.handle = new NativeHandle(handle, hasOwnership);

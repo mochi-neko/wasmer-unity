@@ -38,7 +38,7 @@ namespace Mochineko.WasmerUnity.Wasm
         }
 
         [return: OwnReceive]
-        public static Module FromBinary(Store store, in ReadOnlySpan<byte> wasm)
+        public static Module New(Store store, in ReadOnlySpan<byte> wasm)
         {
             ByteVector.New(in wasm, out var vector);
             using (vector)

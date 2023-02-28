@@ -41,6 +41,23 @@ namespace Mochineko.WasmerUnity.Wasm
             WasmAPIs.wasm_exporttype_vec_new(out vector, size, data);
         }
 
+        internal void ToManaged(out ReadOnlySpan<ExportType> managed)
+        {
+            if (size == 0)
+            {
+                managed = new Span<ExportType>();
+                return;
+            }
+
+            var array = new ExportType[(int)size];
+            for (var i = 0; i < (int)size; i++)
+            {
+                array[i] = ExportType.FromPointer(data[i], false);
+            }
+
+            managed = array;
+        }
+
         public void Dispose()
         {
             WasmAPIs.wasm_exporttype_vec_delete(in this);
