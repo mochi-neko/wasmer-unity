@@ -19,7 +19,7 @@ namespace Mochineko.WasmerUnity.Wasm
         {
             if (!nameToInstanceMap.TryGetValue(name, out var externalInstance))
             {
-                throw new Exception();
+                throw new KeyNotFoundException(nameof(name));
             }
 
             if (externalInstance.Kind != ExternalKind.Function)

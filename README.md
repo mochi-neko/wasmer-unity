@@ -51,7 +51,7 @@ The following are the best features I think:
 - [x] Module
 - [x] ValueInstance
 - [x] FunctionInstance
-- [ ] GlobalInstance
+- [x] GlobalInstance
 - [ ] TableInstance
 - [ ] MemoryInstance
 - [x] ExternalInstance
@@ -79,8 +79,8 @@ The following are the best features I think:
 ### Examples
 
 - Basics
-  - [ ] Hello World
-  - [ ] Instanting a module
+  - [x] Hello World
+  - [x] Instanting a module
   - [ ] Handling errors
   - [ ] Interacting with memory
 - Exports

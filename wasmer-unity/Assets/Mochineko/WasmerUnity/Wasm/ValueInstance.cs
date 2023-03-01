@@ -33,6 +33,9 @@ namespace Mochineko.WasmerUnity.Wasm
             ? of.reference
             : throw new InvalidCastException($"ValueKind is not {ValueKind.AnyRef} or {ValueKind.FuncRef} but {Kind}.");
 
+        internal T OfType<T>()
+            => (T)Of;
+        
         // NOTE: Boxing via "object".
         internal object Of
             => Kind switch
@@ -45,6 +48,24 @@ namespace Mochineko.WasmerUnity.Wasm
                 ValueKind.FuncRef => of.reference,
                 _ => throw new ArgumentOutOfRangeException()
             };
+
+        internal static ValueInstance New<T>(T value)
+        {
+            if (value is null)
+            {
+                throw new ArgumentNullException(nameof(value));
+            }
+
+            return value switch
+            {
+                int int32 => NewInt32(int32),
+                long int64 => NewInt64(int64),
+                float float32 => NewFloat32(float32),
+                double float64 => NewFloat64(float64),
+                IntPtr reference => throw new NotImplementedException(), // NewAnyReference(reference),
+                _ => throw new ArgumentOutOfRangeException(nameof(value), value, null)
+            };
+        }
 
         // NOTE: Boxing via "object".
         internal static ValueInstance New(ValueKind kind, object value)

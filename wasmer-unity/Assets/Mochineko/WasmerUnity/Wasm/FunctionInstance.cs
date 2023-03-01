@@ -82,6 +82,37 @@ namespace Mochineko.WasmerUnity.Wasm
                 }
             }
         }
+        
+        public TResult Call<TResult, T1>(T1 p1)
+        {
+            var argumentsArray = new[]
+            {
+                ValueInstance.New(p1),
+            };
+            var resultsArray = new[]
+            {
+                ValueInstance.New<TResult>(default)
+            };
+            
+            ValueInstanceVector.New(argumentsArray, out var arguments);
+            ValueInstanceVector.New(resultsArray, out var results);
+            using (arguments)
+            using (results)
+            {
+                unsafe
+                {
+                    using var trap = Call(in arguments, ref results);
+                    if (trap != null)
+                    {
+                        // TODO:
+                        throw new Exception();
+                    }
+
+                    var result = Marshal.PtrToStructure<ValueInstance>((IntPtr)results.data);
+                    return result.OfType<TResult>();
+                }
+            }
+        }
 
         [return: OwnReceive]
         internal Trap Call(in ValueInstanceVector arguments, ref ValueInstanceVector results)

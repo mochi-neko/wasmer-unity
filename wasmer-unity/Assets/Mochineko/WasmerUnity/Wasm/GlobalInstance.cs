@@ -6,7 +6,7 @@ using Microsoft.Win32.SafeHandles;
 namespace Mochineko.WasmerUnity.Wasm
 {
     [OwnPointed]
-    internal sealed class GlobalInstance : IDisposable
+    public sealed class GlobalInstance : IDisposable
     {
         [OwnReceive]
         internal GlobalType Type

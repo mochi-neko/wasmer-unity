@@ -10,6 +10,12 @@ namespace Mochineko.WasmerUnity.Wasm
 
         internal void GetImports([OwnOut] out ExternalInstanceVector imports)
         {
+            if (this.imports.Count == 0)
+            {
+                ExternalInstanceVector.NewEmpty(out imports);
+                return;
+            }
+            
             var instances = new List<ExternalInstance>();
 
             foreach (var module in this.imports.Values)
@@ -21,6 +27,11 @@ namespace Mochineko.WasmerUnity.Wasm
             }
             
             ExternalInstanceVector.New(instances.ToArray(), out imports);
+        }
+        
+        public static ImportObject New()
+        {
+            return new ImportObject(new Dictionary<string, IReadOnlyDictionary<string, ExternalInstance>>());
         }
         
         public static ImportObject New(IReadOnlyDictionary<string, IReadOnlyDictionary<string, ExternalInstance>> imports)

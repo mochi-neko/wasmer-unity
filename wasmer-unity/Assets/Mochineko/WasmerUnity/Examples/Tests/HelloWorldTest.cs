@@ -8,10 +8,11 @@ using Mochineko.WasmerUnity.Wasmer;
 namespace Mochineko.WasmerUnity.Examples.Tests
 {
     /// <summary>
+    /// This is a simple example introducing the core concepts of the Wasmer API.
     /// Original: https://github.com/wasmerio/wasmer/blob/master/examples/hello_world.rs
     /// </summary>
     [TestFixture]
-    internal sealed unsafe class HelloWorldTest
+    internal sealed class HelloWorldTest
     {
         [Test, RequiresPlayMode(false)]
         public void HelloWorld()
