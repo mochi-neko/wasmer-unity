@@ -40,7 +40,7 @@ namespace Mochineko.WasmerUnity.Wasm
                 return new FunctionInstance(handle, hasOwnership: true, type);
             }
         }
-        
+
         // TODO: Make wrapper
         [return: OwnReceive]
         internal static FunctionInstance New(
@@ -67,48 +67,31 @@ namespace Mochineko.WasmerUnity.Wasm
                 hasOwnership: true);
         }
 
-        public void Call()
+        internal void Call(in ReadOnlySpan<ValueInstance> arguments)
         {
-            ValueInstanceVector.NewEmpty(out var arguments);
-            ValueInstanceVector.NewEmpty(out var results);
-            using (arguments)
-            using (results)
+            ValueInstanceVector.New(arguments, out var argumentsVector);
+            ValueInstanceVector.NewEmpty(out var resultsVector);
+            using (argumentsVector)
+            using (resultsVector)
             {
-                using var trap = Call(in arguments, ref results);
-                if (trap != null)
-                {
-                    // TODO:
-                    throw new Exception();
-                }
+                using var trap = Call(in argumentsVector, ref resultsVector);
             }
         }
-        
-        public TResult Call<TResult, T1>(T1 p1)
+
+        internal TResult Call<TResult>(in ReadOnlySpan<ValueInstance> arguments)
         {
-            var argumentsArray = new[]
+            ValueInstanceVector.New(arguments, out var argumentsVector);
+            ValueInstanceVector.New(
+                new[] { ValueInstance.New<TResult>(default) },
+                out var resultsVector);
+            using (argumentsVector)
+            using (resultsVector)
             {
-                ValueInstance.New(p1),
-            };
-            var resultsArray = new[]
-            {
-                ValueInstance.New<TResult>(default)
-            };
-            
-            ValueInstanceVector.New(argumentsArray, out var arguments);
-            ValueInstanceVector.New(resultsArray, out var results);
-            using (arguments)
-            using (results)
-            {
+                using var trap = Call(in argumentsVector, ref resultsVector);
+                
                 unsafe
                 {
-                    using var trap = Call(in arguments, ref results);
-                    if (trap != null)
-                    {
-                        // TODO:
-                        throw new Exception();
-                    }
-
-                    var result = Marshal.PtrToStructure<ValueInstance>((IntPtr)results.data);
+                    var result = Marshal.PtrToStructure<ValueInstance>((IntPtr)resultsVector.data);
                     return result.OfType<TResult>();
                 }
             }
@@ -122,7 +105,7 @@ namespace Mochineko.WasmerUnity.Wasm
             // Succeeded
             if (trapPointer == IntPtr.Zero)
             {
-                return null;
+                return null; // TODO: nullable
             }
             // Failed
             else
@@ -138,7 +121,7 @@ namespace Mochineko.WasmerUnity.Wasm
         {
             this.handle = new NativeHandle(handle, hasOwnership);
         }
-        
+
         private FunctionInstance(IntPtr handle, bool hasOwnership, FunctionType type)
         {
             this.handle = new NativeHandle(handle, hasOwnership);
