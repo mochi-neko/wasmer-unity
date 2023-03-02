@@ -5,6 +5,7 @@ namespace Mochineko.WasmerUnity.Wasm
 {
     public static class FunctionInstanceExtension
     {
+        // TODO: Expand with all type patterns for IL2CPP.
         public static void Call(this FunctionInstance instance)
             => instance.Call(Array.Empty<ValueInstance>());
         

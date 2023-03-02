@@ -72,7 +72,7 @@ namespace Mochineko.WasmerUnity.Wasm.Tests
 
             using var excluded = externalInstance.ToGlobal();
             excluded.Should().NotBeNull();
-            excluded.Get(out var excludedValue);
+            var excludedValue = excluded.Get();
             excludedValue.Kind.Should().Be(ValueKind.Int32);
             excludedValue.OfInt32.Should().Be(1);
 

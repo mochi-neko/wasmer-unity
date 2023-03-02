@@ -6,26 +6,26 @@ namespace Mochineko.WasmerUnity.Wasm
 {
     [OwnStruct]
     [StructLayout(LayoutKind.Sequential)]
-    internal readonly struct ValueInstance : IDisposable
+    public readonly struct ValueInstance : IDisposable, IEquatable<ValueInstance>
     {
         private readonly byte kind;
         public ValueKind Kind => (ValueKind)kind;
 
         private readonly ValueUnion of;
 
-        internal int OfInt32 => Kind is ValueKind.Int32
+        public int OfInt32 => Kind is ValueKind.Int32
             ? of.i32
             : throw new InvalidCastException($"ValueKind is not {ValueKind.Int32} but {Kind}.");
 
-        internal long OfInt64 => Kind is ValueKind.Int64
+        public long OfInt64 => Kind is ValueKind.Int64
             ? of.i64
             : throw new InvalidCastException($"ValueKind is not {ValueKind.Int64} but {Kind}.");
 
-        internal float OfFloat32 => Kind is ValueKind.Float32
+        public float OfFloat32 => Kind is ValueKind.Float32
             ? of.f32
             : throw new InvalidCastException($"ValueKind is not {ValueKind.Float32} but {Kind}.");
 
-        internal double OfFloat64 => Kind is ValueKind.Float64
+        public double OfFloat64 => Kind is ValueKind.Float64
             ? of.f64
             : throw new InvalidCastException($"ValueKind is not {ValueKind.Float64} but {Kind}.");
 
@@ -155,7 +155,8 @@ namespace Mochineko.WasmerUnity.Wasm
 
         public void Dispose()
         {
-            WasmAPIs.wasm_val_delete(in this);
+            // Should not call "delete" because "new" is not defined.  
+            // WasmAPIs.wasm_val_delete(in this);
         }
 
         private static class WasmAPIs
@@ -168,6 +169,21 @@ namespace Mochineko.WasmerUnity.Wasm
             public static extern void wasm_val_copy(
                 [OwnOut] out ValueInstance copy,
                 [OwnPass] in ValueInstance value);
+        }
+
+        public bool Equals(ValueInstance other)
+        {
+            return kind == other.kind && of.Equals(other.of);
+        }
+
+        public override bool Equals(object obj)
+        {
+            return obj is ValueInstance other && Equals(other);
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(kind, of);
         }
     }
 }

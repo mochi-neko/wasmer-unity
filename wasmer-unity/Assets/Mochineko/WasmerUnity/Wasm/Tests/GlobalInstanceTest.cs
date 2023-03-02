@@ -25,7 +25,7 @@ namespace Mochineko.WasmerUnity.Wasm.Tests
 
             using var globalInstance = GlobalInstance.New(store, globalType, in value);
             globalInstance.Should().NotBeNull();
-            globalInstance.Get(out var excludedValue);
+            var excludedValue = globalInstance.Get();
             excludedValue.Kind.Should().Be(kind);
             excludedValue.Of.Should().Be(rawValue);
 
@@ -50,13 +50,13 @@ namespace Mochineko.WasmerUnity.Wasm.Tests
             var value = ValueInstance.New(kind, rawValue);
 
             using var globalInstance = GlobalInstance.New(store, globalType, in value);
-            globalInstance.Get(out var excludedValue);
+            var excludedValue = globalInstance.Get();
             excludedValue.Of.Should().Be(rawValue);
 
             var changed = ValueInstance.New(kind, changedValue);
             globalInstance.Set(in changed);
 
-            globalInstance.Get(out var excludedChangedValue);
+            var excludedChangedValue = globalInstance.Get();
             excludedChangedValue.Of.Should().Be(changedValue);
 
             GC.Collect();

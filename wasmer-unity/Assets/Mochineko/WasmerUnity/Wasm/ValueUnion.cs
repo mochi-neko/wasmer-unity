@@ -6,7 +6,7 @@ namespace Mochineko.WasmerUnity.Wasm
 {
     [OwnStruct]
     [StructLayout(LayoutKind.Explicit)]
-    internal readonly struct ValueUnion
+    internal readonly struct ValueUnion : IEquatable<ValueUnion>
     {
         [FieldOffset(0)] internal readonly int i32;
         [FieldOffset(0)] internal readonly long i64;
@@ -62,6 +62,21 @@ namespace Mochineko.WasmerUnity.Wasm
             this.f64 = default;
 
             this.reference = reference;
+        }
+
+        public bool Equals(ValueUnion other)
+        {
+            return i32 == other.i32 && i64 == other.i64 && f32.Equals(other.f32) && f64.Equals(other.f64) && reference.Equals(other.reference);
+        }
+
+        public override bool Equals(object obj)
+        {
+            return obj is ValueUnion other && Equals(other);
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(i32, i64, f32, f64, reference);
         }
     }
 }

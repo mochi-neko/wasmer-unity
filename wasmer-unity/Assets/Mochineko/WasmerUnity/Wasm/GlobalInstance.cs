@@ -9,16 +9,28 @@ namespace Mochineko.WasmerUnity.Wasm
     public sealed class GlobalInstance : IDisposable
     {
         [OwnReceive]
-        internal GlobalType Type
+        public GlobalType Type
             => GlobalType.FromPointer(
                 WasmAPIs.wasm_global_type(Handle),
                 hasOwnership: true);
 
-        internal void Get(out ValueInstance value)
-            => WasmAPIs.wasm_global_get(Handle, out value);
+        public ValueInstance Get()
+        {
+            WasmAPIs.wasm_global_get(Handle, out var value);
 
-        internal void Set(in ValueInstance value)
-            => WasmAPIs.wasm_global_set(Handle, in value);
+            return value;
+        }
+
+        public void Set(in ValueInstance value)
+        {
+            using var type = Type;
+            if (type.Mutability == Mutability.Constant)
+            {
+                throw new InvalidOperationException($"Cannot set value to constant global instance.");
+            }
+
+            WasmAPIs.wasm_global_set(Handle, in value);
+        }
 
         [return: OwnReceive]
         internal static GlobalInstance New(Store store, GlobalType type, in ValueInstance value)
@@ -27,7 +39,7 @@ namespace Mochineko.WasmerUnity.Wasm
             {
                 throw new NotImplementedException($"Native Wasm API does not implement reference type of Global.");
             }
-            
+
             return new GlobalInstance(
                 WasmAPIs.wasm_global_new(store.Handle, type.Handle, in value),
                 hasOwnership: true);

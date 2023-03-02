@@ -6,9 +6,9 @@ using Microsoft.Win32.SafeHandles;
 namespace Mochineko.WasmerUnity.Wasm
 {
     [OwnPointed]
-    internal sealed class ValueType : IDisposable
+    public sealed class ValueType : IDisposable
     {
-        internal ValueKind Kind
+        public ValueKind Kind
             => (ValueKind)WasmAPIs.wasm_valtype_kind(Handle);
 
         [return: OwnReceive]

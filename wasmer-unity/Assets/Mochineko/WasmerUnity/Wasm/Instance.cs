@@ -24,10 +24,27 @@ namespace Mochineko.WasmerUnity.Wasm
 
             if (externalInstance.Kind != ExternalKind.Function)
             {
+                // TODO:
                 throw new Exception();
             }
 
             return externalInstance.ToFunction();
+        }
+
+        public GlobalInstance GetGlobal(string name)
+        {
+            if (!nameToInstanceMap.TryGetValue(name, out var externalInstance))
+            {
+                throw new KeyNotFoundException(nameof(name));
+            }
+
+            if (externalInstance.Kind != ExternalKind.Global)
+            {
+                // TODO:
+                throw new Exception();
+            }
+
+            return externalInstance.ToGlobal();
         }
 
         [return: OwnReceive]

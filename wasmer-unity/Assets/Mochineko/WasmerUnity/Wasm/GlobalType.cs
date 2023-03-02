@@ -6,9 +6,9 @@ using Microsoft.Win32.SafeHandles;
 namespace Mochineko.WasmerUnity.Wasm
 {
     [OwnPointed]
-    internal sealed class GlobalType : IDisposable
+    public sealed class GlobalType : IDisposable
     {
-        internal ValueType Content
+        public ValueType Content
         {
             get
             {
@@ -18,7 +18,7 @@ namespace Mochineko.WasmerUnity.Wasm
             }
         }
 
-        internal Mutability Mutability
+        public Mutability Mutability
             => (Mutability)WasmAPIs.wasm_globaltype_mutability(Handle);
 
         [return: OwnReceive]

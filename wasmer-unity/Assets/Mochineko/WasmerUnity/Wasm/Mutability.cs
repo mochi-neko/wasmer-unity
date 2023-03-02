@@ -1,6 +1,6 @@
 namespace Mochineko.WasmerUnity.Wasm
 {
-    internal enum Mutability : byte
+    public enum Mutability : byte
     {
         Constant,
         Variable,

@@ -1,6 +1,6 @@
 namespace Mochineko.WasmerUnity.Wasm
 {
-    internal enum ValueKind : byte
+    public enum ValueKind : byte
     {
         Int32 = 0,
         Int64 = 1,

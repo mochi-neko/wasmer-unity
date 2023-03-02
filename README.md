@@ -84,7 +84,7 @@ The following are the best features I think:
   - [ ] Handling errors
   - [ ] Interacting with memory
 - Exports
-  - [ ] Exproted global
+  - [x] Exproted global
   - [ ] Exproted function
   - [ ] Exproted memory
 - Imports
