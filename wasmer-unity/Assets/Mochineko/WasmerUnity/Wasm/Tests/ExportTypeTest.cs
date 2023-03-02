@@ -27,6 +27,7 @@ namespace Mochineko.WasmerUnity.Wasm.Tests
             exportType.Kind.Should().Be(ExternalKind.Function);
 
             using var excludedFunctionType = exportType.Type.ToFunction();
+            excludedFunctionType.Should().NotBeNull();
             excludedFunctionType.Parameters.Length.Should().Be(0);
             excludedFunctionType.Results.Length.Should().Be(0);
 
@@ -60,8 +61,33 @@ namespace Mochineko.WasmerUnity.Wasm.Tests
             exportType.Kind.Should().Be(ExternalKind.Global);
 
             using var excludedGlobalType = exportType.Type.ToGlobal();
+            excludedGlobalType.Should().NotBeNull();
             excludedGlobalType.Content.Kind.Should().Be(kind);
             excludedGlobalType.Mutability.Should().Be(mutability);
+
+            GC.Collect();
+        }
+
+        [TestCase(uint.MinValue, uint.MinValue)]
+        [TestCase(uint.MaxValue, uint.MinValue)]
+        [TestCase(uint.MaxValue, uint.MaxValue)]
+        [RequiresPlayMode(false)]
+        public void CreateFromMemoryTest(uint max, uint min)
+        {
+            var name = "MemoryName";
+            var limits = new Limits(max, min);
+            using var memoryType = MemoryType.New(limits);
+
+            using var exportType = ExportType.FromMemory(name, memoryType);
+            memoryType.Handle.IsClosed.Should().BeTrue();
+
+            exportType.Should().NotBeNull();
+            exportType.Name.Should().Be(name);
+            exportType.Kind.Should().Be(ExternalKind.Memory);
+
+            using var excludedGlobalType = exportType.Type.ToMemory();
+            excludedGlobalType.Should().NotBeNull();
+            excludedGlobalType.Limits.Should().Be(limits);
 
             GC.Collect();
         }

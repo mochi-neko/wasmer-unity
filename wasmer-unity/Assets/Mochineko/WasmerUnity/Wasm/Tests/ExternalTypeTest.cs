@@ -59,5 +59,25 @@ namespace Mochineko.WasmerUnity.Wasm.Tests
 
             GC.Collect();
         }
+
+        [TestCase(uint.MinValue, uint.MinValue)]
+        [TestCase(uint.MaxValue, uint.MinValue)]
+        [TestCase(uint.MaxValue, uint.MaxValue)]
+        [RequiresPlayMode(false)]
+        public void CreateAsMemoryTypeTest(uint max, uint min)
+        {
+            var limits = new Limits(max, min);
+            using var memoryType = MemoryType.New(in limits);
+
+            using var externalType = ExternalType.FromMemory(memoryType);
+            externalType.Should().NotBeNull();
+            externalType.Kind.Should().Be(ExternalKind.Memory);
+
+            using var excludedMemoryType = externalType.ToMemory();
+            excludedMemoryType.Should().NotBeNull();
+            excludedMemoryType.Limits.Should().Be(limits);
+
+            GC.Collect();
+        }
     }
 }

@@ -11,24 +11,34 @@ namespace Mochineko.WasmerUnity.Wasm
         internal ExternalKind Kind
             => (ExternalKind)WasmAPIs.wasm_externtype_kind(Handle);
 
-        internal static ExternalType FromFunction(FunctionType functionType)
+        internal static ExternalType FromFunction(FunctionType function)
             => new ExternalType(
-                WasmAPIs.wasm_functype_as_externtype(functionType.Handle),
+                WasmAPIs.wasm_functype_as_externtype(function.Handle),
                 hasOwnership: false);
 
         internal FunctionType ToFunction()
             => FunctionType.FromPointer(
                 WasmAPIs.wasm_externtype_as_functype(Handle),
                 hasOwnership: false);
-        
-        internal static ExternalType FromGlobal(GlobalType globalType)
+
+        internal static ExternalType FromGlobal(GlobalType global)
             => new ExternalType(
-                WasmAPIs.wasm_globaltype_as_externtype(globalType.Handle),
+                WasmAPIs.wasm_globaltype_as_externtype(global.Handle),
                 hasOwnership: false);
 
         internal GlobalType ToGlobal()
             => GlobalType.FromPointer(
                 WasmAPIs.wasm_externtype_as_globaltype(Handle),
+                hasOwnership: false);
+
+        internal static ExternalType FromMemory(MemoryType memory)
+            => new ExternalType(
+                WasmAPIs.wasm_memorytype_as_externtype(memory.Handle),
+                hasOwnership: false);
+
+        internal MemoryType ToMemory()
+            => MemoryType.FromPointer(
+                WasmAPIs.wasm_externtype_as_memorytype(Handle),
                 hasOwnership: false);
 
         internal static ExternalType FromPointer(IntPtr pointer, bool hasOwnership)
@@ -95,9 +105,10 @@ namespace Mochineko.WasmerUnity.Wasm
             //TODO:
             // [DllImport(NativePlugin.LibraryName)]
             // public static extern IntPtr wasm_tabletype_as_externtype(TableType.NativeHandle functionType);
-            //
-            // [DllImport(NativePlugin.LibraryName)]
-            // public static extern IntPtr wasm_memorytype_as_externtype(MemoryType.NativeHandle functionType);
+
+            [DllImport(NativePlugin.LibraryName)]
+            public static extern IntPtr wasm_memorytype_as_externtype(
+                MemoryType.NativeHandle memory);
 
             [DllImport(NativePlugin.LibraryName)]
             public static extern IntPtr wasm_externtype_as_functype(
@@ -124,14 +135,15 @@ namespace Mochineko.WasmerUnity.Wasm
             [return: Const]
             public static extern IntPtr wasm_globaltype_as_externtype_const(
                 [Const] GlobalType.NativeHandle global);
-            
+
             // [DllImport(NativePlugin.LibraryName)]
             // [return: Const]
             // public static extern IntPtr wasm_tabletype_as_externtype_const([Const] TableType.NativeHandle functionType);
             //
-            // [DllImport(NativePlugin.LibraryName)]
-            // [return: Const]
-            // public static extern IntPtr wasm_memorytype_as_externtype_const([Const] MemoryType.NativeHandle functionType);
+            [DllImport(NativePlugin.LibraryName)]
+            [return: Const]
+            public static extern IntPtr wasm_memorytype_as_externtype_const(
+                [Const] MemoryType.NativeHandle memory);
 
             [DllImport(NativePlugin.LibraryName)]
             [return: Const]
