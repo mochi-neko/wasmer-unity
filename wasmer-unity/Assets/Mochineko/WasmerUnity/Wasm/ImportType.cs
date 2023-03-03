@@ -71,6 +71,18 @@ namespace Mochineko.WasmerUnity.Wasm
         }
         
         [return: OwnReceive]
+        internal static ImportType FromTable(string module, string functionName, [OwnPass] TableType tableType)
+        {
+            using var externalType = ExternalType.FromTable(tableType);
+            var importType = New(module, functionName, externalType);
+
+            // Passes ownership to native.
+            tableType.Handle.SetHandleAsInvalid();
+
+            return importType;
+        }
+        
+        [return: OwnReceive]
         internal static ImportType FromMemory(string module, string functionName, [OwnPass] MemoryType memoryType)
         {
             using var externalType = ExternalType.FromMemory(memoryType);

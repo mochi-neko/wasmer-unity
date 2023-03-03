@@ -45,7 +45,7 @@ namespace Mochineko.WasmerUnity.Wasm.Tests
         [RequiresPlayMode(false)]
         public void CreateAsGlobalTypeTest(ValueKind kind, Mutability mutability)
         {
-            using var valueType = ValueType.New(kind);
+            using var valueType = ValueType.FromKind(kind);
             using var globalType = GlobalType.New(valueType, mutability);
 
             using var externalType = ExternalType.FromGlobal(globalType);
@@ -56,6 +56,28 @@ namespace Mochineko.WasmerUnity.Wasm.Tests
             excludedFunctionType.Should().NotBeNull();
             excludedFunctionType.Content.Kind.Should().Be(kind);
             excludedFunctionType.Mutability.Should().Be(mutability);
+
+            GC.Collect();
+        }
+        
+        [TestCase(ValueKind.Int32, uint.MinValue, uint.MinValue)]
+        [TestCase(ValueKind.Float32, uint.MaxValue, uint.MinValue)]
+        [TestCase(ValueKind.Int64, uint.MaxValue, uint.MaxValue)]
+        [RequiresPlayMode(false)]
+        public void CreateAsTableTypeTest(ValueKind kind, uint max, uint min)
+        {
+            var limits = new Limits(max, min);
+            using var element = ValueType.FromKind(kind);
+            using var tableType = TableType.New(element, in limits);
+            
+            using var externalType = ExternalType.FromTable(tableType);
+            externalType.Should().NotBeNull();
+            externalType.Kind.Should().Be(ExternalKind.Table);
+
+            using var excludedTableType = externalType.ToTable();
+            excludedTableType.Should().NotBeNull();
+            excludedTableType.Element.Kind.Should().Be(kind);
+            excludedTableType.Limits.Should().Be(limits);
 
             GC.Collect();
         }

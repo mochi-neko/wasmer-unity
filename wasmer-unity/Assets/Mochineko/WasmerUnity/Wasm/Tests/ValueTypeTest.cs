@@ -19,7 +19,7 @@ namespace Mochineko.WasmerUnity.Wasm.Tests
         [RequiresPlayMode(false)]
         public void CreateValueTypeTest(ValueKind valueKind)
         {
-            using var valueType = ValueType.New(valueKind);
+            using var valueType = ValueType.FromKind(valueKind);
             valueType.Should().NotBeNull();
             valueType.Kind.Should().Be(valueKind);
             

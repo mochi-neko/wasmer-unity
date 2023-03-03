@@ -24,7 +24,7 @@ namespace Mochineko.WasmerUnity.Wasm
 
             for (var i = 0; i < size; ++i)
             {
-                var valueType = ValueType.New(kinds[i]);
+                var valueType = ValueType.FromKind(kinds[i]);
                 vector.data[i] = valueType.Handle.DangerousGetHandle();
                 // Memory of ValueType is released by Vector then passes ownership to native.
                 valueType.Handle.SetHandleAsInvalid();

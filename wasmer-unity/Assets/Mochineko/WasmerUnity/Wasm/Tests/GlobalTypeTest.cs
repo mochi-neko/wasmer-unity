@@ -25,7 +25,7 @@ namespace Mochineko.WasmerUnity.Wasm.Tests
         [RequiresPlayMode(false)]
         public void CreateTest(ValueKind kind, Mutability mutability)
         {
-            using var valueType = ValueType.New(kind);
+            using var valueType = ValueType.FromKind(kind);
 
             using var globalType = GlobalType.New(valueType, mutability);
             valueType.Handle.IsClosed.Should().BeTrue();

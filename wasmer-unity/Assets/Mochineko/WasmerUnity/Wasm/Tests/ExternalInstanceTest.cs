@@ -58,7 +58,7 @@ namespace Mochineko.WasmerUnity.Wasm.Tests
         {
             using var engine = Engine.New();
             using var store = Store.New(engine);
-            using var valueType = ValueType.New(ValueKind.Int32);
+            using var valueType = ValueType.FromKind(ValueKind.Int32);
             using var globalType = GlobalType.New(valueType, Mutability.Variable);
             var value = ValueInstance.NewInt32(1);
             using var globalInstance = GlobalInstance.New(store, globalType, in value);

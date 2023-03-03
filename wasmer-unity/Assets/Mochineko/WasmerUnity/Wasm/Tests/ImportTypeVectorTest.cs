@@ -40,7 +40,7 @@ namespace Mochineko.WasmerUnity.Wasm.Tests
             using var asFunction = ImportType.FromFunction(moduleName, functionName, functionType);
             
             var globalName = "GlobalName";
-            using var valueType = ValueType.New(ValueKind.Int32);
+            using var valueType = ValueType.FromKind(ValueKind.Int32);
             using var globalType = GlobalType.New(valueType, Mutability.Constant);
             using var asGlobal = ImportType.FromGlobal(moduleName, globalName, globalType);
             

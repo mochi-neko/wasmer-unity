@@ -73,6 +73,24 @@ namespace Mochineko.WasmerUnity.Wasm
         }
         
         [return: OwnReceive]
+        internal static ExportType FromTable(string globalName, [OwnPass] TableType tableType)
+        {
+            // Passes name vectors ownerships to native, then vectors are released by owner:ImportType.
+            ByteVector.FromText(globalName, out var nameVector);
+
+            using var type = ExternalType.FromTable(tableType);
+
+            var exportType = new ExportType(
+                WasmAPIs.wasm_exporttype_new(in nameVector, type.Handle),
+                hasOwnership: true);
+
+            // Passes ownership to native.
+            tableType.Handle.SetHandleAsInvalid();
+
+            return exportType;
+        }
+        
+        [return: OwnReceive]
         internal static ExportType FromMemory(string globalName, [OwnPass] MemoryType memoryType)
         {
             // Passes name vectors ownerships to native, then vectors are released by owner:ImportType.

@@ -31,6 +31,16 @@ namespace Mochineko.WasmerUnity.Wasm
                 WasmAPIs.wasm_externtype_as_globaltype(Handle),
                 hasOwnership: false);
 
+        internal static ExternalType FromTable(TableType table)
+            => new ExternalType(
+                WasmAPIs.wasm_tabletype_as_externtype(table.Handle),
+                hasOwnership: false);
+
+        internal TableType ToTable()
+            => TableType.FromPointer(
+                WasmAPIs.wasm_externtype_as_tabletype(Handle),
+                hasOwnership: false);
+
         internal static ExternalType FromMemory(MemoryType memory)
             => new ExternalType(
                 WasmAPIs.wasm_memorytype_as_externtype(memory.Handle),
@@ -102,9 +112,9 @@ namespace Mochineko.WasmerUnity.Wasm
             public static extern IntPtr wasm_globaltype_as_externtype(
                 GlobalType.NativeHandle global);
 
-            //TODO:
-            // [DllImport(NativePlugin.LibraryName)]
-            // public static extern IntPtr wasm_tabletype_as_externtype(TableType.NativeHandle functionType);
+            [DllImport(NativePlugin.LibraryName)]
+            public static extern IntPtr wasm_tabletype_as_externtype(
+                TableType.NativeHandle table);
 
             [DllImport(NativePlugin.LibraryName)]
             public static extern IntPtr wasm_memorytype_as_externtype(
@@ -136,10 +146,11 @@ namespace Mochineko.WasmerUnity.Wasm
             public static extern IntPtr wasm_globaltype_as_externtype_const(
                 [Const] GlobalType.NativeHandle global);
 
-            // [DllImport(NativePlugin.LibraryName)]
-            // [return: Const]
-            // public static extern IntPtr wasm_tabletype_as_externtype_const([Const] TableType.NativeHandle functionType);
-            //
+            [DllImport(NativePlugin.LibraryName)]
+            [return: Const]
+            public static extern IntPtr wasm_tabletype_as_externtype_const(
+                [Const] TableType.NativeHandle table);
+            
             [DllImport(NativePlugin.LibraryName)]
             [return: Const]
             public static extern IntPtr wasm_memorytype_as_externtype_const(

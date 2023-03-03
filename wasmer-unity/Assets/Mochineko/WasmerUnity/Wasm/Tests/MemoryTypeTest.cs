@@ -1,3 +1,4 @@
+using System;
 using FluentAssertions;
 using NUnit.Framework;
 using UnityEngine.TestTools;
@@ -17,6 +18,8 @@ namespace Mochineko.WasmerUnity.Wasm.Tests
             using var memoryType = MemoryType.New(limit);
             memoryType.Should().NotBeNull();
             memoryType.Limits.Should().Be(limit);
+            
+            GC.Collect();
         }
     }
 }

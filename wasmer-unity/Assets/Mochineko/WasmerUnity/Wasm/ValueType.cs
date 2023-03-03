@@ -12,7 +12,7 @@ namespace Mochineko.WasmerUnity.Wasm
             => (ValueKind)WasmAPIs.wasm_valtype_kind(Handle);
 
         [return: OwnReceive]
-        internal static ValueType New(ValueKind kind)
+        internal static ValueType FromKind(ValueKind kind)
         {
             return new ValueType(
                 WasmAPIs.wasm_valtype_new((byte)kind),

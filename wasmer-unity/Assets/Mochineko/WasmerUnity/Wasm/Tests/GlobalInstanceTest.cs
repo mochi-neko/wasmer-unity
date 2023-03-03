@@ -19,7 +19,7 @@ namespace Mochineko.WasmerUnity.Wasm.Tests
         {
             using var engine = Engine.New();
             using var store = Store.New(engine);
-            using var valueType = ValueType.New(kind);
+            using var valueType = ValueType.FromKind(kind);
             using var globalType = GlobalType.New(valueType, mutability);
             var value = ValueInstance.New(kind, rawValue);
 
@@ -45,7 +45,7 @@ namespace Mochineko.WasmerUnity.Wasm.Tests
         {
             using var engine = Engine.New();
             using var store = Store.New(engine);
-            using var valueType = ValueType.New(kind);
+            using var valueType = ValueType.FromKind(kind);
             using var globalType = GlobalType.New(valueType, Mutability.Variable);
             var value = ValueInstance.New(kind, rawValue);
 
