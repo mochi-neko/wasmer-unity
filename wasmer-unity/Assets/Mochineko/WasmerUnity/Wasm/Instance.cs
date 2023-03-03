@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using Mochineko.WasmerUnity.Wasm.Attributes;
 using Microsoft.Win32.SafeHandles;
+using Mochineko.WasmerUnity.Wasm.Instances;
+using Mochineko.WasmerUnity.Wasm.Types;
 
 namespace Mochineko.WasmerUnity.Wasm
 {

@@ -1,6 +1,7 @@
 using System;
 using Mochineko.WasmerUnity.Wasm;
 using FluentAssertions;
+using Mochineko.WasmerUnity.Wasm.Instances;
 using NUnit.Framework;
 using UnityEngine.TestTools;
 

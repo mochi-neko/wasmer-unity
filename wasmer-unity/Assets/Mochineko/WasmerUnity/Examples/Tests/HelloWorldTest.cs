@@ -3,6 +3,7 @@ using FluentAssertions;
 using NUnit.Framework;
 using UnityEngine.TestTools;
 using Mochineko.WasmerUnity.Wasm;
+using Mochineko.WasmerUnity.Wasm.Instances;
 using Mochineko.WasmerUnity.Wasmer;
 
 namespace Mochineko.WasmerUnity.Examples.Tests

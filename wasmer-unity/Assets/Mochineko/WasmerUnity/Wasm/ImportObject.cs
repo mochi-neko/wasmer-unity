@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Mochineko.WasmerUnity.Wasm.Attributes;
+using Mochineko.WasmerUnity.Wasm.Instances;
 
 namespace Mochineko.WasmerUnity.Wasm
 {
