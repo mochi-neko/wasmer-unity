@@ -119,9 +119,9 @@ namespace Mochineko.WasmerUnity.Examples.Tests
             
             some.Set(ValueInstance.NewFloat32(42.0f));
             
-            var someResult2 = some.Get();
+            someResult = some.Get();
 
-            someResult2.OfFloat32.Should().Be(42.0f);
+            someResult.OfFloat32.Should().Be(42.0f);
         }
     }
 }

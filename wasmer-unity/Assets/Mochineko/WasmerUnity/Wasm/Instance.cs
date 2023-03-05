@@ -48,6 +48,38 @@ namespace Mochineko.WasmerUnity.Wasm
 
             return externalInstance.ToGlobal();
         }
+        
+        public TableInstance GetTable(string name)
+        {
+            if (!nameToInstanceMap.TryGetValue(name, out var externalInstance))
+            {
+                throw new KeyNotFoundException(nameof(name));
+            }
+
+            if (externalInstance.Kind != ExternalKind.Table)
+            {
+                // TODO:
+                throw new Exception();
+            }
+
+            return externalInstance.ToTable();
+        }
+        
+        public MemoryInstance GetMemory(string name)
+        {
+            if (!nameToInstanceMap.TryGetValue(name, out var externalInstance))
+            {
+                throw new KeyNotFoundException(nameof(name));
+            }
+
+            if (externalInstance.Kind != ExternalKind.Memory)
+            {
+                // TODO:
+                throw new Exception();
+            }
+
+            return externalInstance.ToMemory();
+        }
 
         [return: OwnReceive]
         public static Instance New(Store store, Module module, ImportObject importObject)

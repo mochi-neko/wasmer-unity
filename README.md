@@ -82,11 +82,11 @@ The following are the best features I think:
   - [x] Hello World
   - [x] Instanting a module
   - [ ] Handling errors
-  - [ ] Interacting with memory
+  - [x] Interacting with memory
 - Exports
   - [x] Exproted global
   - [ ] Exproted function
-  - [ ] Exproted memory
+  - [x] Exproted memory
 - Imports
   - [ ] Imported global
   - [ ] Imported function

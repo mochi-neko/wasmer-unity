@@ -73,6 +73,62 @@ namespace Mochineko.WasmerUnity.Wasm.Instances
                 WasmAPIs.wasm_extern_as_global(Handle),
                 hasOwnership: false);
         }
+        
+        // Pass ownership because ExternalInstanceVector releases not "GlobalInstance" but "ExternalInstance".
+        [return: OwnReceive]
+        internal static ExternalInstance FromTableWithOwnership([OwnPass] TableInstance instance)
+        {
+            var externalInstance = new ExternalInstance(
+                WasmAPIs.wasm_table_as_extern(instance.Handle),
+                hasOwnership: true);
+
+            // Passes ownership from TableInstance to ExternalInstance
+            instance.Handle.SetHandleAsInvalid();
+
+            return externalInstance;
+        }
+
+        internal static ExternalInstance FromTable(TableInstance instance)
+        {
+            return new ExternalInstance(
+                WasmAPIs.wasm_table_as_extern(instance.Handle),
+                hasOwnership: true);
+        }
+
+        internal TableInstance ToTable()
+        {
+            return TableInstance.FromPointer(
+                WasmAPIs.wasm_extern_as_table(Handle),
+                hasOwnership: false);
+        }
+
+        // Pass ownership because ExternalInstanceVector releases not "GlobalInstance" but "ExternalInstance".
+        [return: OwnReceive]
+        internal static ExternalInstance FromMemoryWithOwnership([OwnPass] MemoryInstance instance)
+        {
+            var externalInstance = new ExternalInstance(
+                WasmAPIs.wasm_memory_as_extern(instance.Handle),
+                hasOwnership: true);
+
+            // Passes ownership from MemoryInstance to ExternalInstance
+            instance.Handle.SetHandleAsInvalid();
+
+            return externalInstance;
+        }
+
+        internal static ExternalInstance FromMemory(MemoryInstance instance)
+        {
+            return new ExternalInstance(
+                WasmAPIs.wasm_memory_as_extern(instance.Handle),
+                hasOwnership: true);
+        }
+
+        internal MemoryInstance ToMemory()
+        {
+            return MemoryInstance.FromPointer(
+                WasmAPIs.wasm_extern_as_memory(Handle),
+                hasOwnership: false);
+        }
 
         internal static ExternalInstance FromPointer(IntPtr ptr, bool hasOwnership)
             => new ExternalInstance(ptr, hasOwnership);
@@ -145,12 +201,13 @@ namespace Mochineko.WasmerUnity.Wasm.Instances
             public static extern IntPtr wasm_global_as_extern(
                 GlobalInstance.NativeHandle global);
 
-            // TODO:
-            // [DllImport(NativePlugin.LibraryName)]
-            // public static extern IntPtr wasm_table_as_extern(TableInstance.NativeHandle table);
-            //
-            // [DllImport(NativePlugin.LibraryName)]
-            // public static extern IntPtr wasm_memory_as_extern(MemoryInstance.NativeHandle memory);
+            [DllImport(NativePlugin.LibraryName)]
+            public static extern IntPtr wasm_table_as_extern(
+                TableInstance.NativeHandle table);
+
+            [DllImport(NativePlugin.LibraryName)]
+            public static extern IntPtr wasm_memory_as_extern(
+                MemoryInstance.NativeHandle memory);
 
             [DllImport(NativePlugin.LibraryName)]
             public static extern IntPtr wasm_extern_as_func(

@@ -37,22 +37,22 @@ namespace Mochineko.WasmerUnity.Examples.Tests
     (export ""add_one"" (func $add_one_f))
 )
             ".WatToWasm();
-            
+
             // Create a Store.
             // Note that we don't need to specify the engine/compiler if we want to use
             // the default provided by Wasmer.
             // You can use `Store::default()` for that.
             using var store = Store.Default();
-            
+
             // Let's compile the Wasm module.
             using var module = Module.New(store, wasmBytes);
-            
+
             // Create an empty import object.
             using var importObject = ImportObject.New();
-            
+
             // Let's instantiate the Wasm module.
             using var instance = Instance.New(store, module, importObject);
-            
+
             // We now have an instance ready to be used.
             //
             // From an `Instance` we can retrieve any exported entities.
